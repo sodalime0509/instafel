@@ -130,7 +130,7 @@ public class AddAppTrigger extends InstafelPatch {
                         File file = fileIterator.next();
                         List<String> fContent = smaliUtils.getSmaliFileContent(file.getAbsolutePath()); 
 
-                        boolean[] conditions = {false, false, false, false};
+                        boolean[] conditions = {false, false, false, false, false};
 
                         for (String line : fContent) {
                             if (line.contains("Landroid/content/res/Configuration;")) {
@@ -147,6 +147,10 @@ public class AddAppTrigger extends InstafelPatch {
                             
                             if (line.contains(".super Ljava/lang/Object;")) {
                                 conditions[3] = true;
+                            }
+
+                            if (line.contains("MainFeedQuickPromotionDelegate.onCreateView")) {
+                                conditions[4] = true;
                             }
                         }
 
