@@ -24,9 +24,12 @@ build
 # Instafel Patcher
 
 /patcher/output
-/patcher/apktool.jar
-/patcher/bin
-/patcher/src/main/resources/patcher.properties
+/patcher/core/bin
+/patcher/core/build
+/patcher/cli/bin
+/patcher/cli/build
+/patcher/core/src/main/resources/patcher-core.properties
+/patcher/cli/src/main/resources/patcher.properties
 
 # Instafel GPlayAPI
 

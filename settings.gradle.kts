@@ -31,6 +31,15 @@ println("Loaded & exported Instafel project configuration file")
 gradle.rootProject {
     extra["commitHash"] = getGitCommitHash()
     extra["instafelConfig"] = jsonData
+    extra["patcherLibs"] = mapOf(
+        "org-json" to "org.json:json:20240303",
+        "commons-io" to "commons-io:commons-io:2.18.0",
+        "okhttp" to "com.squareup.okhttp3:okhttp:4.12.0",
+        "apktool-lib" to "org.apktool:apktool-lib:2.11.1",
+        "classgraph" to "io.github.classgraph:classgraph:4.8.179",
+        "jackson-databind" to "com.fasterxml.jackson.core:jackson-databind:2.18.3",
+        "jackson-yaml" to "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.3"
+    )
 }
 
 pluginManagement {
@@ -50,7 +59,9 @@ pluginManagement {
 
 
 include(":app")
-include(":patcher")
+include(":patcher:cli")
+include(":patcher:core")
+include(":patcher:mobile")
 include(":updater")
 include(":website")
 include(":gplayapi")
