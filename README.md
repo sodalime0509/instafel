@@ -3,8 +3,6 @@
 **Instafel** is a modular project designed to patch the latest **Instagram Alpha APKs** using its own custom patcher.  
 This repository contains the source code of six core subprojects that make up the Instafel ecosystem.
 
----
-
 ## Projects
 
 ### App
@@ -37,8 +35,6 @@ Provides guides, libraries, and more for Instafel users dynamically.
 A simple module for retrieve latest Alpha APKs directly from the Google Play Store for patching
 > 📦 [Source Code](https://github.com/mamiiblt/instafel/tree/main/gplayapi)
 
----
-
 ## Links
 
 - 🌐 [Website](https://instafel.mamiiblt.me)  
@@ -46,8 +42,6 @@ A simple module for retrieve latest Alpha APKs directly from the Google Play Sto
 - 🗂️ [Backup Library](https://instafel.mamiiblt.me/library_backup)
 
 > 🛠️ **Work in Progress:** The wiki & source guide is still being written. Documentation will be expanded in upcoming updates.
-
----
 
 ## Disclaimer
 
