@@ -49,8 +49,8 @@ pluginManagement {
 }
 
 
-rootDir.listFiles()
-    .filter { it.isDirectory && it.name.startsWith("instafel") && File(it, "build.gradle.kts").exists() }
-    .forEach {
-        include(it.name)
-    }
+include(":app")
+include(":patcher")
+include(":updater")
+include(":website")
+include(":gplayapi")

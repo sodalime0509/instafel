@@ -1,17 +1,27 @@
 {
-  "instafel.gplayapi": {
+  "gplayapi": {
     "version": "1.5",
     "tag": "custom"
   },
-  "instafel.patcher": {
+  "patcher": {
     "version": "1.0.6",
     "tag": "release"
   },
-  "instafel.website": {
+  "website": {
     "version": null,
     "tag": "custom"
   },
-  "instafel.updater": {
+  "app": {
+    "androidConfig": {
+      "keystore": {
+        "ksPath": "/config/keystores/instafel-app.jks",
+        "ksKeyPass": "value",
+        "ksAlias": "value",
+        "ksPass": "value"
+      }
+    }
+  },
+  "updater": {
     "version": "2.0.3",
     "androidConfig": {
       "versionCode": 1,
@@ -27,16 +37,6 @@
       "android_work_version": "2.9.1",
       "okhttp_version": "4.9.0",
       "materialyoupreferences_version": "0.2.5"
-    }
-  },
-  "instafel.app": {
-    "androidConfig": {
-      "keystore": {
-        "ksPath": "/config/keystores/instafel-app.jks",
-        "ksKeyPass": "value",
-        "ksAlias": "value",
-        "ksPass": "value"
-      }
     }
   }
 }

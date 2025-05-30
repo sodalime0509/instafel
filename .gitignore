@@ -17,40 +17,40 @@ build
 
 # Instafel APP
 
-/instafel.app/build
-/instafel.app/output
+/app/build
+/app/output
 
 
 # Instafel Patcher
 
-/instafel.patcher/output
-/instafel.patcher/apktool.jar
-/instafel.patcher/bin
-/instafel.patcher/src/main/resources/patcher.properties
+/patcher/output
+/patcher/apktool.jar
+/patcher/bin
+/patcher/src/main/resources/patcher.properties
 
 # Instafel GPlayAPI
 
-/instafel.gplayapi/output
-/instafel.gplayapi/build
-/instafel.gplayapi/.gradle
-/instafel.gplayapi/bin
-/instafel.gplayapi/src/main/resources/gplayapi.properties
+/gplayapi/output
+/gplayapi/build
+/gplayapi/.gradle
+/gplayapi/bin
+/gplayapi/src/main/resources/gplayapi.properties
 
 # Instafel Updater
 
-/instafel.updater/output
-/instafel.updater/*.iml
-/instafel.updater/.gradle
-/instafel.updater/local.properties
-/instafel.updater/.idea/caches
-/instafel.updater/.idea/libraries
-/instafel.updater/.idea/modules.xml
-/instafel.updater/.idea/workspace.xml
-/instafel.updater/.idea/navEditor.xml
-/instafel.updater/.idea/assetWizardSettings.xml
-/instafel.updater/.DS_Store
-/instafel.updater/build
-/instafel.updater/captures
-/instafel.updater/.externalNativeBuild
-/instafel.updater/.cxx
-/instafel.updater/local.properties
+/updater/output
+/updater/*.iml
+/updater/.gradle
+/updater/local.properties
+/updater/.idea/caches
+/updater/.idea/libraries
+/updater/.idea/modules.xml
+/updater/.idea/workspace.xml
+/updater/.idea/navEditor.xml
+/updater/.idea/assetWizardSettings.xml
+/updater/.DS_Store
+/updater/build
+/updater/captures
+/updater/.externalNativeBuild
+/updater/.cxx
+/updater/local.properties
