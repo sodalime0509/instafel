@@ -38,6 +38,7 @@ public class CoreHandler {
                 throw new Exception("Core commit is not a string, something went wrong.");
             }
         } catch (Exception e) {
+            e.printStackTrace();
             Log.severe("Error while loading sources from core: " + e.getMessage());
             System.exit(-1);
         }
@@ -46,7 +47,7 @@ public class CoreHandler {
 
     public static void loadCoreJAR() {
         try {
-            File coreJar = new File(Paths.get(Utils.USER_DIR, "ifl-pcore-7777878.jar").toString());
+            File coreJar = new File(Paths.get(Utils.USER_DIR, "ifl-pcore-765b68c.jar").toString());
 
             if (!coreJar.exists()) {
                 Log.severe("Core JAR not found, mami bunu dinamik olarak indirme ekleyecek.");
@@ -55,6 +56,7 @@ public class CoreHandler {
 
             coreClassLoader = new URLClassLoader(new URL[]{coreJar.toURI().toURL()}, CoreHandler.class.getClassLoader());
         } catch (Exception e) {
+            e.printStackTrace();
             Log.severe("Error while loading core JAR: " + e.getMessage());
         }
         

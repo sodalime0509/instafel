@@ -13,18 +13,18 @@ public class ListPatches implements Command {
         try {
             JSONObject patchInfos = (JSONObject) CoreHandler.invokeNonParamMethod(
                 "providers.InfoProvider",
-                "getAllPatchInfos", null
+                "getPatchesList", null
             );
 
             System.out.println("Patches: ");
-            JSONArray singlePatches = patchInfos.getJSONArray("single");
+            JSONArray singlePatches = patchInfos.getJSONArray("singles");
             for (int i = 0; i < singlePatches.length(); i++) {
                 JSONObject info = singlePatches.getJSONObject(i);
                 System.out.println("    • " + getPatchInfoString(info.getString("name"), info.getString("shortname")));
             }
 
             System.out.println("Patch Groups:");
-            JSONArray groupPatches = patchInfos.getJSONArray("group");
+            JSONArray groupPatches = patchInfos.getJSONArray("groups");
             for (int i = 0; i < groupPatches.length(); i++) {
                 JSONObject patchGroupInfo = groupPatches.getJSONObject(i);
                 System.out.println("    • " + getPatchInfoString(patchGroupInfo.getString("name"), patchGroupInfo.getString("shortname")));

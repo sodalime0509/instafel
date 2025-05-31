@@ -8,13 +8,13 @@ plugins {
 val libs = rootProject.extra["patcherLibs"] as Map<*, *>
 var config = rootProject.extra["instafelConfig"] as Map<*, *>
 val projectConfig = config["patcher"] as Map<*, *>
-val projectVersion = projectConfig["version"] as String
+val cliVersion = projectConfig["cli_version"] as String
 val projectTag = projectConfig["tag"] as String
 
 val commitHash: String by rootProject.extra
 
 group = "me.mamiiblt.instafel"
-version = "v$projectVersion-$commitHash-$projectTag"
+version = "v$cliVersion-$commitHash-$projectTag"
 
 repositories {
     mavenCentral()
@@ -48,28 +48,20 @@ tasks.register("clear-cache") {
     }
 }
 
-tasks.register("generate-patcher-props") {
-    doLast {
-        val outputFile = File("${project.projectDir}/src/main/resources/patcher.properties")
-        outputFile.writeText("""
-            patcher.cli.version=$projectVersion
-            patcher.cli.commit=$commitHash
-            patcher.cli.branch=main
-            patcher.cli.tag=$projectTag
-        """.trimIndent())
-
-        println("Patcher property file created")
-    }
-
-    mustRunAfter("clear-cache")
-
-}
-
 tasks.shadowJar {
     archiveBaseName = "ifl-patcher"
     archiveClassifier = ""
-    destinationDirectory.set(file("${rootProject.rootDir}/instafel.patcher/output"))
-    mustRunAfter("generate-patcher-props")
+    destinationDirectory.set(file("${rootProject.rootDir}/patcher/output"))
+    manifest {
+        attributes(
+            "Patcher-Cli-Version" to cliVersion,
+            "Patcher-Cli-Commit" to commitHash,
+            "Patcher-Cli-Branch" to "main",
+            "Patcher-Cli-Tag" to projectTag
+        )
+    }
+
+    mustRunAfter("clear-cache")
 }
 
 tasks.withType<JavaCompile> {
@@ -77,7 +69,7 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.register("build-jar") {
-    dependsOn("clear-cache", "generate-patcher-props", "shadowJar")
+    dependsOn("clear-cache", "shadowJar")
 
     doLast {
         delete(file("${project.projectDir}/build"))

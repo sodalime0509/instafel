@@ -2,8 +2,6 @@ package me.mamiiblt.instafel.patcher.core.utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
@@ -20,28 +18,6 @@ public class Env {
     public static String PROJECT_DIR = null;
     public static String[] INSTAFEL_LOCALES = {"tr", "de", "el", "fr", "hi", "hu", "pt", "es", "az"};
     public static String SPERATOR_STR = "---------------------------";
-
-    public static void readPatcherProps()  {
-        try {
-            Properties patcherProperties = new Properties();
-            InputStream in = Env.class.getClassLoader().getResourceAsStream("patcher.properties");
-            patcherProperties.load(in);
-    
-            PROP_VERSION_STRING = patcherProperties.getProperty("patcher.version");
-            PROP_COMMIT_HASH = patcherProperties.getProperty("patcher.commit");
-            PROP_PROJECT_TAG = patcherProperties.getProperty("patcher.tag");
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.severe("Error while organizing environment.");
-            System.exit(-1);
-        }
-    }
-
-    public static void printPatcherHeader() {
-        System.out.println("Instafel Patcher v" + PROP_VERSION_STRING);
-        System.out.println("by mamiiblt");
-        System.out.println("");
-    }
 
     public class Config {
         public static enum Keys {

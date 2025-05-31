@@ -5,7 +5,9 @@ plugins {
 }
 
 val libs = rootProject.extra["patcherLibs"] as Map<*, *>
-
+var config = rootProject.extra["instafelConfig"] as Map<*, *>
+val projectConfig = config["patcher"] as Map<*, *>
+val coreSupportedVersion = projectConfig["core_supported_version"] as String
 val commitHash: String by rootProject.extra
 
 group = "me.mamiiblt.instafel"
@@ -27,18 +29,6 @@ dependencies {
     implementation(libs["jackson-yaml"]!!)
 }
 
-tasks.register("generate-patcher-props") {
-    doLast {
-        val outputFile = File("${project.projectDir}/src/main/resources/patcher-core.properties")
-        outputFile.writeText("""
-            patcher.core.commit=$commitHash
-            patcher.core.branch=main
-        """.trimIndent())
-
-        println("Patcher property file created")
-    }
-}
-
 tasks.register("clear-cache") {
     val filesToDelete = listOf(
         file("${project.projectDir}/bin"),
@@ -54,17 +44,20 @@ tasks.register("clear-cache") {
 tasks.named<Jar>("jar") {
     archiveBaseName.set("ifl-pcore")
     archiveClassifier.set("")
-    destinationDirectory.set(file("${rootProject.rootDir}/instafel.patcher/output"))
+    destinationDirectory.set(file("${rootProject.rootDir}/patcher/output"))
     manifest {
-        attributes["Implementation-Title"] = "Instafel Patcher Core"
-        attributes["Implementation-Commit"] = version
+        attributes(
+            "Patcher-Core-Commit" to commitHash,
+            "Patcher-Core-Supported-Version" to coreSupportedVersion,
+            "Patcher-Core-Branch" to "main"
+        )
     }
 
     mustRunAfter("clear-cache")
 }
 
 tasks.register("build-jar") {
-    dependsOn("clear-cache", "generate-patcher-props", "jar")
+    dependsOn("clear-cache", "jar")
 
     doLast {
         delete(file("${project.projectDir}/build"))
