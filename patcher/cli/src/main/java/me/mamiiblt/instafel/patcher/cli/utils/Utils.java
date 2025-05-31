@@ -1,6 +1,9 @@
 package me.mamiiblt.instafel.patcher.cli.utils;
 
+import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -30,5 +33,26 @@ public class Utils {
         System.out.println("Instafel Patcher v" + PROP_CLI_VERSION);
         System.out.println("by mamiiblt");
         System.out.println("");
+    }
+
+    public static String getPatcherFolder() {
+        String OS = System.getProperty("os.name").toLowerCase();
+
+        File base = new File(System.getProperty("user.home"));
+        Path path;
+        if (OS.contains("mac")) {
+            path = Paths.get(base.getAbsolutePath(), "Library", "ipatcher");
+        } else if (OS.contains("win")) {
+            path = Paths.get(base.getAbsolutePath(), "AppData", "Local", "ipatcher");
+        } else {
+            String xdgDataFolder = System.getenv("XDG_DATA_HOME");
+            if (xdgDataFolder != null) {
+                path = Paths.get(xdgDataFolder, "ipatcher", "framework");
+            } else {
+                path = Paths.get(base.getAbsolutePath(), ".local", "share", "ipatcher");
+            }
+        }
+        
+        return path.toString(); 
     }
 }

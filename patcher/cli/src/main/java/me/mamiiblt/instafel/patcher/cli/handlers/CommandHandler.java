@@ -8,7 +8,6 @@ import me.mamiiblt.instafel.patcher.cli.commands.HelpCmd;
 import me.mamiiblt.instafel.patcher.cli.commands.InitProject;
 import me.mamiiblt.instafel.patcher.cli.commands.ListPatches;
 import me.mamiiblt.instafel.patcher.cli.commands.RunPatch;
-import me.mamiiblt.instafel.patcher.cli.utils.Utils;
 
 public class CommandHandler {
     
@@ -21,13 +20,9 @@ public class CommandHandler {
 
     private void setupHandler(String[] args) {
         if (args.length == 0) {
-            Utils.printPatcherHeader();
             System.out.println("Use `help` command for list all commands.");
         } else {
             String command = args[0];
-            if (!command.equals("about")) {
-                Utils.printPatcherHeader();
-            }
             String[] commandArgs = new String[args.length - 1];
             System.arraycopy(args, 1, commandArgs, 0, args.length - 1);
             executeCommand(command, commandArgs);

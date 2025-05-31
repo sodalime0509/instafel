@@ -9,7 +9,6 @@ public class AboutCmd implements Command {
     @Override
     public void execute(String[] args) {
         String[] helpLines = {
-            "Instafel Patcher\nPatch Instagram alpha APKs fastly!\n",
             "CLI Version    : v" + Utils.PROP_CLI_VERSION + " (" + Utils.PROP_CLI_PROJECT_TAG + ")",
             "CLI Commit     : " + Utils.PROP_CLI_COMMIT_HASH + "@" + Utils.PROP_CLI_PROJECT_BRANCH,
             "Core Commit    : " + Utils.PROP_CORE_COMMIT + "@" + Utils.PROP_CORE_BRANCH,

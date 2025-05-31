@@ -14,8 +14,8 @@ public class Main {
 
         Log.setupLogger();
         Utils.readPatcherProps();
-        CoreHandler.loadCoreJAR();
-        CoreHandler.loadCoreInfo();
+        Utils.printPatcherHeader();
+        new CoreHandler();
         new CommandHandler(args);
     }
 }

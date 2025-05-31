@@ -4,9 +4,9 @@
     "tag": "custom"
   },
   "patcher": {
-    "cli_version": "1.0.6",
+    "cli_version": "2.1.0",
     "mobile_version": "1.0.0",
-    "core_supported_version": "1.0.6",
+    "core_supported_version": "2.1.0",
     "tag": "release"
   },
   "website": {
