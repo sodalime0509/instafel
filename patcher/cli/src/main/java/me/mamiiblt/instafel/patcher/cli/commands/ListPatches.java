@@ -1,5 +1,6 @@
 package me.mamiiblt.instafel.patcher.cli.commands;
 
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,33 +12,45 @@ public class ListPatches implements Command {
     @Override
     public void execute(String[] args) {
         try {
+            boolean getRaw = false; 
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].equals("--getRaw")) {
+                    getRaw = true;
+                }
+            }
+            
             JSONObject patchInfos = (JSONObject) CoreHandler.invokeNonParamMethod(
                 "providers.InfoProvider",
                 "getPatchesList", null
             );
 
-            System.out.println("Patches: ");
-            JSONArray singlePatches = patchInfos.getJSONArray("singles");
-            for (int i = 0; i < singlePatches.length(); i++) {
-                JSONObject info = singlePatches.getJSONObject(i);
-                System.out.println("    • " + getPatchInfoString(info.getString("name"), info.getString("shortname")));
-            }
+            if (getRaw) {
+                System.out.println(patchInfos.toString(2));
+            } else {
+                System.out.println("Patches: ");
+                JSONArray singlePatches = patchInfos.getJSONArray("singles");
+                for (int i = 0; i < singlePatches.length(); i++) {
+                    JSONObject info = singlePatches.getJSONObject(i);
+                    System.out.println("    • " + getPatchInfoString(info.getString("name"), info.getString("shortname")));
+                }
 
-            System.out.println("Patch Groups:");
-            JSONArray groupPatches = patchInfos.getJSONArray("groups");
-            for (int i = 0; i < groupPatches.length(); i++) {
-                JSONObject patchGroupInfo = groupPatches.getJSONObject(i);
-                System.out.println("    • " + getPatchInfoString(patchGroupInfo.getString("name"), patchGroupInfo.getString("shortname")));
+                System.out.println("Patch Groups:");
+                JSONArray groupPatches = patchInfos.getJSONArray("groups");
+                for (int i = 0; i < groupPatches.length(); i++) {
+                    JSONObject patchGroupInfo = groupPatches.getJSONObject(i);
+                    System.out.println("    • " + getPatchInfoString(patchGroupInfo.getString("name"), patchGroupInfo.getString("shortname")));
 
-                for (int a = 0; a < patchGroupInfo.getJSONArray("infos").length(); a++) {
-                    JSONObject info = patchGroupInfo.getJSONArray("infos").getJSONObject(a);
-                    System.out.println("        • " + getPatchInfoString(info.getString("name"), info.getString("shortname")));
+                    for (int a = 0; a < patchGroupInfo.getJSONArray("infos").length(); a++) {
+                        JSONObject info = patchGroupInfo.getJSONArray("infos").getJSONObject(a);
+                        System.out.println("        • " + getPatchInfoString(info.getString("name"), info.getString("shortname")));
+                    }
                 }
             }
 
             System.out.println("");
             System.out.println("Use run <wdir> name... for executing patches / patch groups");
             System.out.println("Totally found " + patchInfos.getInt("total_size") + " patch.");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

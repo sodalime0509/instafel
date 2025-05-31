@@ -194,7 +194,7 @@ public class CopyInstafelSources extends InstafelPatch {
 
     private void preapereResData() throws IOException, ParserConfigurationException, SAXException {
         File resDataPath = new File(Utils.mergePaths(Env.PROJECT_DIR, "ifl_data_temp.xml"));
-        Utils.copyResourceToFile("/pcore-res/ifl_sources/ifl_data.xml", resDataPath);
+        Utils.copyResourceToFile("/ifl_sources/ifl_data.xml", resDataPath);
         resDataParser = new IFLResData.Parser(resDataPath);
     }
 }
