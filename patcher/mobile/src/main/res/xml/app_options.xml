@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <PreferenceCategory android:title="About Patcher" app:iconSpaceReserved="false" app:allowDividerAbove="false">
+        <com.github.tttt55.materialyoupreferences.preferences.MaterialPreference
+            android:key="source_code"
+            android:title="Source Code"
+            app:allowDividerAbove="false"
+            android:summary="Visit source code of Instafel"
+            app:icon="@drawable/source_code_2" />
+        <com.github.tttt55.materialyoupreferences.preferences.MaterialPreference
+            android:key="create_issue"
+            app:allowDividerAbove="false"
+            android:title="Create Issue"
+            android:summary="Create a issue on GitHub for feedback!"
+            app:icon="@drawable/create_issue" />
+        <com.github.tttt55.materialyoupreferences.preferences.MaterialPreference
+            android:key="app_version"
+            android:title="App Version"
+            android:summary="_appVersion"
+            app:allowDividerAbove="false"
+            app:icon="@drawable/app_info" />
+    </PreferenceCategory>
+</PreferenceScreen>

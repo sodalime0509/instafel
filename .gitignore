@@ -10,7 +10,12 @@ build
 .vscode
 .vercel
 
+.android_studio
+.android_sdk
+
 # Ingore Config
+
+local.properties
 
 /config/ifl_config.json
 /config/keystores
