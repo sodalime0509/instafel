@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import me.mamiiblt.instafel.patcher.cli.commands.AboutCmd;
+import me.mamiiblt.instafel.patcher.cli.commands.ClearPatcherCache;
+import me.mamiiblt.instafel.patcher.cli.commands.ForceUpdateCore;
 import me.mamiiblt.instafel.patcher.cli.commands.HelpCmd;
 import me.mamiiblt.instafel.patcher.cli.commands.InitProject;
 import me.mamiiblt.instafel.patcher.cli.commands.ListPatches;
@@ -39,6 +41,8 @@ public class CommandHandler {
     }
 
     private void registerCommands() {
+        commands.put("update-core", new ForceUpdateCore());
+        commands.put("clear-cache", new ClearPatcherCache());
         commands.put("help", new HelpCmd());
         commands.put("about", new AboutCmd());
         commands.put("list", new ListPatches());

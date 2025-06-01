@@ -14,6 +14,8 @@ public class HelpCmd implements Command {
             "  init <apk file>           Initializes a working directory with the Instagram APK",
             "  run <wdir> <patch name>   Applies the specified patch to the working directory",
             "  build <wdir>              Builds the modified APK from the working directory",
+            "  update-core               Update Core JAR manually",
+            "  clear-cache               Clear patcher caches",
             "",
             "For a complete guide on using the patcher, visit:",
             "https://github.com/mamiiblt/instafel"
