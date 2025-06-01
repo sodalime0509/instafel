@@ -16,6 +16,8 @@ val commitHash: String by rootProject.extra
 group = "me.mamiiblt.instafel"
 version = "v$cliVersion-$commitHash-$projectTag"
 
+apply(from = "publish.gradle.kts")
+
 repositories {
     mavenCentral()
     google()
@@ -49,7 +51,7 @@ tasks.register("clear-cache") {
 }
 
 tasks.shadowJar {
-    archiveBaseName = "ifl-patcher"
+    archiveBaseName = "ifl-cli"
     archiveClassifier = ""
     destinationDirectory.set(file("${rootProject.rootDir}/patcher/output"))
     manifest {
