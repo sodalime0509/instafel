@@ -25,15 +25,15 @@ tasks.register("publish-core") {
         val jarBase64 = Base64.getEncoder().encodeToString(jarFile.readBytes())
         val jarPayload = """
             {
-              "message": "Upload core: $commit",
+              "message": "[PUBLISH] Upload Core $commit JAR",
               "content": "$jarBase64",
               "branch": "ft-releases"
             }
         """.trimIndent()
-        val jarUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/core/dist/ifl-pcore-$commit.jar"
+        val jarUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/p-core/dist/ifl-pcore-$commit.jar"
         apiPut(jarUploadUrl, token, jarPayload)
 
-        println("Uploaded dist: ifl-pcore-$commit.jar")
+        println("Dist ifl-pcore-$commit.jar uploaded")
 
         val ts = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Date())
         val latestJson = """
@@ -46,7 +46,7 @@ tasks.register("publish-core") {
 
         val latestBase64 = Base64.getEncoder().encodeToString(latestJson.toByteArray())
 
-        val latestGetUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/core/latest.json?ref=ft-releases"
+        val latestGetUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/p-core/latest.json?ref=ft-releases"
         val existingJsonResponse = try {
             apiGet(latestGetUrl, token)
         } catch (e: Exception) {
@@ -58,18 +58,19 @@ tasks.register("publish-core") {
 
         val latestPayload = """
             {
-              "message": "Update latest.json to $commit",
+              "message": "[PUBLISH] Update latest.json for Core $commit",
               "content": "$latestBase64",
               "branch": "ft-releases"
               ${if (existingSha != null) """, "sha": "$existingSha" """ else ""}
             }
         """.trimIndent()
 
-        val latestUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/core/latest.json"
+        val latestUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/p-core/latest.json"
 
         apiPut(latestUploadUrl, token, latestPayload)
 
-        println("Updated latest.json")
+        println("latest.json updated succesfully")
+        println("published succesfully")
     }
 }
 
