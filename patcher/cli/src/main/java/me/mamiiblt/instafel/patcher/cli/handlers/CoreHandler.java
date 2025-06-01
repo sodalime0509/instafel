@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import me.mamiiblt.instafel.patcher.cli.utils.Log;
 import me.mamiiblt.instafel.patcher.cli.utils.Utils;
+import me.mamiiblt.instafel.patcher.cli.utils.modals.UpdateInfo;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -40,11 +41,22 @@ public class CoreHandler {
             CORE_INFO_FILE = coreDir.resolve("info.json").toFile();
             CORE_JAR_FILE = coreDir.resolve("core.jar").toFile();
             createOrReadCoreDatas();
-            fetchCore();
+            checkDebugCoreJAR();
         } catch (Exception e) {
             e.printStackTrace();
             Log.severe("Error while loading core");
             System.exit(-1);
+        }
+    }
+
+    private void checkDebugCoreJAR() throws Exception {
+        File debugCore = new File(Paths.get(Utils.USER_DIR, "ifl-pcore-" + Utils.PROP_CLI_COMMIT_HASH + ".jar").toString());
+        if (debugCore.exists()) {
+            Log.info("Using debug core");
+            CORE_JAR_FILE = debugCore;
+            loadCoreJAR();
+        } else {
+            fetchCore();
         }
     }
 
@@ -56,7 +68,6 @@ public class CoreHandler {
             }
             INFO_DATA = new JSONObject();
             INFO_DATA.put("lc_ts", System.currentTimeMillis());
-            INFO_DATA.put("use_debug_core", JSONObject.NULL);
             FileUtils.writeStringToFile(CORE_INFO_FILE, INFO_DATA.toString(4), StandardCharsets.UTF_8);
         } else {
             INFO_DATA = new JSONObject(FileUtils.readFileToString(CORE_INFO_FILE, StandardCharsets.UTF_8));
@@ -68,7 +79,7 @@ public class CoreHandler {
         loadCoreInfo();
     }
 
-    private void downloadCoreJAR(UpdateInfo updateInfo) {
+    public static void downloadCoreJAR(UpdateInfo updateInfo) {
         String URL = "https://github.com/mamiiblt/instafel/raw/refs/heads/rel-pcore/cores/ifl-pcore-" + updateInfo.commit + ".jar";
     
         OkHttpClient client = new OkHttpClient();
@@ -98,7 +109,7 @@ public class CoreHandler {
         }
     }
 
-    private void fetchCore() throws Exception {
+    public void fetchCore() throws Exception {
         if (CORE_JAR_FILE.exists()) {
             long last_ts = INFO_DATA.getLong("lc_ts");
             long elapsed_time = (System.currentTimeMillis() - last_ts) / 1000;
@@ -145,7 +156,6 @@ public class CoreHandler {
         FileUtils.writeStringToFile(CORE_INFO_FILE, INFO_DATA.toString(4), StandardCharsets.UTF_8);
     }
 
-
     private void loadCoreInfo() {
         try {
             JSONObject coreInfo = (JSONObject) invokeNonParamMethod(
@@ -164,7 +174,7 @@ public class CoreHandler {
         }
     }
 
-    private UpdateInfo getLatestCoreUpdateInfo() throws Exception {
+    public static UpdateInfo getLatestCoreUpdateInfo() throws Exception {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("https://raw.githubusercontent.com/mamiiblt/instafel/refs/heads/rel-pcore/latest.json")
@@ -184,10 +194,6 @@ public class CoreHandler {
             e.printStackTrace();
             throw new Exception("An error has occured while checking core updates...");
         }
-    }
-
-    class UpdateInfo {
-        public String commit, supported_pversion;
     }
     
     public static Object invokeNonParamMethod(String className, String methodName, Class<?>[] paramTypes, Object... args) {
