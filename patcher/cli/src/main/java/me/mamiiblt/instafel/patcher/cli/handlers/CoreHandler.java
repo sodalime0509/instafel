@@ -80,7 +80,7 @@ public class CoreHandler {
     }
 
     public static void downloadCoreJAR(UpdateInfo updateInfo) {
-        String URL = "https://github.com/mamiiblt/instafel/raw/refs/heads/rel-pcore/cores/ifl-pcore-" + updateInfo.commit + ".jar";
+        String URL = "https://github.com/mamiiblt/instafel/raw/refs/heads/ft-releases/core/dist/ifl-pcore-" + updateInfo.commit + ".jar";
     
         OkHttpClient client = new OkHttpClient();
 
@@ -177,7 +177,7 @@ public class CoreHandler {
     public static UpdateInfo getLatestCoreUpdateInfo() throws Exception {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://raw.githubusercontent.com/mamiiblt/instafel/refs/heads/rel-pcore/latest.json")
+                .url("https://raw.githubusercontent.com/mamiiblt/instafel/refs/heads/ft-releases/core/latest.json")
                 .build();
 
         try (Response response = client.newCall(request).execute()) {

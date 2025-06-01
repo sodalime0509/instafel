@@ -27,13 +27,13 @@ tasks.register("publish-core") {
             {
               "message": "Upload core: $commit",
               "content": "$jarBase64",
-              "branch": "rel-pcore"
+              "branch": "ft-releases"
             }
         """.trimIndent()
-        val jarUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/cores/ifl-pcore-$commit.jar"
+        val jarUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/core/dist/ifl-pcore-$commit.jar"
         apiPut(jarUploadUrl, token, jarPayload)
 
-        println("Uploaded jar: ifl-pcore-$commit.jar")
+        println("Uploaded dist: ifl-pcore-$commit.jar")
 
         val ts = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Date())
         val latestJson = """
@@ -46,7 +46,7 @@ tasks.register("publish-core") {
 
         val latestBase64 = Base64.getEncoder().encodeToString(latestJson.toByteArray())
 
-        val latestGetUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/latest.json?ref=rel-pcore"
+        val latestGetUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/core/latest.json?ref=ft-releases"
         val existingJsonResponse = try {
             apiGet(latestGetUrl, token)
         } catch (e: Exception) {
@@ -60,12 +60,12 @@ tasks.register("publish-core") {
             {
               "message": "Update latest.json to $commit",
               "content": "$latestBase64",
-              "branch": "rel-pcore"
+              "branch": "ft-releases"
               ${if (existingSha != null) """, "sha": "$existingSha" """ else ""}
             }
         """.trimIndent()
 
-        val latestUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/latest.json"
+        val latestUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/core/latest.json"
 
         apiPut(latestUploadUrl, token, latestPayload)
 
