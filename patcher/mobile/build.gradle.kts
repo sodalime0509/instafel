@@ -10,6 +10,7 @@ val projectConfig = config["patcher"] as Map<*, *>
 val androidConfig = projectConfig["mobileAndroidConfig"] as Map<*, *>
 val keystoreConfig = androidConfig["keystore"] as Map<*, *>
 val depsConfig = projectConfig["dependencyConfig"] as Map<*, *>
+val pLibs = rootProject.extra["patcherLibs"] as Map<*, *>
 
 val projectVersion = projectConfig["mobile_version"] as String
 
@@ -122,14 +123,18 @@ tasks.register("clear-cache") {
 }
 
 dependencies {
+    implementation(pLibs["org-json"]!!)
+    implementation(pLibs["commons-io"]!!)
+    implementation(pLibs["okhttp"]!!)
+    implementation(pLibs["apktool-lib"]!!)
+    implementation(pLibs["classgraph"]!!)
+    implementation(pLibs["jackson-databind"]!!)
+    implementation(pLibs["jackson-yaml"]!!)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.navigation.fragment)
-    implementation("dev.rikka.shizuku:api:${depsConfig["shizuku_version"] as String}")
-    implementation("dev.rikka.shizuku:provider:${depsConfig["shizuku_version"] as String}")
-    implementation("androidx.work:work-runtime:${depsConfig["android_work_version"] as String}")
     implementation("com.squareup.okhttp3:okhttp:${depsConfig["okhttp_version"] as String}")
     implementation("com.github.TTTT55:Material-You-Preferences:${depsConfig["materialyoupreferences_version"] as String}")
     implementation(libs.navigation.ui)

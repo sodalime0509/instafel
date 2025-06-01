@@ -13,6 +13,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
+import com.github.tttt55.materialyoupreferences.preferences.MaterialListPreference;
 import com.github.tttt55.materialyoupreferences.preferences.MaterialPreference;
 import com.github.tttt55.materialyoupreferences.preferences.MaterialSwitchGooglePreference;
 
@@ -69,6 +70,37 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return false;
             }
         });
+
+        MaterialPreference aboutDecompiler = findPreference("about_decompiler");
+        aboutDecompiler.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                Utils.showDecompilerInfoDialog(getActivity());
+                return false;
+            }
+        });
+
+        int cpuCores = Math.min(Runtime.getRuntime().availableProcessors(), 32);
+        CharSequence[] entries = new CharSequence[cpuCores];
+        CharSequence[] entryValues = new CharSequence[cpuCores];
+
+        for (int i = 0; i < cpuCores; i++) {
+            int threadCount = i + 1;
+            entries[i] = threadCount + (threadCount > 1 ? " threads" : " thread");
+            entryValues[i] = String.valueOf(threadCount);
+        }
+
+        MaterialListPreference threadPref = findPreference("custom_thread_count");
+
+        if (threadPref != null) {
+            threadPref.setEntries(entries);
+            threadPref.setEntryValues(entryValues);
+
+            if (threadPref.getValue() == null) {
+                int defaultThreads = Math.min(cpuCores, 2);
+                threadPref.setValue(String.valueOf(defaultThreads));
+            }
+        }
     }
 
     @Override
