@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import me.mamiiblt.instafel.patcher.cli.commands.AboutCmd;
+import me.mamiiblt.instafel.patcher.cli.commands.BuildCmd;
 import me.mamiiblt.instafel.patcher.cli.commands.ClearPatcherCache;
 import me.mamiiblt.instafel.patcher.cli.commands.ForceUpdateCore;
 import me.mamiiblt.instafel.patcher.cli.commands.HelpCmd;
@@ -48,7 +49,7 @@ public class CommandHandler {
         commands.put("list", new ListPatches());
         commands.put("init", new InitProject());
         commands.put("run", new RunPatch());
-        // commands.put("build", new BuildProject());
+        commands.put("build", new BuildCmd());
         // commands.put("csrc", new CreateIflSourceZip());
         // commands.put("uprew", new UploadPreview());
     }

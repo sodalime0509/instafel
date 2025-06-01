@@ -27,13 +27,21 @@ public class InitProject implements Command {
                     Class<?> clazz = CoreHandler.coreClassLoader.loadClass("me.mamiiblt.instafel.patcher.core.jobs.InitializeProject");
                     Method method = clazz.getMethod("runInitProject", File.class, File.class);
                     File pdir = new File(Utils.USER_DIR);
-                    method.invoke(null, pdir, apkFile);
+
+                    Thread task = new Thread(() -> {
+                        try {
+                            method.invoke(null, pdir, apkFile);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                    task.start();
                 } else {
                     Log.warning("Please select an .apk file");
                 }
             } else {
                 Log.info("Wrong commage usage type, use like that;");
-                Log.info("java -jar patcher.jar cwdir instagram.apk");
+                Log.info("java -jar patcher.jar init instagram.apk");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -23,6 +23,7 @@ public class ForceUpdateCore implements Command {
         } catch (Exception e) {
             e.printStackTrace();
             Log.info("An error occured while running command");
+            System.exit(-1);
         }
 
     }

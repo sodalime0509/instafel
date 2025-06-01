@@ -11,9 +11,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Env {
 
-    public static String PROP_VERSION_STRING = null;
-    public static String PROP_COMMIT_HASH = null;
-    public static String PROP_PROJECT_TAG = null;   
     public static String USER_DIR = System.getProperty("user.dir"); 
     public static String PROJECT_DIR = null;
     public static String[] INSTAFEL_LOCALES = {"tr", "de", "el", "fr", "hi", "hu", "pt", "es", "az"};
