@@ -1,3 +1,10 @@
+import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
+import java.util.Base64
+import java.text.SimpleDateFormat
+import java.util.Date
+
 plugins {
     java
     application
@@ -12,6 +19,8 @@ val commitHash: String by rootProject.extra
 
 group = "me.mamiiblt.instafel"
 version = "$commitHash"
+
+apply(from = "publish.gradle.kts")
 
 repositories {
     mavenCentral()
