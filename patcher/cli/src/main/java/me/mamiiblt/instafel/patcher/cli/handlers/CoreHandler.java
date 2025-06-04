@@ -158,15 +158,12 @@ public class CoreHandler {
 
     private void loadCoreInfo() {
         try {
-            JSONObject coreInfo = (JSONObject) invokeNonParamMethod(
-                "providers.InfoProvider", 
-                "getCoreInfo", null);
-            if (coreInfo != null) {
-                Utils.PROP_CORE_COMMIT = coreInfo.getString("core_commit");
-                Utils.PROP_CORE_BRANCH = coreInfo.getString("core_branch");
-            } else {
-                throw new Exception("Core commit is not a string, something went wrong.");
-            }
+            JarFile jarFile = new JarFile(CORE_JAR_FILE);
+            Manifest manifest = jarFile.getManifest();
+            Attributes attr = manifest.getMainAttributes();
+            
+            Utils.PROP_CORE_COMMIT = attr.getValue("Patcher-Core-Commit");
+            Utils.PROP_CORE_BRANCH = attr.getValue("Patcher-Core-Branch");
         } catch (Exception e) {
             e.printStackTrace();
             Log.severe("Error while loading sources from core: " + e.getMessage());

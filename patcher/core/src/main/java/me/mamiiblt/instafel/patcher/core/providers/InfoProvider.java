@@ -1,5 +1,6 @@
 package me.mamiiblt.instafel.patcher.core.providers;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.jar.Attributes;
@@ -16,29 +17,6 @@ import me.mamiiblt.instafel.patcher.core.utils.patch.InstafelPatchGroup;
 import me.mamiiblt.instafel.patcher.core.utils.patch.PInfos;
 
 public class InfoProvider {
-    public static JSONObject getCoreInfo() {
-        try {
-            JarFile jar = new JarFile(InfoProvider.class
-                .getProtectionDomain()
-                .getCodeSource()
-                .getLocation()
-                .toURI()
-                .getPath());
-            Manifest manifest = jar.getManifest();
-            Attributes attr = manifest.getMainAttributes();
-
-            JSONObject coreInfo = new JSONObject();
-            coreInfo.put("core_commit", attr.getValue("Patcher-Core-Commit"));
-            coreInfo.put("supported_version", attr.getValue("Patcher-Core-Supported-Version"));
-            coreInfo.put("core_branch", attr.getValue("Patcher-Core-Branch"));
-            return coreInfo;
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.severe("Error while getting core info from MANIFEST");
-            return null;
-        }
-    }
-
     public static JSONObject getPatchesList() {
         try {
             JSONObject resp = new JSONObject();
