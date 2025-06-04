@@ -1,10 +1,3 @@
-import java.io.*
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.Base64
-import java.text.SimpleDateFormat
-import java.util.Date
-
 plugins {
     java
     application
@@ -12,13 +5,18 @@ plugins {
 }
 
 val libs = rootProject.extra["patcherLibs"] as Map<*, *>
-var config = rootProject.extra["instafelConfig"] as Map<*, *>
+val config = rootProject.extra["instafelConfig"] as Map<*, *>
 val projectConfig = config["patcher"] as Map<*, *>
 val coreSupportedVersion = projectConfig["core_supported_version"] as String
 val commitHash: String by rootProject.extra
 
+// use SDK 34 for compalibility
+val d8Executable = System.getenv("ANDROID_HOME") + "/build-tools/34.0.0/d8"
+val dexOutputDir = file("${buildDir}/tmp/dex")
+val mergedJar = file("${rootProject.rootDir}/patcher/output/ifl-pcore-$commitHash.jar")
+
 group = "me.mamiiblt.instafel"
-version = "$commitHash"
+version = "$commitHash-sd"
 
 apply(from = "publish.gradle.kts")
 
@@ -65,12 +63,47 @@ tasks.named<Jar>("jar") {
     mustRunAfter("clear-cache")
 }
 
-tasks.register("build-jar") {
-    dependsOn("clear-cache", "jar")
+tasks.register("dexify") {
+    dependsOn("jar")
+    doLast {
+        dexOutputDir.mkdirs()
 
+        exec {
+            commandLine(
+                d8Executable,
+                "--output", dexOutputDir.absolutePath,
+                tasks.named<Jar>("jar").get().archiveFile.get().asFile.absolutePath
+            )
+        }
+
+        println("Dexification complete. classes.dex generated.")
+    }
+}
+
+tasks.register("mergeJarWithDex") {
+    dependsOn("dexify")
+    doLast {
+        val originalJar = tasks.named<Jar>("jar").get().archiveFile.get().asFile
+        val dexFile = File(dexOutputDir, "classes.dex")
+
+        ant.withGroovyBuilder {
+            "zip"("destfile" to mergedJar) {
+                "zipfileset"("src" to originalJar)
+                "zipfileset"("file" to dexFile, "fullpath" to "classes.dex")
+            }
+        }
+
+        originalJar.delete()
+
+        println("Merged JAR created at: ${mergedJar.absolutePath}")
+    }
+}
+
+tasks.register("build-jar") {
+    dependsOn("clear-cache", "mergeJarWithDex")
     doLast {
         delete(file("${project.projectDir}/build"))
         delete(file("${project.projectDir}/bin"))
-        println("All build tasks completed successfully")
+        println("All build tasks completed successfully with merged JAR.")
     }
 }
