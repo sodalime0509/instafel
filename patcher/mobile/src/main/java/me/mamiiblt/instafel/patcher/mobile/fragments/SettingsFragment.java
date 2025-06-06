@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.github.tttt55.materialyoupreferences.preferences.MaterialSwitchGoogle
 
 import me.mamiiblt.instafel.patcher.mobile.BuildConfig;
 import me.mamiiblt.instafel.patcher.mobile.R;
+import me.mamiiblt.instafel.patcher.mobile.handlers.CoreHandler;
 import me.mamiiblt.instafel.patcher.mobile.utils.Utils;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -101,6 +103,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 threadPref.setValue(String.valueOf(defaultThreads));
             }
         }
+
+        MaterialPreference clearCache = findPreference("clear_cache");
+        clearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(@NonNull Preference preference) {
+                CoreHandler.coreJarFile(getActivity()).delete();
+                Toast.makeText(getActivity(), "Cache cleared succesfully.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
     }
 
     @Override

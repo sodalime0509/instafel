@@ -1,15 +1,23 @@
 package me.mamiiblt.instafel.patcher.mobile.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.dialog.MaterialDialogs;
+
+import java.io.File;
 
 import brut.androlib.ApktoolProperties;
 import me.mamiiblt.instafel.patcher.mobile.BuildConfig;
 
 public class Utils {
+
+    public static String PROP_CORE_COMMIT, PROP_CORE_BRANCH;
+    public static String PATCHER_VERSION = BuildConfig.VERSION_NAME;
 
     public static void openInBrowser(Context ctx, Uri uri) {
         Intent intent = new Intent("android.intent.action.VIEW", uri);
@@ -45,7 +53,7 @@ public class Utils {
         new MaterialAlertDialogBuilder(ctx)
                 .setTitle(title)
                 .setMessage(message)
-                .setNegativeButton(android.R.string.yes, null)
+                .setPositiveButton(android.R.string.yes, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }

@@ -2,8 +2,11 @@ package me.mamiiblt.instafel.patcher.mobile;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -20,11 +23,15 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.color.DynamicColors;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import me.mamiiblt.instafel.patcher.mobile.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
 
     TextView titleView;
+    ImageView coreInfoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +51,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         titleView = findViewById(R.id.title);
+        coreInfoView = findViewById(R.id.coreInfoID);
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
+
+        coreInfoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new MaterialAlertDialogBuilder(MainActivity.this)
+                        .setTitle("About Core")
+                        .setMessage("Core is a JAR file that contains patches, patcher components, and tiny dependencies, among other things. Instafel always supports only the latest Alpha builds, so make sure your Core is up to date.")
+                        .setPositiveButton("Okay", null)
+                        .show();
+            }
+        });
+        coreInfoView.setVisibility(View.GONE);
 
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
@@ -59,6 +79,12 @@ public class MainActivity extends AppCompatActivity {
                     titleView.setText("Core");
                 } else if (destination.getId() == R.id.nav_settings) {
                     titleView.setText("Settings");
+                }
+
+                if (destination.getId() == R.id.nav_core) {
+                    coreInfoView.setVisibility(View.VISIBLE);
+                } else {
+                    coreInfoView.setVisibility(View.GONE);
                 }
             }
         });

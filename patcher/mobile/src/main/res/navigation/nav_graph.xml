@@ -15,7 +15,7 @@
         android:id="@+id/nav_patches"
         android:name="me.mamiiblt.instafel.patcher.mobile.fragments.PatchesFragment"
         android:label="Patches"
-        tools:layout="@layout/fragment_patches" />
+        tools:layout="@layout/fragment_patches_host" />
 
     <fragment
         android:id="@+id/nav_core"
