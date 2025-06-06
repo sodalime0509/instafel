@@ -48,6 +48,14 @@ tasks.register("clear-cache") {
     }
 }
 
+tasks.register<JavaExec>("generate-patches-json") {
+    mainClass.set("me.mamiiblt.instafel.patcher.core.utils.GeneratePatchesJSON")
+    classpath = sourceSets["main"].runtimeClasspath
+    args("${project.projectDir}/src/main/resources/patches.json")
+
+    mustRunAfter("clear-cache")
+}
+
 tasks.named<Jar>("jar") {
     archiveBaseName.set("ifl-pcore")
     archiveClassifier.set("")
@@ -60,8 +68,9 @@ tasks.named<Jar>("jar") {
         )
     }
 
-    mustRunAfter("clear-cache")
+    mustRunAfter("generate-patches-json")
 }
+
 
 tasks.register("dexify") {
     dependsOn("jar")
