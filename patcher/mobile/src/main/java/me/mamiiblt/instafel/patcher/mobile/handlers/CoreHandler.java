@@ -9,12 +9,17 @@ import androidx.fragment.app.FragmentActivity;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import dalvik.system.DexClassLoader;
 import me.mamiiblt.instafel.patcher.mobile.handlers.utils.ICoreRequest;
@@ -76,11 +81,14 @@ public class CoreHandler {
         });
     }
 
-    public static JSONObject getPatchesJSON() throws Exception {
-        return (JSONObject) CoreUtils.invokeNonParamMethod(
-                "providers.InfoProvider",
-                "getPatchesList", null
-        );
+    public static JSONObject getPatchesJSON(Activity act) throws Exception {
+        JarFile jarFile = new JarFile(coreJarFile(act));
+        JarEntry entry = jarFile.getJarEntry("patches.json");
+        InputStream inputStream = jarFile.getInputStream(entry);
+        String content = new BufferedReader(new InputStreamReader(inputStream))
+                .lines()
+                .collect(Collectors.joining("\n"));
+        return new JSONObject(content);
     }
 
     public static void downloadCoreJAR(UpdateInfo updateInfo, Activity act, ICoreRequest callback) {
