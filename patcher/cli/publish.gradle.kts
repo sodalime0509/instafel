@@ -9,6 +9,8 @@ var config = rootProject.extra["instafelConfig"] as Map<*, *>
 val projectConfig = config["patcher"] as Map<*, *>
 val cliVersion = projectConfig["cli_version"] as String
 
+val commitHash: String by rootProject.extra
+
 tasks.register("publish-cli") {
     doLast {
         val token = System.getenv("GITHUB_TOKEN")
@@ -30,7 +32,7 @@ tasks.register("publish-cli") {
               "branch": "ft-releases"
             }
         """.trimIndent()
-        val jarUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/p-cli/dist/ifl-cli-$commit-release.jar"
+        val jarUploadUrl = "https://api.github.com/repos/mamiiblt/instafel/contents/p-cli/dist/ifl-cli-$cliVersion-$commit-release.jar"
         apiPut(jarUploadUrl, token, jarPayload)
 
         println("Dist ifl-cli-$commit-release uploaded")
@@ -39,6 +41,7 @@ tasks.register("publish-cli") {
         val latestJson = """
             {
               "version": "$cliVersion",
+              "commit": "$commitHash",
               "updated_at": "$ts"
             }
         """.trimIndent()
