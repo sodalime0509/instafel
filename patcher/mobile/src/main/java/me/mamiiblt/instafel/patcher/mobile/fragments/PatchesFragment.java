@@ -1,5 +1,7 @@
 package me.mamiiblt.instafel.patcher.mobile.fragments;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,11 +14,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceScreen;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.tttt55.materialyoupreferences.preferences.MaterialPreference;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -65,6 +72,11 @@ public class PatchesFragment extends PreferenceFragmentCompat {
             loadingBar = rootView.findViewById(R.id.loading_spinner);
             patchesLayout = rootView.findViewById(R.id.preference_container);
             loadPatches();
+
+            RecyclerView rv = getListView();
+            while (rv.getItemDecorationCount() > 0) {
+                rv.removeItemDecorationAt(0);
+            }
         }
 
         private void loadPatches() {
@@ -78,7 +90,7 @@ public class PatchesFragment extends PreferenceFragmentCompat {
                     FragmentActivity act = requireActivity();
                     if (CoreHandler.coreJarFile(act).exists()) {
                         CoreHandler.loadCoreSafely(act);
-                        JSONObject patches = CoreHandler.getPatchesJSON();
+                        JSONObject patches = CoreHandler.getPatchesJSON(act);
                         Log.i("IPatcher", "patches loaded succesfully.");
                         requireActivity().runOnUiThread(() -> {
                             try {
@@ -109,12 +121,78 @@ public class PatchesFragment extends PreferenceFragmentCompat {
         }
 
         private void buildPreferenceScreen(JSONObject patchesData) throws JSONException {
-            PreferenceScreen screen = getPreferenceScreen();
-            Preference deneme = new Preference(getContext());
-            deneme.setTitle(patchesData.toString(2));
-            deneme.setSummary("naber fıstık");
-            screen.addPreference(deneme);
+            Context context = getPreferenceManager().getContext();
+            PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
 
+            JSONArray singles = patchesData.getJSONArray("singles");
+            JSONArray groups = patchesData.getJSONArray("groups");
+
+            PreferenceCategory categorySingles = createPreferenceCategory("Single Patches", context);
+            screen.addPreference(categorySingles);
+            for (int i = 0; i < singles.length(); i++) {
+                Preference pref = createPatchPreference(singles.getJSONObject(i), context);
+                categorySingles.addPreference(pref);
+            }
+
+            for (int i = 0; i < groups.length(); i++) {
+                JSONObject groupData = groups.getJSONObject(i);
+                JSONArray groupPatches = groupData.getJSONArray("infos");
+                PreferenceCategory groupCategory = createPreferenceCategory(groupData.getString("name"), context);
+                screen.addPreference(groupCategory);
+
+                for (int a = 0; a < groupPatches.length(); a++) {
+                    groupCategory.addPreference(createPatchPreference(groupPatches.getJSONObject(a), context));
+                }
+            }
+
+            setPreferenceScreen(screen);
         }
+
+        private Preference createPatchPreference(JSONObject patchInfo, Context ctx) throws JSONException {
+            Preference preference = new Preference(ctx);
+            preference.setTitle(patchInfo.optString("name", "Unnamed"));
+            preference.setSummary(patchInfo.optString("desc", ""));
+            preference.setIconSpaceReserved(false);
+            preference.setOnPreferenceClickListener(createPatchClickListener(patchInfo, ctx));
+            return preference;
+        }
+
+        private Preference.OnPreferenceClickListener createPatchClickListener(JSONObject patchInfo, Context ctx) {
+            return new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(@NonNull Preference preference) {
+                    try {
+                        String className = patchInfo.getString("class");
+                        String sCname = className.substring(className.indexOf(".core") + 1);
+                        String[] message = {
+                                "Name: " + patchInfo.getString("name"),
+                                "Author: " + patchInfo.getString("author"),
+                                "Shortname: " + patchInfo.getString("shortname"),
+                                "Desc: " + patchInfo.getString("desc") + "\n",
+                                "Loaded from " + sCname
+                        };
+
+                        new MaterialAlertDialogBuilder(ctx)
+                                .setTitle(patchInfo.getString("name"))
+                                .setMessage(String.join("\n", message))
+                                .setNegativeButton("Visit Code", (dialog, which) -> Utils.openInBrowser(ctx, Uri.parse("https://github.com/mamiiblt/instafel/tree/main/patcher/core/src/main/java/" + className.replace(".", "/") + ".java")))
+                                .setPositiveButton(android.R.string.yes, null)
+                                .show();
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return false;
+                }
+            };
+        }
+
+        private PreferenceCategory createPreferenceCategory(String title, Context context) {
+            PreferenceCategory preferenceCategory = new PreferenceCategory(context);
+            preferenceCategory.setTitle(title);
+
+            preferenceCategory.setIconSpaceReserved(false);
+            return preferenceCategory;
+        }
+
     }
 }
