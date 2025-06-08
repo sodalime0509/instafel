@@ -10,13 +10,8 @@ val projectConfig = config["patcher"] as Map<*, *>
 val coreSupportedVersion = projectConfig["core_supported_version"] as String
 val commitHash: String by rootProject.extra
 
-// use SDK 34 for compalibility
-val d8Executable = System.getenv("ANDROID_HOME") + "/build-tools/34.0.0/d8"
-val dexOutputDir = file("${buildDir}/tmp/dex")
-val mergedJar = file("${rootProject.rootDir}/patcher/output/ifl-pcore-$commitHash.jar")
-
 group = "me.mamiiblt.instafel"
-version = "$commitHash-sd"
+version = "$commitHash"
 
 apply(from = "publish.gradle.kts")
 
@@ -36,26 +31,6 @@ dependencies {
     implementation(libs["jackson-yaml"]!!)
 }
 
-tasks.register("clear-cache") {
-    val filesToDelete = listOf(
-        file("${project.projectDir}/bin"),
-        file("${project.projectDir}/build"),
-    )
-
-    delete(filesToDelete)
-    doLast {
-        println("Cache successfully deleted.")
-    }
-}
-
-tasks.register<JavaExec>("generate-patches-json") {
-    mainClass.set("me.mamiiblt.instafel.patcher.core.utils.GeneratePatchesJSON")
-    classpath = sourceSets["main"].runtimeClasspath
-    args("${project.projectDir}/src/main/resources/patches.json")
-
-    mustRunAfter("clear-cache")
-}
-
 tasks.named<Jar>("jar") {
     archiveBaseName.set("ifl-pcore")
     archiveClassifier.set("")
@@ -67,52 +42,12 @@ tasks.named<Jar>("jar") {
             "Patcher-Core-Branch" to "main"
         )
     }
-
-    mustRunAfter("generate-patches-json")
 }
 
-
-tasks.register("dexify") {
-    dependsOn("jar")
-    doLast {
-        dexOutputDir.mkdirs()
-
-        exec {
-            commandLine(
-                d8Executable,
-                "--output", dexOutputDir.absolutePath,
-                tasks.named<Jar>("jar").get().archiveFile.get().asFile.absolutePath
-            )
-        }
-
-        println("Dexification complete. classes.dex generated.")
-    }
-}
-
-tasks.register("mergeJarWithDex") {
-    dependsOn("dexify")
-    doLast {
-        val originalJar = tasks.named<Jar>("jar").get().archiveFile.get().asFile
-        val dexFile = File(dexOutputDir, "classes.dex")
-
-        ant.withGroovyBuilder {
-            "zip"("destfile" to mergedJar) {
-                "zipfileset"("src" to originalJar)
-                "zipfileset"("file" to dexFile, "fullpath" to "classes.dex")
-            }
-        }
-
-        originalJar.delete()
-
-        println("Merged JAR created at: ${mergedJar.absolutePath}")
-    }
-}
 
 tasks.register("build-jar") {
-    dependsOn("clear-cache", "mergeJarWithDex")
+    dependsOn("jar")
     doLast {
-        delete(file("${project.projectDir}/build"))
-        delete(file("${project.projectDir}/bin"))
-        println("All build tasks completed successfully with merged JAR.")
+        println("JAR succesfully generated.")
     }
 }
