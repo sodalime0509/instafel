@@ -9,7 +9,7 @@ This repository contains the source code of six core subprojects that make up th
 
 This project includes the Instafel menu, activities, dialogs, and many other components.  
 > 📦 [Source Code](https://github.com/mamiiblt/instafel/tree/main/app)
-> 🌐 [Website](https://instafel.mamiiblt.me)  
+> 🌐 [Website](https://instafel.app)  
 
 ### Patcher
 
@@ -21,13 +21,13 @@ Injects the modified Instafel sources into the Instagram APK, making it function
 
 Keeps the Instafel application up to date by checking and installing the latest release from OTA.  
 > 📦 [Source Code](https://github.com/mamiiblt/instafel/tree/main/updater)
-> 🌐 [Website](https://instafel.mamiiblt.me/about_updater)  
+> 🌐 [Website](https://instafel.app/about_updater)  
 
 ### Website
 
 Provides guides, libraries, and more for Instafel users dynamically.  
 > 📦 [Source Code](https://github.com/mamiiblt/instafel/tree/main/website)
-> 🌐 [Website](https://instafel.mamiiblt.me)  
+> 🌐 [Website](https://instafel.app)  
 
 
 ### GPlayAPI
@@ -37,9 +37,9 @@ A simple module for retrieve latest Alpha APKs directly from the Google Play Sto
 
 ## Links
 
-- 🌐 [Website](https://instafel.mamiiblt.me)  
+- 🌐 [Website](https://instafel.app)  
 - 💬 [Instafel Community](https://t.me/instafel)  
-- 🗂️ [Backup Library](https://instafel.mamiiblt.me/library_backup)
+- 🗂️ [Backup Library](https://instafel.app/library_backup)
 
 > 🛠️ **Work in Progress:** The wiki & source guide is still being written. Documentation will be expanded in upcoming updates.
 

@@ -16,9 +16,16 @@ export const defaultMetadata: Metadata = {
   description: SITE_CONFIG.description,
   keywords: [
     "Instafel",
+    "Instafel Mod",
+    "Download Instafel",
+    "Instafel backups",
+    "Instafel flags",
     "Instagram Mod",
     "Instagram",
     "Alpha",
+    "Instagram Alpha",
+    "Join Instagram Alpha",
+    "Join instagram alpha"
   ],
   authors: [
     {

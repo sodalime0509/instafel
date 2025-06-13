@@ -28,7 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import { LoadingBar } from "@/components/ifl";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { useT } from "@/i18n/client";
+import { useTranslation } from "react-i18next";
 
 interface InstafelData {
   build_date: string | null;
@@ -63,16 +63,8 @@ interface GithubRelease {
   assets: GithubAsset[];
 }
 
-export default function DownloadPage() {
-  return (
-    <Suspense>
-      <DownloadContent />
-    </Suspense>
-  );
-}
-
-function DownloadContent() {
-  const { t } = useT("download");
+export default function  PageDownload() {
+  const { t } = useTranslation("download");
   const [activeTab, setActiveTab] = useState<string>("build");
 
   const searchParams = useSearchParams();

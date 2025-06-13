@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { useT } from "@/i18n/client";
+import { useTranslation } from "react-i18next";
 
 interface Backup {
   id: string;
@@ -21,16 +21,8 @@ interface BackupInfo {
   backups: Backup[];
 }
 
-export default function LibraryBackup() {
-  return (
-    <Suspense>
-      <LibraryBackupContent />
-    </Suspense>
-  );
-}
-
-function LibraryBackupContent() {
-  const { t } = useT("library_backup");
+export default function LibraryBackupContent() {
+  const { t } = useTranslation("library_backup");
   const [data, setData] = useState<BackupInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

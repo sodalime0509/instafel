@@ -6,7 +6,7 @@ if (!baseUrl) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const routes = ["", "/library_backup", "/about_updater", "/download"].map(
+  const routes = ["/", "/guides", "/library_backup", "/about_updater", "/download?version=latest"].map(
     (route) => ({
       url: `${baseUrl}${route}`,
       lastModified: new Date(),

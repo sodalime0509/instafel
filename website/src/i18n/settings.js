@@ -17,5 +17,4 @@ export const namespaces = [
   "library_backup",
   "updater",
 ];
-export const cookieName = "i18next";
-export const headerName = "x-i18next-current-language";
+export const cookieName = "WPG_LANG";

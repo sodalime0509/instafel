@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { useT } from "@/i18n/client";
+import { useTranslation } from "react-i18next";
 
 interface Manifest {
   version_name: string;
@@ -36,16 +36,8 @@ interface Resp {
   manifest: Manifest;
 }
 
-export default function BackupPage() {
-  return (
-    <Suspense>
-      <BackupContent />
-    </Suspense>
-  );
-}
-
-function BackupContent() {
-  const { t } = useT("backup");
+export default function PageBackup() {
+  const { t } = useTranslation("backup");
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id") ?? "null";

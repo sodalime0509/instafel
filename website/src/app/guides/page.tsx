@@ -7,19 +7,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { useGuides } from "@/hooks/useGuides";
-import { useT } from "@/i18n/client";
-import { Suspense } from "react";
+import { useTranslation } from "react-i18next";
 
-export default function Guide() {
-  return (
-    <Suspense>
-      <GuideContent />
-    </Suspense>
-  );
-}
-
-function GuideContent() {
-  const { t } = useT("guides");
+export default function PageGuide() {
+  const { t } = useTranslation("guides");
   const { guides, loading, error } = useGuides();
 
   return (

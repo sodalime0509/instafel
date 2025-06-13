@@ -16,19 +16,10 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
-import { useT } from "@/i18n/client";
-import { Suspense } from "react";
+import { useTranslation } from "react-i18next";
 
-export default function Updater() {
-  return (
-    <Suspense>
-      <UpdaterContent />
-    </Suspense>
-  );
-}
-
-function UpdaterContent() {
-  const { t } = useT("updater");
+export default function PageUpdater() {
+  const { t } = useTranslation("updater");
   const apkUrl =
     "https://bitbucket.org/mamiiblt_ws/ifl-updater-releases/downloads/ifl-updater-v2.0.3.apk";
   const versionTag = "v2.0.3";

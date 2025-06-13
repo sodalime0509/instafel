@@ -25,15 +25,15 @@ import {
   Globe,
 } from "lucide-react";
 import ThemeSwitcher from "./ThemeSwitcher";
-import { useT } from "@/i18n/client";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 export default function Navbar() {
   const [open, setOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
-  const { t } = useT("common");
+  const { t } = useTranslation("common");
 
   React.useEffect(() => {
     const handleScroll = () => {
