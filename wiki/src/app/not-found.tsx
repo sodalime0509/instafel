@@ -45,7 +45,6 @@ export default function NotFound() {
         transition={{ delay: 0.6 }}
       >
         <Button
-          href="/"
           asChild
           className="mt-4 px-6 py-2 text-base md:text-lg hover:scale-105 transition-transform"
         >

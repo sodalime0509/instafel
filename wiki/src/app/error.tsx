@@ -49,7 +49,6 @@ export default function Error({
           Retry
         </Button>
         <Button
-          href="/"
           asChild
           className="w-full sm:w-auto hover:scale-105 transition-transform"
         >
