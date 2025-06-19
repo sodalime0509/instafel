@@ -4,14 +4,14 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   NavigationMenu,
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { NavbarLoading } from "./loading";
-import { NavigationItem } from "./NavigationItem";
+import { NavbarLoading } from "../loading";
+import { NavigationItem } from "../NavigationItem";
 import {
   BookOpenText,
   FileCog2Icon,
@@ -24,12 +24,23 @@ import {
   Box,
   Globe,
 } from "lucide-react";
-import ThemeSwitcher from "./ThemeSwitcher";
+import ThemeSwitcher from "../ThemeSwitcher";
+import { useSidebar } from "../ui/sidebar";
 
-export default function Navbar() {
+export default function WikiNavbar() {
   const [loading, setLoading] = React.useState(true);
   const [scrolled, setScrolled] = React.useState(false);
   const pathname = usePathname();
+
+  const {
+    state,
+    open,
+    setOpen,
+    openMobile,
+    setOpenMobile,
+    isMobile,
+    toggleSidebar,
+  } = useSidebar();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -67,10 +78,8 @@ export default function Navbar() {
       }`}
     >
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
-        <Link
-          href="/"
-          className="flex items-center space-x-2 transition-transform duration-200 hover:scale-105"
-        >
+        <div className="flex items-center space-x-2 transition-transform duration-200 hover:scale-105 hidden md:block"></div>
+        <div className="flex items-center space-x-2 transition-transform duration-200 hover:scale-105 md:hidden">
           <motion.div
             initial={{ opacity: 0, rotate: -10 }}
             animate={{ opacity: 1, rotate: 0 }}
@@ -87,7 +96,7 @@ export default function Navbar() {
           >
             Instafel Wiki
           </motion.span>
-        </Link>
+        </div>
 
         <div className="flex items-center gap-2">
           <motion.div
@@ -124,7 +133,8 @@ export default function Navbar() {
               variant="outline"
               size="icon"
               className="relative transition-all duration-200 hover:bg-accent hover:scale-105"
-              aria-label="Toggle menu"
+              aria-label="Toggle Sidebar"
+              onClick={toggleSidebar}
             >
               <Menu className="h-5 w-5" />
             </Button>

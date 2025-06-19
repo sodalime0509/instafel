@@ -55,7 +55,8 @@ export default function Footer() {
                   </span>
                 </div>
                 <p className="text-muted-foreground">
-                  Learn everything about Instafel!
+                  Everything you need to know about Instafel. Find guides,
+                  tutorials, API and sub-project documentations!
                 </p>
               </div>
 
