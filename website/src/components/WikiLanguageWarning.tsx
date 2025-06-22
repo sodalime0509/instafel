@@ -13,7 +13,7 @@ export default function WikiLanguageWarning() {
       size="icon"
       className="relative dark"
       onClick={() =>
-        toast("Currently translations aren't available in Wiki!", {
+        toast("Translations currently aren't available in Wiki contents!", {
           description:
             "But, you can use Google Translator or other extensions for translate pages!",
           action: {
