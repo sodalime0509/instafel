@@ -30,7 +30,12 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/guide",
-        destination: "/guides",
+        destination: "/wiki",
+        permanent: true,
+      },
+      {
+        source: "/guides",
+        destination: "/wiki",
         permanent: true,
       },
     ];

@@ -12,7 +12,6 @@ export const namespaces = [
   "backup",
   "common",
   "download",
-  "guides",
   "home",
   "library_backup",
   "updater",

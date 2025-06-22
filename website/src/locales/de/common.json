@@ -1,7 +1,6 @@
 {
   "navbar": {
     "items": {
-      "guide": "Anleitung",
       "backups": "Backups",
       "updater": "Updater",
       "src_code": "Quellcode",
@@ -17,7 +16,7 @@
     "2": "Instafel steht in keiner Verbindung zu Meta oder Instagram",
     "3": "Mit ❤️ entwickelt von mamiiblt",
     "4": "Ressourcen",
-    "5": "Anleitungen",
+    "5": "Wiki",
     "6": "Backups",
     "7": "Links",
     "8": "Updater",

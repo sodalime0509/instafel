@@ -21,6 +21,7 @@ import {
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
+import Navbar from "@/components/Navbar";
 
 interface Manifest {
   version_name: string;
@@ -115,6 +116,7 @@ export default function PageBackup() {
 
   return (
     <>
+      <Navbar />
       <div className="min-h-screen py-6 sm:py-8 px-3 sm:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">

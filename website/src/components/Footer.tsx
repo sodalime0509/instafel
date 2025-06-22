@@ -4,6 +4,7 @@ import React, { Suspense } from "react";
 import { FooterLoading } from "./loading";
 import {
   Book,
+  BookOpenText,
   Download,
   FileCog2Icon,
   GithubIcon,
@@ -69,10 +70,10 @@ export default function Footer() {
                     transition={{ type: "spring", stiffness: 400 }}
                   >
                     <Link
-                      href="/guides"
+                      href="/wiki"
                       className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
                     >
-                      <Book className="w-4 h-4" />
+                      <BookOpenText className="w-4 h-4" />
                       {t("footer.5")}
                     </Link>
                   </motion.li>

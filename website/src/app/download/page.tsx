@@ -29,6 +29,7 @@ import { LoadingBar } from "@/components/ifl";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import Navbar from "@/components/Navbar";
 
 interface InstafelData {
   build_date: string | null;
@@ -63,7 +64,7 @@ interface GithubRelease {
   assets: GithubAsset[];
 }
 
-export default function  PageDownload() {
+export default function PageDownload() {
   const { t } = useTranslation("download");
   const [activeTab, setActiveTab] = useState<string>("build");
 
@@ -250,382 +251,390 @@ export default function  PageDownload() {
   ];
 
   return (
-    <AnimatePresence>
-      {loading ? (
-        <LoadingBar />
-      ) : (
-        <div className="min-h-screen flex flex-col bg-background">
-          <div className="container mx-auto px-2 sm:px-4 md:px-8 pt-8 sm:pt-12 md:pt-16 lg:pt-20 pb-32 sm:pb-12 flex-grow">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.7,
-                ease: "easeOut",
-              }}
-              className="text-center mb-8 sm:mb-12"
-            >
-              <div className="flex justify-center mb-4 sm:mb-6">
-                <div className="relative">
-                  <div
-                    className="absolute inset-0 rounded-full bg-primary/20 animate-ping"
-                    style={{ animationDuration: "3s" }}
-                  ></div>
-                  <div className="relative bg-primary/30 p-3 sm:p-4 md:p-5 rounded-full">
-                    <Download className="h-6 w-6 sm:h-8 sm:w-8 md:h-12 md:w-12 text-primary" />
+    <>
+      <Navbar />
+      <AnimatePresence>
+        {loading ? (
+          <LoadingBar />
+        ) : (
+          <div className="min-h-screen flex flex-col bg-background">
+            <div className="container mx-auto px-2 sm:px-4 md:px-8 pt-8 sm:pt-12 md:pt-16 lg:pt-20 pb-32 sm:pb-12 flex-grow">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.7,
+                  ease: "easeOut",
+                }}
+                className="text-center mb-8 sm:mb-12"
+              >
+                <div className="flex justify-center mb-4 sm:mb-6">
+                  <div className="relative">
+                    <div
+                      className="absolute inset-0 rounded-full bg-primary/20 animate-ping"
+                      style={{ animationDuration: "3s" }}
+                    ></div>
+                    <div className="relative bg-primary/30 p-3 sm:p-4 md:p-5 rounded-full">
+                      <Download className="h-6 w-6 sm:h-8 sm:w-8 md:h-12 md:w-12 text-primary" />
+                    </div>
                   </div>
                 </div>
-              </div>
-              <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-3 sm:mb-4">
-                {t("page.title")}
-              </h1>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.7 }}
-                className="text-base xs:text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto"
-              >
-                {data.isLatest == false
-                  ? t("page.version", { version: data.app.ifl_version })
-                  : t("page.version_latest", { version: data.app.ifl_version })}
-              </motion.p>
-            </motion.div>
-
-            {data && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.7 }}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 "
-              >
-                {variants.map((variant) => (
-                  <motion.div
-                    key={variant.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: variant.delay, duration: 0.5 }}
-                    whileHover={{ scale: 1.025 }}
-                    className="relative"
-                  >
-                    <Card className="h-full border-2 hover:border-primary/70 transition-all duration-300 overflow-hidden shadow-lg bg-card/80">
-                      <CardContent className="p-0">
-                        <div className="p-4 sm:p-6 pb-0">
-                          <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
-                            <div className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-primary/20 to-primary/5">
-                              {variant.icon}
-                            </div>
-                            <div>
-                              <h3 className="text-lg sm:text-xl font-bold">
-                                {variant.title}
-                              </h3>
-                            </div>
-                          </div>
-
-                          <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-4 sm:mb-5">
-                            {variant.description}
-                          </p>
-                        </div>
-
-                        <div className="px-4 sm:px-6 pb-3 sm:pb-4">
-                          <h4 className="text-xs sm:text-sm font-medium mb-2 flex items-center">
-                            <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-primary" />
-                            {t("common.benefits")}
-                          </h4>
-                          <ul className="space-y-0.5 sm:space-y-1 mb-5 sm:mb-6">
-                            {variant.benefits.map((benefit, benefitIndex) => (
-                              <li
-                                key={benefitIndex}
-                                className="text-xs sm:text-sm flex items-center"
-                              >
-                                <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary/70 mr-1" />
-                                {benefit}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 sm:p-6">
-                          <Button
-                            size="default"
-                            className={`w-full relative overflow-hidden ${
-                              downloadStarted[variant.type]
-                                ? "bg-green-600 hover:bg-green-700"
-                                : ""
-                            }`}
-                            onClick={() =>
-                              download(variant.downloadUrl, variant.type)
-                            }
-                            disabled={!variant.downloadUrl}
-                          >
-                            {downloadStarted[variant.type] ? (
-                              <>
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: "100%" }}
-                                  transition={{ duration: 1.5 }}
-                                  className="absolute left-0 top-0 bottom-0 bg-green-500/20"
-                                />
-                                <span className="relative z-10 flex items-center text-xs sm:text-sm md:text-base">
-                                  <svg
-                                    className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mr-1 sm:mr-1.5 md:mr-2"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      fill="currentColor"
-                                      d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
-                                    />
-                                  </svg>
-                                  {t("download.started")}
-                                </span>
-                              </>
-                            ) : (
-                              <span className="flex items-center text-xs sm:text-sm md:text-base">
-                                <Download className="mr-1 sm:mr-1.5 md:mr-2 h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-                                {t("download.action", { type: variant.type })}
-                              </span>
-                            )}
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
+                <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-3 sm:mb-4">
+                  {t("page.title")}
+                </h1>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.7 }}
+                  className="text-base xs:text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto"
+                >
+                  {data.isLatest == false
+                    ? t("page.version", { version: data.app.ifl_version })
+                    : t("page.version_latest", {
+                        version: data.app.ifl_version,
+                      })}
+                </motion.p>
               </motion.div>
-            )}
 
-            {data && (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.7 }}
-                className="mt-8 sm:mt-10"
-              >
-                <Card className="shadow-md border-2 bg-card/90 transition-all duration-300">
-                  <CardContent className="p-0">
-                    <Tabs
-                      defaultValue="build"
-                      value={activeTab}
-                      onValueChange={setActiveTab}
-                      className="w-full"
+              {data && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.7 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12 "
+                >
+                  {variants.map((variant) => (
+                    <motion.div
+                      key={variant.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: variant.delay, duration: 0.5 }}
+                      whileHover={{ scale: 1.025 }}
+                      className="relative"
                     >
-                      <div className="border-b p-4 sm:p-5">
-                        <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 flex items-center gap-2">
-                          <Info className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-                          {t("info.title")}
-                        </h2>
-                        <TabsList className="grid w-full grid-cols-2 h-auto">
-                          <TabsTrigger
-                            value="build"
-                            className="py-2.5 text-xs sm:text-sm md:text-base"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                              {t("tabs.build")}
-                            </span>
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="changelog"
-                            className="py-2.5 text-xs sm:text-sm md:text-base"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                              {t("tabs.changelog")}
-                            </span>
-                          </TabsTrigger>
-                        </TabsList>
-                      </div>
-
-                      <div className="p-4 sm:p-5 md:p-6">
-                        <TabsContent value="changelog" className="mt-0">
-                          <div className="flex items-center justify-between mb-4">
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant="secondary"
-                                className="px-2.5 py-1"
-                              >
-                                {t("release.version", {
-                                  version:
-                                    data.app.ifl_version || t("common.unknown"),
-                                })}
-                              </Badge>
+                      <Card className="h-full border-2 hover:border-primary/70 transition-all duration-300 overflow-hidden shadow-lg bg-card/80">
+                        <CardContent className="p-0">
+                          <div className="p-4 sm:p-6 pb-0">
+                            <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                              <div className="p-2 sm:p-3 rounded-full bg-gradient-to-r from-primary/20 to-primary/5">
+                                {variant.icon}
+                              </div>
+                              <div>
+                                <h3 className="text-lg sm:text-xl font-bold">
+                                  {variant.title}
+                                </h3>
+                              </div>
                             </div>
 
-                            <div className="text-xs text-muted-foreground flex items-center gap-1.5">
-                              <Calendar className="h-3.5 w-3.5" />
-                              {data.build_date
-                                ? new Date(
-                                    parseInt(data.build_date)
-                                  ).toLocaleString("en-US", {
-                                    day: "2-digit",
-                                    month: "2-digit",
-                                    year: "numeric",
-                                  })
-                                : t("common.unknown_date")}
-                            </div>
+                            <p className="text-xs sm:text-sm md:text-base text-muted-foreground mb-4 sm:mb-5">
+                              {variant.description}
+                            </p>
                           </div>
 
-                          {data.changelogs && data.changelogs.length > 0 ? (
-                            <div className="space-y-1 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
-                              {data.changelogs.map((item, idx) => (
-                                <motion.div
-                                  key={idx}
-                                  initial={{ opacity: 0, y: 5 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{
-                                    delay: 0.05 * idx,
-                                    duration: 0.3,
-                                  }}
+                          <div className="px-4 sm:px-6 pb-3 sm:pb-4">
+                            <h4 className="text-xs sm:text-sm font-medium mb-2 flex items-center">
+                              <CheckCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 mr-1.5 text-primary" />
+                              {t("common.benefits")}
+                            </h4>
+                            <ul className="space-y-0.5 sm:space-y-1 mb-5 sm:mb-6">
+                              {variant.benefits.map((benefit, benefitIndex) => (
+                                <li
+                                  key={benefitIndex}
+                                  className="text-xs sm:text-sm flex items-center"
                                 >
-                                  <div className="flex group items-start gap-2 py-2 px-3 hover:bg-muted/40 rounded-md transition-colors">
-                                    <ChevronRight className="h-4 w-4 shrink-0 text-primary mt-0.5 group-hover:translate-x-0.5 transition-transform" />
-                                    <span className="text-sm group-hover:text-foreground/90 transition-colors">
-                                      {item}
-                                    </span>
-                                  </div>
-                                </motion.div>
+                                  <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary/70 mr-1" />
+                                  {benefit}
+                                </li>
                               ))}
-                            </div>
-                          ) : (
-                            <div className="bg-muted/30 rounded-lg py-10 text-center">
-                              <FileText className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
-                              <p className="text-sm text-muted-foreground">
-                                {t("changelog.empty")}
-                              </p>
-                            </div>
-                          )}
-                        </TabsContent>
+                            </ul>
+                          </div>
 
-                        <TabsContent value="build" className="mt-0">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <InfoCard
-                              icon={
-                                <Calendar className="h-5 w-5 text-primary" />
-                              }
-                              title={t("info.build_date")}
-                              value={
-                                data.build_date
-                                  ? new Date(parseInt(data.build_date))
-                                      .toLocaleString("en-US", {
-                                        day: "2-digit",
-                                        month: "2-digit",
-                                        year: "numeric",
-                                        hour: "2-digit",
-                                        minute: "2-digit",
-                                      })
-                                      .replace(",", "")
-                                  : t("common.not_available")
-                              }
-                            />
-
-                            <InfoCard
-                              icon={
-                                <BadgeInfo className="h-5 w-5 text-primary" />
-                              }
-                              title={t("info.instafel_version")}
-                              value={`${
-                                "Release v" + data.app.ifl_version ||
-                                t("common.not_available")
+                          <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 sm:p-6">
+                            <Button
+                              size="default"
+                              className={`w-full relative overflow-hidden ${
+                                downloadStarted[variant.type]
+                                  ? "bg-green-600 hover:bg-green-700"
+                                  : ""
                               }`}
-                            />
-
-                            <InfoCard
-                              icon={
-                                <InfoIcon className="h-5 w-5 text-primary" />
+                              onClick={() =>
+                                download(variant.downloadUrl, variant.type)
                               }
-                              title={t("info.instagram_version")}
-                              value={`v${
-                                data.app.version_name +
-                                  " (" +
-                                  data.app.version_code +
-                                  ")" || t("common.not_available")
-                              }`}
-                            />
-
-                            <Link
-                              href={`https://github.com/mamiiblt/instafel/commit/${data.commit}`}
+                              disabled={!variant.downloadUrl}
                             >
+                              {downloadStarted[variant.type] ? (
+                                <>
+                                  <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: "100%" }}
+                                    transition={{ duration: 1.5 }}
+                                    className="absolute left-0 top-0 bottom-0 bg-green-500/20"
+                                  />
+                                  <span className="relative z-10 flex items-center text-xs sm:text-sm md:text-base">
+                                    <svg
+                                      className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mr-1 sm:mr-1.5 md:mr-2"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        fill="currentColor"
+                                        d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"
+                                      />
+                                    </svg>
+                                    {t("download.started")}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="flex items-center text-xs sm:text-sm md:text-base">
+                                  <Download className="mr-1 sm:mr-1.5 md:mr-2 h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
+                                  {t("download.action", { type: variant.type })}
+                                </span>
+                              )}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+
+              {data && (
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7, duration: 0.7 }}
+                  className="mt-8 sm:mt-10"
+                >
+                  <Card className="shadow-md border-2 bg-card/90 transition-all duration-300">
+                    <CardContent className="p-0">
+                      <Tabs
+                        defaultValue="build"
+                        value={activeTab}
+                        onValueChange={setActiveTab}
+                        className="w-full"
+                      >
+                        <div className="border-b p-4 sm:p-5">
+                          <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 flex items-center gap-2">
+                            <Info className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                            {t("info.title")}
+                          </h2>
+                          <TabsList className="grid w-full grid-cols-2 h-auto">
+                            <TabsTrigger
+                              value="build"
+                              className="py-2.5 text-xs sm:text-sm md:text-base"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <Code className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                {t("tabs.build")}
+                              </span>
+                            </TabsTrigger>
+                            <TabsTrigger
+                              value="changelog"
+                              className="py-2.5 text-xs sm:text-sm md:text-base"
+                            >
+                              <span className="flex items-center gap-1.5">
+                                <FileText className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                {t("tabs.changelog")}
+                              </span>
+                            </TabsTrigger>
+                          </TabsList>
+                        </div>
+
+                        <div className="p-4 sm:p-5 md:p-6">
+                          <TabsContent value="changelog" className="mt-0">
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant="secondary"
+                                  className="px-2.5 py-1"
+                                >
+                                  {t("release.version", {
+                                    version:
+                                      data.app.ifl_version ||
+                                      t("common.unknown"),
+                                  })}
+                                </Badge>
+                              </div>
+
+                              <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                <Calendar className="h-3.5 w-3.5" />
+                                {data.build_date
+                                  ? new Date(
+                                      parseInt(data.build_date)
+                                    ).toLocaleString("en-US", {
+                                      day: "2-digit",
+                                      month: "2-digit",
+                                      year: "numeric",
+                                    })
+                                  : t("common.unknown_date")}
+                              </div>
+                            </div>
+
+                            {data.changelogs && data.changelogs.length > 0 ? (
+                              <div className="space-y-1 max-h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+                                {data.changelogs.map((item, idx) => (
+                                  <motion.div
+                                    key={idx}
+                                    initial={{ opacity: 0, y: 5 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                      delay: 0.05 * idx,
+                                      duration: 0.3,
+                                    }}
+                                  >
+                                    <div className="flex group items-start gap-2 py-2 px-3 hover:bg-muted/40 rounded-md transition-colors">
+                                      <ChevronRight className="h-4 w-4 shrink-0 text-primary mt-0.5 group-hover:translate-x-0.5 transition-transform" />
+                                      <span className="text-sm group-hover:text-foreground/90 transition-colors">
+                                        {item}
+                                      </span>
+                                    </div>
+                                  </motion.div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="bg-muted/30 rounded-lg py-10 text-center">
+                                <FileText className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+                                <p className="text-sm text-muted-foreground">
+                                  {t("changelog.empty")}
+                                </p>
+                              </div>
+                            )}
+                          </TabsContent>
+
+                          <TabsContent value="build" className="mt-0">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               <InfoCard
                                 icon={
-                                  <WrenchIcon className="h-5 w-5 text-primary" />
+                                  <Calendar className="h-5 w-5 text-primary" />
                                 }
-                                title={t("info.patcher_version")}
+                                title={t("info.build_date")}
                                 value={
-                                  data.patcher_version != null
-                                    ? `v${data.patcher_version}`
-                                    : t("info.older_patcher")
-                                }
-                                subtitle={
-                                  data.commit ? `${data.commit}@main` : null
+                                  data.build_date
+                                    ? new Date(parseInt(data.build_date))
+                                        .toLocaleString("en-US", {
+                                          day: "2-digit",
+                                          month: "2-digit",
+                                          year: "numeric",
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })
+                                        .replace(",", "")
+                                    : t("common.not_available")
                                 }
                               />
-                            </Link>
 
-                            <InfoCard
-                              icon={<Shapes className="h-5 w-5 text-primary" />}
-                              title={t("info.generation_id")}
-                              value={
-                                <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                                  {data.gen_id || t("common.not_available")}
+                              <InfoCard
+                                icon={
+                                  <BadgeInfo className="h-5 w-5 text-primary" />
+                                }
+                                title={t("info.instafel_version")}
+                                value={`${
+                                  "Release v" + data.app.ifl_version ||
+                                  t("common.not_available")
+                                }`}
+                              />
+
+                              <InfoCard
+                                icon={
+                                  <InfoIcon className="h-5 w-5 text-primary" />
+                                }
+                                title={t("info.instagram_version")}
+                                value={`v${
+                                  data.app.version_name +
+                                    " (" +
+                                    data.app.version_code +
+                                    ")" || t("common.not_available")
+                                }`}
+                              />
+
+                              <Link
+                                href={`https://github.com/mamiiblt/instafel/commit/${data.commit}`}
+                              >
+                                <InfoCard
+                                  icon={
+                                    <WrenchIcon className="h-5 w-5 text-primary" />
+                                  }
+                                  title={t("info.patcher_version")}
+                                  value={
+                                    data.patcher_version != null
+                                      ? `v${data.patcher_version}`
+                                      : t("info.older_patcher")
+                                  }
+                                  subtitle={
+                                    data.commit ? `${data.commit}@main` : null
+                                  }
+                                />
+                              </Link>
+
+                              <InfoCard
+                                icon={
+                                  <Shapes className="h-5 w-5 text-primary" />
+                                }
+                                title={t("info.generation_id")}
+                                value={
+                                  <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
+                                    {data.gen_id || t("common.not_available")}
+                                  </code>
+                                }
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t">
+                              <div className="bg-muted/30 rounded-lg p-3">
+                                <h4 className="text-sm font-medium flex items-center gap-2 mb-2 text-primary">
+                                  <ShieldCheck className="h-4 w-4" />
+                                  {t("info.md5_hash_unclone")}
+                                </h4>
+                                <code className="text-xs block bg-background/80 p-2 rounded overflow-x-auto whitespace-nowrap">
+                                  {data.hash.uc || t("common.not_available")}
                                 </code>
-                              }
-                            />
-                          </div>
+                              </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t">
-                            <div className="bg-muted/30 rounded-lg p-3">
-                              <h4 className="text-sm font-medium flex items-center gap-2 mb-2 text-primary">
-                                <ShieldCheck className="h-4 w-4" />
-                                {t("info.md5_hash_unclone")}
-                              </h4>
-                              <code className="text-xs block bg-background/80 p-2 rounded overflow-x-auto whitespace-nowrap">
-                                {data.hash.uc || t("common.not_available")}
-                              </code>
+                              <div className="bg-muted/30 rounded-lg p-3">
+                                <h4 className="text-sm font-medium flex items-center gap-2 mb-2 text-primary">
+                                  <ShieldCheck className="h-4 w-4" />
+                                  {t("info.md5_hash_clone")}
+                                </h4>
+                                <code className="text-xs block bg-background/80 p-2 rounded overflow-x-auto whitespace-nowrap">
+                                  {data.hash.c || t("common.not_available")}
+                                </code>
+                              </div>
                             </div>
+                          </TabsContent>
+                        </div>
+                      </Tabs>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
 
-                            <div className="bg-muted/30 rounded-lg p-3">
-                              <h4 className="text-sm font-medium flex items-center gap-2 mb-2 text-primary">
-                                <ShieldCheck className="h-4 w-4" />
-                                {t("info.md5_hash_clone")}
-                              </h4>
-                              <code className="text-xs block bg-background/80 p-2 rounded overflow-x-auto whitespace-nowrap">
-                                {data.hash.c || t("common.not_available")}
-                              </code>
-                            </div>
-                          </div>
-                        </TabsContent>
-                      </div>
-                    </Tabs>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-
-            {!data && !loading && (
-              <div className="text-center p-4 xs:p-6 sm:p-10 md:p-12 border rounded-lg bg-card/90">
-                <FileText className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mb-3 sm:mb-4 opacity-50" />
-                <h3 className="text-xl sm:text-2xl font-medium mb-2">
-                  {t("error.not_found")}
-                </h3>
-                <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
-                  {t("error.not_found_desc")}
-                </p>
-                <Button asChild size="default">
-                  <Link
-                    href={{
-                      pathname: "/download",
-                      query: { version: "latest" },
-                    }}
-                  >
-                    {t("error.get_latest")}
-                  </Link>
-                </Button>
-              </div>
-            )}
+              {!data && !loading && (
+                <div className="text-center p-4 xs:p-6 sm:p-10 md:p-12 border rounded-lg bg-card/90">
+                  <FileText className="mx-auto h-12 w-12 sm:h-16 sm:w-16 text-muted-foreground mb-3 sm:mb-4 opacity-50" />
+                  <h3 className="text-xl sm:text-2xl font-medium mb-2">
+                    {t("error.not_found")}
+                  </h3>
+                  <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
+                    {t("error.not_found_desc")}
+                  </p>
+                  <Button asChild size="default">
+                    <Link
+                      href={{
+                        pathname: "/download",
+                        query: { version: "latest" },
+                      }}
+                    >
+                      {t("error.get_latest")}
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+            <Footer />
           </div>
-          <Footer />
-        </div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 

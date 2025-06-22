@@ -1,7 +1,6 @@
 {
   "navbar": {
     "items": {
-      "guide": "Rehber",
       "backups": "Yedekler",
       "updater": "Güncelleyici",
       "src_code": "Kaynak Kodu",
@@ -17,7 +16,7 @@
     "2": "Instafel'in Meta ve Instagram ile hiçbir bağı yoktur",
     "3": "mamiiblt tarafından ❤️ ile geliştirilmiştir",
     "4": "Kaynaklar",
-    "5": "Rehber",
+    "5": "Wiki",
     "6": "Yedekler",
     "7": "Linkler",
     "8": "Güncelleyici",
