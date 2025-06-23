@@ -5,6 +5,7 @@ import { useParams, notFound } from "next/navigation";
 import wikiData from "@/wdata/list";
 import WikiContent from "@/components/wiki/WikiContent";
 import { LoadingBar } from "@/components/ifl";
+import { WikiPage } from "@/wdata/wiki";
 
 function getPageBySlug(slug: string) {
   var rPage = null;
@@ -22,31 +23,19 @@ function getPageBySlug(slug: string) {
 }
 
 function getPreviousAndNextPage(currentSlug: string) {
-  var pagePrev = null;
-  var pageNext = null;
-  for (const category of wikiData) {
-    category.subs.forEach((subcat) => {
-      for (var i = 0; i < subcat.pages.length; i++) {
-        const crPage = subcat.pages[i];
-        if (crPage.slug == currentSlug) {
-          if (subcat.pages[i - 1] != undefined) {
-            pagePrev = subcat.pages[i - 1];
-          }
-          if (subcat.pages[i + 1] != undefined) {
-            pageNext = subcat.pages[i + 1];
-          }
-        }
-      }
-    });
-  }
+  const pages: WikiPage[] = wikiData.flatMap((category) =>
+    category.subs.flatMap((subcat) => subcat.pages)
+  );
+
+  const index = pages.findIndex((page) => page.slug === currentSlug);
 
   return {
-    prev: pagePrev,
-    next: pageNext,
+    prev: pages[index - 1] ?? null,
+    next: pages[index + 1] ?? null,
   };
 }
 
-export default function WikiPage() {
+export default function WikiSlugPage() {
   const { slug } = useParams() as { slug: string };
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
