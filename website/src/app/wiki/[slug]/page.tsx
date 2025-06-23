@@ -7,12 +7,43 @@ import WikiContent from "@/components/wiki/WikiContent";
 import { LoadingBar } from "@/components/ifl";
 
 function getPageBySlug(slug: string) {
+  var rPage = null;
   for (const category of wikiData) {
-    for (const page of category.pages) {
-      if (page.slug === slug) return page;
-    }
+    category.subs.forEach((subCategory) => {
+      for (const page of subCategory.pages) {
+        if (page.slug == slug) {
+          rPage = page;
+        }
+      }
+    });
   }
-  return null;
+
+  return rPage != null ? rPage : null;
+}
+
+function getPreviousAndNextPage(currentSlug: string) {
+  var pagePrev = null;
+  var pageNext = null;
+  for (const category of wikiData) {
+    category.subs.forEach((subcat) => {
+      for (var i = 0; i < subcat.pages.length; i++) {
+        const crPage = subcat.pages[i];
+        if (crPage.slug == currentSlug) {
+          if (subcat.pages[i - 1] != undefined) {
+            pagePrev = subcat.pages[i - 1];
+          }
+          if (subcat.pages[i + 1] != undefined) {
+            pageNext = subcat.pages[i + 1];
+          }
+        }
+      }
+    });
+  }
+
+  return {
+    prev: pagePrev,
+    next: pageNext,
+  };
 }
 
 export default function WikiPage() {
@@ -21,6 +52,7 @@ export default function WikiPage() {
   const [loading, setLoading] = useState(true);
 
   const page = getPageBySlug(slug);
+  const proviData = getPreviousAndNextPage(slug);
 
   useEffect(() => {
     if (!slug) return;
@@ -39,5 +71,11 @@ export default function WikiPage() {
   if (loading) return <LoadingBar />;
   if (!content) return <div className="p-6">Content not found.</div>;
 
-  return <WikiContent page={page} content={content} />;
+  return (
+    <WikiContent
+      page={page}
+      content={content}
+      proviData={getPreviousAndNextPage(slug)}
+    />
+  );
 }
