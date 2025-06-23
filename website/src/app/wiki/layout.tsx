@@ -16,16 +16,5 @@ export default async function WikiLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <SidebarProvider>
-        <WikiSidebar />
-        <main className="flex-1 overflow-auto">
-          <Navbar />
-          {children}
-        </main>
-      </SidebarProvider>
-      <Footer />
-    </>
-  );
+  return <div>{children}</div>;
 }

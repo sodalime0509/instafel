@@ -6,6 +6,10 @@ import wikiData from "@/wdata/list";
 import WikiContent from "@/components/wiki/WikiContent";
 import { LoadingBar } from "@/components/ifl";
 import { WikiPage } from "@/wdata/wiki";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { WikiSidebar } from "@/components/wiki/WikiSidebar";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 function getPageBySlug(slug: string) {
   var rPage = null;
@@ -61,10 +65,19 @@ export default function WikiSlugPage() {
   if (!content) return <div className="p-6">Content not found.</div>;
 
   return (
-    <WikiContent
-      page={page}
-      content={content}
-      proviData={getPreviousAndNextPage(slug)}
-    />
+    <>
+      <SidebarProvider>
+        <WikiSidebar />
+        <div className="flex-1 overflow-auto">
+          <Navbar />
+          <WikiContent
+            page={page}
+            content={content}
+            proviData={getPreviousAndNextPage(slug)}
+          />
+        </div>
+      </SidebarProvider>
+      <Footer />
+    </>
   );
 }
