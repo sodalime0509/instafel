@@ -29,17 +29,19 @@ The patcher is what transforms an unstable internal build into a usable testing 
 1. **Input:**  
    You provide a stock Instagram Alpha APK (usually downloaded from official sources or scraped builds).
 
-2. **Patch Process:**  
+2. **Patch Process:**
+
    - The patcher removes restrictions on internal fragments and flags.
    - Injects UI triggers to reveal hidden developer menus.
    - Enables compatibility for OTA updates and crash logging.
    - Optionally modifies the package name (for Clone builds).
 
-3. **Output:**  
+3. **Output:**
+
    - A signed, installable APK with Instafel features included.
    - Optionally built in **Clone** or **Unclone** variants.
 
-4. **Distribution:**  
+4. **Distribution:**
    - These patched builds are either shared manually or pushed via in-app OTA updater.
 
 ---
@@ -53,7 +55,7 @@ Without the patcher, Instafel would just be a stock Alpha build — unstable, hi
 - More modular (menus for updates, backups, flags)
 - More flexible (Clone/Unclone versions)
 
-It allows Instafel to be a tool for *exploration and learning*, not just usage.
+It allows Instafel to be a tool for _exploration and learning_, not just usage.
 
 ---
 
@@ -72,5 +74,3 @@ Since the patcher is open-source, you’re welcome to:
 ### ✅ Summary
 
 The **Instafel Patcher** is the engine that powers every Instafel release. It’s a public, transparent tool aimed at turning unstable Instagram Alpha builds into feature-rich experimental platforms — while giving users control, clarity, and OTA update convenience.
-
----

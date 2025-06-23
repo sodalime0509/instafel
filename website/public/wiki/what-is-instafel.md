@@ -60,5 +60,3 @@ Follow these steps to install Instafel on your device:
 
 5. **Stay Updated**  
    Use the in-app updater or join our Telegram channel to stay informed about the new releases and updates.
-
----

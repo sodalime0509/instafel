@@ -9,7 +9,13 @@ One of Instafel’s most powerful features is its support for **cloning**, allow
 Cloning refers to modifying the app’s package name (and sometimes its digital signature) so that it can work with other Instagram-based apps on the same device. A cloned app behaves like a completely separate application:
 
 - It has its own app data and cache
+<<<<<<< HEAD
 - You can run multiple setups with different feature flags in parallel  
+=======
+- It does **not** interfere with your official Instagram installation
+- You can log in with a different account
+- You can run multiple setups with different feature flags in parallel
+>>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
 
 This is especially valuable for power users and testers running experiments or comparing behaviors between builds.
 
@@ -19,6 +25,7 @@ This is especially valuable for power users and testers running experiments or c
 
 When downloading or installing Instafel, you may see two different variants:
 
+<<<<<<< HEAD
 - **Unclone Version** (`com.instagram.android`)  
   - This version **replaces** the stock Instagram app  
   - Cannot be installed alongside the official app  
@@ -26,14 +33,47 @@ When downloading or installing Instafel, you may see two different variants:
 
 - **Clone Version** (`com.instafel.android`)  
   - Has a different package name, app name and app logo
+=======
+- **Unclone Version** (`com.instagram.android`)
+
+  - This version **replaces** the stock Instagram app
+  - Cannot be installed alongside the official app
+  - Useful for mimicking the original Instagram environment
+
+- **Clone Version** (`com.instafel.android`)
+  - Has a different package name
+>>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
   - Can be installed side by side with the original app
-  - Safe for testing and experimental use  
+  - Safe for testing and experimental use
 
 You can install both types at once. For example:
 
+<<<<<<< HEAD
 - Use **stock Instagram** for daily use  
 - Use **Instafel Clone** for exploring internal flags and unreleased features  
 
 Or, you might want to use Unclone variant if you want Instafel to replace your official Instagram app.
 
 ---
+=======
+- Use **stock Instagram** for daily use
+- Use **Instafel Clone** for exploring developer flags and unreleased features
+
+---
+
+### 🔄 What Is “Unclone”?
+
+“Unclone” refers to using the original Instagram package name. You might want this if:
+
+- You want Instafel to replace your official Instagram app
+- Some experimental server-side flags only activate on `com.instagram.android`
+- You’re debugging behaviors that only occur in the official app context
+
+**Note:** You cannot install the unclone build if the stock Instagram app is already installed. You must uninstall it first.
+
+---
+
+### ✅ Summary
+
+Clone and unclone builds allow Instafel to adapt to your use case. The clone version is ideal for testing and multi-instance use, while unclone version behaves exactly like the official app. The choice depends on how you want to use Instafel — either as a standalone experiment platform or a full Instagram replacement.
+>>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
