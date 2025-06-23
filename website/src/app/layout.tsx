@@ -1,7 +1,6 @@
 import { Geist } from "next/font/google";
 import "@/app/globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import Navbar from "@/components/Navbar";
 import { SITE_CONFIG } from "@/config/config";
 import { defaultMetadata } from "@/config/metadata";
 import LocaleProvider from "@/i18n/LocaleProvider";

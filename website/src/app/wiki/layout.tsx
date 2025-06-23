@@ -1,7 +1,3 @@
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { WikiSidebar } from "@/components/wiki/WikiSidebar";
 import { defaultMetadata } from "@/config/metadata";
 import { Metadata } from "next";
 

@@ -6,7 +6,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
-import { LoadingBar } from "@/components/ifl";
+import { LoadingBar } from "@/components/LoadingBars";
 import Footer from "@/components/Footer";
 import {
   Calendar,

@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import i18next from "@/i18n/i18n";
 import { cookieName, languages } from "@/i18n/settings";
 import { I18nextProvider } from "react-i18next";
-import { LoadingBar } from "@/components/ifl";
+import { LoadingBar } from "@/components/LoadingBars";
 
 function getCookie(name: string) {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
   if (match) return match[2];
   return null;
 }
@@ -16,7 +16,11 @@ function getBrowserLanguage() {
   return navigator.language.split("-")[0];
 }
 
-export default function LocaleProvider({ children }: { children: React.ReactNode }) {
+export default function LocaleProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -28,7 +32,7 @@ export default function LocaleProvider({ children }: { children: React.ReactNode
     }
 
     i18next.changeLanguage(lng).then(() => {
-        setReady(true)
+      setReady(true);
     });
   }, []);
 

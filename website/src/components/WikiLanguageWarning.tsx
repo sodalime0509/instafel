@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Globe } from "lucide-react";

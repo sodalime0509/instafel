@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
 import wikiData from "@/wdata/list";
 import WikiContent from "@/components/wiki/WikiContent";
-import { LoadingBar } from "@/components/ifl";
+import { LoadingBar } from "@/components/LoadingBars";
 import { WikiPage } from "@/wdata/wiki";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { WikiSidebar } from "@/components/wiki/WikiSidebar";

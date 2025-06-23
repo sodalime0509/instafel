@@ -2,8 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { FileCog2Icon, FileSpreadsheet, ChevronRight } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
-import { LoadingBar } from "@/components/ifl";
+import { useEffect, useState } from "react";
+import { LoadingBar } from "@/components/LoadingBars";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

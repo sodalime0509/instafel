@@ -22,10 +22,6 @@ import {
   Download,
   GithubIcon,
   Box,
-  Globe,
-  ChevronRight,
-  ChevronsRight,
-  ChevronsLeft,
   ListCollapse,
 } from "lucide-react";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -36,15 +32,7 @@ import WikiLanguageWarning from "./WikiLanguageWarning";
 import { Separator } from "./ui/separator";
 
 function SidebarToggleButton() {
-  const {
-    state,
-    open,
-    setOpen,
-    openMobile,
-    setOpenMobile,
-    isMobile,
-    toggleSidebar,
-  } = useSidebar();
+  const { toggleSidebar } = useSidebar();
 
   return (
     <Button

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -17,7 +17,6 @@ import {
   Code,
   CheckCircle,
   ShieldCheck,
-  HardDrive,
   Smartphone,
   InfoIcon,
   BadgeInfo,
@@ -25,7 +24,7 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { LoadingBar } from "@/components/ifl";
+import { LoadingBar } from "@/components/LoadingBars";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";

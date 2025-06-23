@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import React, { Suspense, useEffect, useState } from "react";
-import { LoadingBar } from "@/components/ifl";
+import { LoadingBar } from "@/components/LoadingBars";
 import Footer from "@/components/Footer";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Flag, Search, Trash, User, X } from "lucide-react";

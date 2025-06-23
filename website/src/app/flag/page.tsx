@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from "framer-motion";
 import React, { Suspense, useEffect, useState } from "react";
-import { LoadingBar } from "@/components/ifl";
+import { LoadingBar } from "@/components/LoadingBars";
 import Footer from "@/components/Footer";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -23,7 +23,7 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FlagLibraryCarousel } from "@/components/carousel";
+import { FlagLibraryCarousel } from "@/components/Carousel";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 

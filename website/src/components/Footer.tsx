@@ -3,7 +3,6 @@
 import React, { Suspense } from "react";
 import { FooterLoading } from "./loading";
 import {
-  Book,
   BookOpenText,
   Download,
   FileCog2Icon,
