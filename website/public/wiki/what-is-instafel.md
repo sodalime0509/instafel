@@ -1,13 +1,13 @@
-**Instafel** is a community-driven project that delivers the **latest alpha builds of Instagram** with **developer options enabled** — allowing users, developers, and testers to explore Instagram like never before.
+**Instafel** is a project that aims to deliver the **latest alpha builds of Instagram** with **developer options enabled** — allowing users to explore Instagram's alpha features which is not released publicly yet.
 
-These builds are ideal for those who want early access to experimental features, enhanced control, and a peek into the backend behavior of the app.
+Instafel is ideal for those who want early access to experimental features and enhanced control over Instagram.
 
 ## 🚀 How Instafel Works
 
 The process behind Instafel is designed to be fast, efficient, and reliable:
 
 1. **Alpha Builds Patched Instantly**  
-   Using our in-house patcher, we generate modified Instagram alpha builds with developer options enabled as soon as a new version is released.
+   Using our Instafel patcher, we generate patched Instagram alpha builds with developer options enabled as soon as a new alpha version is released by Meta.
 
 2. **Internal Testing**  
    Once a build is generated, it is passed on to our testing team. They ensure that everything works as expected and the build is safe to use.
@@ -15,7 +15,7 @@ The process behind Instafel is designed to be fast, efficient, and reliable:
 3. **Automated Release**  
    After successful testing, the **Instafel Bot** automatically uploads the approved build to our official release channel — making it instantly accessible to users.
 
-   ***
+---
 
 ## ✨ Features
 
@@ -37,50 +37,19 @@ The process behind Instafel is designed to be fast, efficient, and reliable:
 - **🐞 Crash Report Catcher**  
   Automatically detect and report crashes to help us improve the app.
 
-  These features can be accessed directly from the **Instafel Menu**:
-
-  ***
-
-## 🍔 What Is Instafel Menu
-
-Instafel comes with its own custom menu to provide quick access to advanced settings and features. Here's how you can use it:
-
-1. **Access the Menu**  
-   Open the Instafel app and tap on the **hamburger icon** (three horizontal lines) located at the top-left corner of the profile screen.
-
-   ![Preview Not Found](/menu-access.jpg)
-
-2. **Menu Options**  
-   The menu gives you access to various tools and features, including:
-
-   - **Experiment Management**: Import, export, and manage your custom experiments.
-   - **Settings**: Customize your Instafel experience, including update preferences and notifications.
-   - **Crash Reports**: View recent crash reports to help improve the app.
-
-3. **Explore Features**  
-   The menu lets you quickly toggle between different configurations, ensuring an optimal Instagram experience tailored to your needs.
-
-4. **In-App Help**  
-   If you need assistance, the menu also includes a **Help** section with guides and FAQs.
-
----
-
-Use the Instafel menu to fully personalize your experience and get the most out of the app!
-
-Here's the menu preview:-
-![Preview Not Found](/instafel-menu.jpg)
+  These features can be accessed directly from the **Instafel Menu**.
 
 ---
 
 ## 🧰 Getting Started
 
-Follow these quick steps to get up and running with Instafel:
+Follow these steps to install Instafel on your device:
 
 1. **Download the Latest Build**  
    Get it from [Download Page](https://instafel.app/download?version=latest) or head over to our [Official Release Channel](https://t.me/instafel) to grab the newest alpha version patched by our team.
 
 2. **Enable Unknown Sources**  
-   On your Android device, make sure installation from unknown sources is allowed. You can enable this in:
+   On your Android device, make sure that the option "Installation from unknown sources" is allowed. You can enable this in:
    `Settings > Security > Install Unknown Apps`
 
 3. **Install the APK**  
@@ -90,4 +59,6 @@ Follow these quick steps to get up and running with Instafel:
    Open Instafel and start exploring the enhanced Instagram experience — including developer options, other features and more.
 
 5. **Stay Updated**  
-   Use the in-app updater or join our Telegram channel to stay informed about future releases and updates.
+   Use the in-app updater or join our Telegram channel to stay informed about the new releases and updates.
+
+---

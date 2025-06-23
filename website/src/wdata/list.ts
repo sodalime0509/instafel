@@ -12,16 +12,116 @@ import {
 
 const wikiData: WikiCategory[] = [
   {
-    name: "Guides",
+    name: "General Information",
     icon: InfoIcon,
     pages: [
       {
         slug: "what-is-instafel",
         title: "What is Instafel?",
-        description: "An article for explaing Instafel and Instafel stuffs",
-        writer: "mamiiblt",
+        description: "An article for explaining the Instafel app.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "what-is-instagram-alpha",
+        title: "What is Instagram Alpha?",
+        description: "An article for explaining the basic logic of Instafel and Instagram Alpha.",
+        writer: "buraakkcayir",
       },
     ],
+  },
+  {
+    name: "Flag Modifications",
+    icon: InfoIcon,
+    pages: [
+      {
+        slug: "developer-options",
+        title: "Developer Options",
+        description: "An article for explaining the Developer Options.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "flags-and-backups",
+        title: "Flags and Backups",
+        description: "An article for explaining the Flags and Backups.",
+        writer: "buraakkcayir",
+      },
+    ]
+  },
+  {
+    name: "Releases & Updates",
+    icon: InfoIcon,
+    pages: [
+      {
+        slug: "unclone-and-clone-versions",
+        title: "Unclone and Clone Versions",
+        description: "An article for explaining the basic logic of the Unclone and Clone versions of Instafel.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "ota-updates",
+        title: "OTA Updates",
+        description: "An article for explaining the basic logic of the in-app OTA updates.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "instafel-updater",
+        title: "Instafel Updater",
+        description: "An article for explaining the Instafel Updater App.",
+        writer: "buraakkcayir",
+      },
+    ],
+  },
+  {
+    name: "Limitations & Risks",
+    icon: InfoIcon,
+    pages: [
+      {
+        slug: "limitations-and-warnings",
+        title: "Limitations and Warnings",
+        description: "An article for explaining the limitations and warnings of Instafel.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "crash-reporting-and-troubleshooting",
+        title: "Crash Reporting and Troubleshooting",
+        description: "An article for explaining how you can report the crashes about Instafel.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "common-misconceptions-what-instafel-is-and-is-not",
+        title: "Common Misconceptions: What Instafel Is and Is Not",
+        description: "An article for explaining the common misconceptions of Instafel.",
+        writer: "buraakkcayir",
+      },
+    ],
+  },
+  {
+    name: "Community & Support",
+    icon: InfoIcon,
+    pages: [
+      {
+        slug: "official-platforms",
+        title: "Official Platforms",
+        description: "An article for listing the official platforms.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "community-rules",
+        title: "Community Rules",
+        description: "An article for explaining the community rules.",
+        writer: "buraakkcayir",
+      },
+      {
+        slug: "disclaimer",
+        title: "Disclaimer",
+        description: "An article for explaining how to reporting issues and the disclaimer.",
+        writer: "buraakkcayir",
+      },],
+  },
+  {
+    name: "For Backup Creators",
+    icon: InfoIcon,
+    pages: []
   },
   {
     name: "Translation",
@@ -29,7 +129,7 @@ const wikiData: WikiCategory[] = [
     pages: [],
   },
   {
-    name: "Patcher",
+    name: "Source Code",
     icon: Wrench,
     pages: [],
   },
