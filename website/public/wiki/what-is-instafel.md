@@ -15,8 +15,6 @@ The process behind Instafel is designed to be fast, efficient, and reliable:
 3. **Automated Release**  
    After successful testing, the **Instafel Bot** automatically uploads the approved build to our official release channel — making it instantly accessible to users.
 
----
-
 ## ✨ Features
 
 - **📱 Clone Support**  
@@ -38,8 +36,6 @@ The process behind Instafel is designed to be fast, efficient, and reliable:
   Automatically detect and report crashes to help us improve the app.
 
   These features can be accessed directly from the **Instafel Menu**.
-
----
 
 ## 🧰 Getting Started
 

@@ -6,8 +6,6 @@ Flag in Instagram are like an on/off switch controlled by Meta’s servers. Inst
 
 Instafel makes these flags inside the app accessible by users and lets you change them yourself. In this way, you can try out features even if Meta hasn’t officially released them to everyone. However, some features are completely server based and you cannot enable some experimental things without Meta's roll outs.
 
----
-
 ### 📚 Flag & Backup Libraries
 
 To make using feature flags easier, Instafel provides two main libraries:
@@ -18,12 +16,6 @@ To make using feature flags easier, Instafel provides two main libraries:
 - **Backup Library:**  
   Saved flag configurations (.JSON or .IBACKUP files) that can be imported directly. These backups activate pre-tested combinations of flags known to work well together or unlock specific features.
 
-<<<<<<< HEAD
-Users can:  
-- Save their current configuration as a backup  
-- Share their backups with others  
-- Restore from a backup to revert to a known-good state
-=======
 Users can:
 
 - Save their current configuration as a backup
@@ -31,24 +23,13 @@ Users can:
 - Restore from a backup to revert to a known-good state
 
 This enables community-based experimentation and shared discoveries.
->>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
-
----
 
 ### 🔍 How to Access the Flag Library and Backup Library?
 
-<<<<<<< HEAD
-- The Flag Library is being established on the website (still WIP) at [instafel.app/library/flags](https://instafel.app/library/flags)  
-- The most used flags can also be found via our [Telegram Community](https://t.me/instafel/34335)  
-- The Backup Library is accessible here: [instafel.app/library_backup](https://instafel.app/library_backup)  
-=======
-- The Flag Library is being established on the website (still WIP) at [instafel.app/library/flags](https://instafel.app/library/flags)
+- The Flag Library is being established on the website (still WIP) at [Flag Library](https://instafel.app/library_flag)
 - The most used flags can also be found via the [Telegram Community](https://t.me/instafel/34335)
-- The Backup Library is accessible here: [instafel.app/library_backup](https://instafel.app/library_backup)
->>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
+- The Backup Library is accessible here: [Backup Library](https://instafel.app/library_backup)
 - You can apply any backup files via the Instafel Menu.
-
----
 
 ## 🛠️ Accessing and Using the Instafel Menu
 
@@ -56,23 +37,12 @@ This enables community-based experimentation and shared discoveries.
 
 The Instafel Menu is a special settings panel added to the regular Instagram Alpha app. It reveals powerful tools, lets you import, export, or apply backups, and control updates—giving you full access to Instagram Alpha’s unique experience.
 
----
-
 ### 🚪 How to Access the Instafel Menu
 
-<<<<<<< HEAD
-1. **Open Instafel App:** Launch Instafel on your device.  
-2. **Go to Your Profile:** Tap your profile icon at the bottom right.  
-3. **Open the Side Navigation Drawer:** **Press and hold** the hamburger (☰) icon in the top-right corner to open the Instafel menu.  
-4. **Access Instafel Features:** The Instafel Menu will appear, giving you access to flags, backups, updater controls, and more.
-=======
 1. **Open Instafel App:** Launch Instafel on your device.
 2. **Go to Your Profile:** Tap your profile icon at the bottom right.
 3. **Open the Side Navigation Drawer:** **Press and hold** the hamburger (☰) icon in the top-right corner to open the Instafel menu.
 4. **Access Instafel Features:** The hidden developer options and advanced menus will appear, giving you access to flags, backups, updater controls, and more.
->>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
-
---- 
 
 ### 🔍 Key Features on Instafel Menu
 
@@ -88,15 +58,6 @@ The Instafel Menu is a special settings panel added to the regular Instagram Alp
 - **Crash Reports:**  
   Capture crash logs and send them to developers to help improve stability over time.
 
----
-
-<<<<<<< HEAD
-### ⚠️ Warnings and Tips
-
-- Some flags may **cause crashes or UI glitches**; enable with caution.  
-- Always **backup your current flag setup** before experimenting.  
-- Some flags or backups may become unavailable later, keep your app and the backup you use updated for the best experience.
-=======
 ### ⚡ Why the Instafel Menu Matters
 
 The Instafel Menu acts as the central control hub for everything that makes Instafel different from the stock Instagram Alpha client. It’s not just about toggling flags — it’s a unified interface that empowers users to explore, customize, and stabilize their experience in ways Meta never intended for the public.
@@ -110,16 +71,11 @@ This menu matters because it offers:
 
 The true power lies in this **integration**, providing a single point of access instead of fragmented or root-only tools.
 
----
-
 ### ⚠️ Warnings and Tips
 
 - Some flags may **cause crashes or UI glitches**; enable with caution.
 - Always **backup your current flag setup** before experimenting.
 - Instafel menus may receive updates; keep your app updated for best experience.
->>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
-
----
 
 ### 🚨 Risks and Limitations
 
@@ -131,11 +87,6 @@ Not all flags are safe to enable. Because these features are under active develo
 
 Instafel does **not fake** server responses; it only allows local control over flags already built into the APK.
 
----
-<<<<<<< HEAD
-=======
-
 ### ✅ Summary
 
 Instafel turns a black-box Alpha app into a transparent developer sandbox. For users who want to tinker, experiment, or analyze Instagram's evolution, access to developer features and internal flags is transformative. It demystifies how the Instagram app functions internally and enables community-powered advanced feature discovery.
->>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)

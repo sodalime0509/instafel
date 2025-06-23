@@ -11,8 +11,6 @@ Developer options include:
 
 These options are critical to understanding how Meta builds, evaluates, and releases features.
 
----
-
 ### 🛠️ How Instafel Unlocks These Menus
 
 Instafel uses a custom patching process to forcibly unlock developer menus. Rather than injecting external code, it modifies the Alpha APK’s layout and view tree to:
@@ -29,8 +27,6 @@ Examples of these unreleased features:
 - Reels-specific playback controls
 - New features related to social interactions
 - etc.
-
----
 
 ## 🛠️ Accessing Developer Options
 

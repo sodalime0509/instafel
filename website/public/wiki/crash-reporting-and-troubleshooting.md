@@ -2,22 +2,12 @@
 
 Instafel provides some tools and recommended practices for managing crashes and bugs:
 
-<<<<<<< HEAD
-- **Crash Logs Collection:** Instafel can capture crash reports and send them directly to the development team to improve future releases. Report your captured crashes and logs in Instafel Menu to help us solve your problem.
-- **Rollbacks:** If a new Instafel version causes crashes, revert to a previous stable release to maintain usability.  
-- **Backup Restore:** Use the Instafel Menu to import previously working backup you have created before when new changes cause instability.  
-- **Wait for Fixes:** Some crashes result from server-side changes or Alpha bugs outside Instafel’s control — waiting for updates is often necessary.  
-- **Clean Reinstall:** If persistent issues occur, uninstall Instafel completely and reinstall fresh to clear corrupted data or broken caches.  
-=======
 - **Crash Logs Collection:** Instafel can capture crash reports and send them directly to the development team to improve future releases. Enable crash reporting in settings to help.
 - **Rollbacks:** If a new Instafel version causes crashes, revert to a previous stable release to maintain usability.
 - **Backup Restore:** Use the backup library to restore previously working flag configurations when new changes cause instability.
 - **Wait for Fixes:** Some crashes result from server-side changes or Alpha bugs outside Instafel’s control — waiting for updates is often necessary.
 - **Clean Reinstall:** If persistent issues occur, uninstall Instafel completely and reinstall fresh to clear corrupted data or broken caches.
->>>>>>> aad6a6b (style: Remove uncompatible brackets from wiki contents)
 - **Provide Detailed Reports:** When seeking help, include logs, device info, and steps to reproduce the issue to speed up troubleshooting.
-
----
 
 ### 🛠️ Reporting Issues & Contributions
 

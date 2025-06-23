@@ -22,8 +22,6 @@ It modifies the APK to enable:
 
 The patcher is what transforms an unstable internal build into a usable testing tool for the public.
 
----
-
 ### 🏗️ How It Works
 
 1. **Input:**  
@@ -44,8 +42,6 @@ The patcher is what transforms an unstable internal build into a usable testing 
 4. **Distribution:**
    - These patched builds are either shared manually or pushed via in-app OTA updater.
 
----
-
 ### 🧪 Why the Patcher Is Important
 
 Without the patcher, Instafel would just be a stock Alpha build — unstable, hidden, and hard to control. The patcher makes it:
@@ -57,8 +53,6 @@ Without the patcher, Instafel would just be a stock Alpha build — unstable, hi
 
 It allows Instafel to be a tool for _exploration and learning_, not just usage.
 
----
-
 ### 🤝 Open for Contributions
 
 Since the patcher is open-source, you’re welcome to:
@@ -68,8 +62,6 @@ Since the patcher is open-source, you’re welcome to:
 - Suggest improvements via pull requests
 
 > Community contributions are essential for keeping the patcher compatible with Meta’s rapid-fire Alpha updates.
-
----
 
 ### ✅ Summary
 
