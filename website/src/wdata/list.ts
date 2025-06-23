@@ -135,7 +135,20 @@ const wikiData: WikiCategory[] = [
       {
         name: "For Backup Creators",
         icon: FileCog2,
-        pages: [],
+        pages: [
+          {
+            slug: "exporting-backups",
+            title: "Exporting Backups",
+            description: "An article for explaining how you can export your backups.",
+            writer: "buraakkcayir",
+          },
+          {
+            slug: "contributing",
+            title: "Contributing",
+            description: "An article for explaining how you can contribute to the Backup Library.",
+            writer: "buraakkcayir",
+          },
+        ],
       },
     ],
   },
