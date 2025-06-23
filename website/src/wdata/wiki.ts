@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-import { JSX } from "react";
 
 export interface WikiPage {
   slug: string;
@@ -8,8 +7,13 @@ export interface WikiPage {
   writer: string;
 }
 
-export interface WikiCategory {
+export interface WikiSubCategory {
   name: string;
   icon: LucideIcon;
   pages: WikiPage[];
+}
+
+export interface WikiCategory {
+  name: string;
+  subs: WikiSubCategory[];
 }
