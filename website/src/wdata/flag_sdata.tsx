@@ -3,7 +3,6 @@ import {
   BriefcaseBusiness,
   Camera,
   CircleFadingPlus,
-  Ellipsis,
   GalleryVerticalEnd,
   MessageCircleMore,
   PhoneCall,
@@ -17,7 +16,7 @@ import {
   Wrench,
 } from "lucide-react";
 
-const flagCategories = [
+export const flagCategories = [
   {
     cif: "direct",
     icon: <Send />,
@@ -78,11 +77,4 @@ const flagCategories = [
     cif: "livestreams",
     icon: <TvMinimalPlay />,
   },
-
-  {
-    cif: "other",
-    icon: <Ellipsis />,
-  },
 ];
-
-export default flagCategories;

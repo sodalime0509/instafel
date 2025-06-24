@@ -3,15 +3,14 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import Footer from "@/components/Footer";
-import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import flagCategories from "@/wdata/flag_sdata";
+import { flagCategories } from "@/wdata/flag_sdata";
 import { FlagIcon } from "lucide-react";
 
 export default function LibraryBackupPage() {
-  const { t } = useTranslation("library_flag");
+  const { t } = useTranslation(["library_flag", "fcategories"]);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   return (
@@ -82,7 +81,7 @@ export default function LibraryBackupPage() {
                         </div>
 
                         <h3 className="font-medium mb-1 transition-colors duration-300">
-                          {t(`categories.${category.cif}`)}
+                          {t(`${category.cif}`, { ns: "fcategories" })}
                         </h3>
                       </button>
                     </Link>

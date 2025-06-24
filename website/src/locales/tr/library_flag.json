@@ -1,23 +1,4 @@
 {
-  "categories": {
-    "all": "Hepsi",
-    "direct": "DM",
-    "reels": "Reels",
-    "stories": "Hikayeler",
-    "feed": "Akış",
-    "interface": "Arayüz",
-    "notes": "Notlar",
-    "quality": "Kalite",
-    "camera": "Kamera",
-    "call": "Arama",
-    "fixes": "Düzeltmeler",
-    "other": "Diğer",
-    "comments": "Yorumlar",
-    "profile": "Profil",
-    "professional": "Profesyonel",
-    "livestreams": "Canlı Yayınlar",
-    "meta-ai": "Meta AI"
-  },
   "title": "Bayrak Kütüphanesi",
   "desc": "Bu sayfada Instafel'in bayrak kütüphanesinde bulunan tüm bayrakların kategorisel olarak ayrıştırılmış hallerini bulabilirsiniz."
 }

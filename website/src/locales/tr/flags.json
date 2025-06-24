@@ -6,28 +6,5 @@
   "uploaded_at": "{{date_str}} tarihinde eklendi",
   "removed_with": "Sürüm v{{version}} ile kaldırıldı",
   "loading": "Yükleniyor...",
-  "descs": {
-    "fl_on": {
-      "with_cat": "Filtrelerle beraber bu kategoride toplamda {{fcount}} bayrak bulundu",
-      "without_cat": "Filterelerle beraber kütüphanede toplamda {{fcount}} bayrak bulundu"
-    },
-    "fl_off": {
-      "with_cat": "Bu kategoride toplamda {{fcount}} bayrak var",
-      "without_cat": "Kütüphanede toplam olarak {{fcount}} bayrak var"
-    }
-  },
-  "categories": {
-    "0": "Tüm Bayraklar",
-    "1": "Sohbetler",
-    "2": "Reels",
-    "3": "Hikayeler",
-    "4": "Akış",
-    "5": "Arayüz",
-    "6": "Notlar",
-    "7": "Kalite",
-    "8": "Kamera",
-    "9": "Arama",
-    "10": "Düzeltmeler",
-    "11": "Diğer"
-  }
+  "flag_found": "Bu kategoride toplamda {{fcount}} bayrak var"
 }
