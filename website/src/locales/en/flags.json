@@ -1,0 +1,33 @@
+{
+  "search_flag": "Search by flag name...",
+  "all_users": "All Users",
+  "clear_filters": "Clear Filters",
+  "added_by": "Added by {{name}}",
+  "uploaded_at": "Uploaded at {{date_str}}",
+  "removed_with": "Removed with v{{version}}",
+  "loading": "Loading...",
+  "descs": {
+    "fl_on": {
+      "with_cat": "There are a total of {{fcount}} flags in this category with filters.",
+      "without_cat": "There are a total of {{fcount}} in flag library without filters"
+    },
+    "fl_off": {
+      "with_cat": "There are a total of {{fcount}} flags in this category",
+      "without_cat": "There are a total of {{fcount}} in flag library"
+    }
+  },
+  "categories": {
+    "0": "All Flags",
+    "1": "Direct",
+    "2": "Reels",
+    "3": "Stories",
+    "4": "Feed",
+    "5": "Interface",
+    "6": "Notes",
+    "7": "Quality",
+    "8": "Camera",
+    "9": "Call",
+    "10": "Fixes",
+    "11": "Other"
+  }
+}

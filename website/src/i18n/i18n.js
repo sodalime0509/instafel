@@ -18,6 +18,9 @@ i18next
     fallbackLng,
     defaultNS,
     ns: [defaultNS],
+    interpolation: {
+      escapeValue: false,
+    },
     preload: runsOnServerSide ? languages : [],
   });
 
