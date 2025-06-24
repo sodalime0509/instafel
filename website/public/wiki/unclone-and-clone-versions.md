@@ -29,7 +29,7 @@ You can install both types at once. For example:
 - Use **stock Instagram** for daily use
 - Use **Instafel Clone** for exploring developer flags and unreleased features
 
-Or, You might want the unclone variant if you want Instafel to replace your official Instagram app.
+Or, you might want the unclone variant if you want Instafel to replace your official Instagram app.
 
 **Note:** You cannot install the unclone build if the stock Instagram app is already installed. You must uninstall it first.
 

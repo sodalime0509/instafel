@@ -2,7 +2,7 @@
 
 Clarifying what Instafel does **not** do helps set correct user expectations:
 
-- **No Media Downloading:** Instafel does not allow downloading stories, posts, reels, or any media content. This feature is not supported yet.
+- **No Media Downloading:** Instafel does not allow downloading stories, posts, reels, or any media content. This feature is not supported yet. The only provided download feature is what Instagram officially does.
 - **No Ghost Mode:** Stealth viewing or hiding seen statuses (“ghost mode”) is not available and never guaranteed in the app.
 - **No Font or Emoji Changes:** Font styles and emoji appearances depend on your device OS settings; Instafel cannot override these without root or system-level hacks.
 - **No Official Affiliation:** Instafel is an independent, community-driven project without official ties to Meta or Instagram.
