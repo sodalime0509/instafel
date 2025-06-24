@@ -1,31 +1,65 @@
-## Başlamadan önce
+## 📌 Before You Start
 
-İlk olarak bilmeniz gereken şey, Instafel doğal olarak sadece kullanıcıların erişiminin olmaması gerektiği (Private API vb.) projelerin kaynak kodunu paylaşmaz. Bu kısımlar Instafel için yazılan toplam kodun %20'si gibi bir kısımı oluşturur. Yani uygulama kodlarını incelerken API veya bilinmeyen bir mikroservis / alt proje ile iletişime geçildiğinde şaşırmamanız gerekmektedir.
+Before diving into the codebase, there’s one important thing to understand:  
+**Instafel does not share the source code for private APIs or internal services** that users aren’t supposed to access (like private Instagram APIs). These make up about **20% of the whole project**, so if you come across references to unknown APIs, microservices, or endpoints, don’t be surprised — they’re intentionally left out.
 
-## Giriş
+---
 
-Instafel'in kaynak kodlarını [mamiiblt/instafel](https://github.com/mamiiblt/instafel) deposundan çekebilirsiniz. Instafel dependency ve alt projelerin yönetimi gibi hususlar için Gradle yöneticisini kullanmaktadır. Instafel toplamda 5 alt projeden oluşmaktadır, her alt projenin farklı bir amacı vardır.
+## 🚀 Overview
 
-- **App**
+You can find the full Instafel source code here: [**mamiiblt/instafel**](https://github.com/mamiiblt/instafel)  
+The project uses **Gradle** to manage its dependencies and modular structure. In total, Instafel consists of **five separate subprojects**, each serving a specific role.
 
-  Instafel menüsü, diyalogları gibi bileşenleri içerir. Kodlarda değişiklik yaparken yazdığınız kodların Instagram'ın dahili libleri ile uyumlu olması gerektiğini unutmayın.
+---
 
-- **Updater**
+### 📱 App
 
-  Tek başına yani standalone bir uygulama olarak yayımlanır. Temel amacı uygulamayı manuel olarak güncelleme derdinden kurtarıp Shizuku ve Root kullanarak otomasyon sağlamaktır.
+This is where most of the user-facing components live — like the **Instafel menu**, UI dialogs, and custom screens.  
+Keep in mind: any code you write here should be **compatible with Instagram's internal libraries** since it integrates directly with their UI system.
 
-- **Patcher**
+---
 
-  Normal kullanıcıları ilgilendiren bir alt proje değildir. Instafel APKlarının üretilmesinden sorumludur. Patcher App'in derlenen hallerini (dex, arsc dosyaları gibi) işleyerek Instagram APK'sının içerisine yerleştirir ve kod bağlantılarını yapar.
+### 🔄 Updater
 
-- **GPlayAPI**
+A completely **standalone app** that automates updates.  
+Its aim is to make sure users don’t need to manually download and install APKs. It uses **Shizuku** or **root access** to apply updates directly from inside the device.
 
-  En güncel alpha apklarını Google Play'den çekerek Patcher'ı tetikler, bu sayede tam otomasyon sağlanır
+---
 
-- **Website**
+### 🧩 Patcher
 
-  Şu an gezinmekte olduğunuz websitenin kodlarını içermektedir. NextJS ve Shacn/UI kullanılarak yapılmışır.
+This one’s mainly for developers — **not end-users**.  
+It’s used to generate Instafel APKs by injecting the App module’s compiled code (like `.dex` and `.arsc` files) into the official Instagram Alpha APK. It also takes care of hooking and wiring everything together.
 
-## Instafel Config Nedir?
+---
 
-Instafel config dosyası **config/example.ifl_config.json** içinde bulunabilir. Bu dosya alt projelerin derlenirken alacağı sürüm bilgileri, etiketleri ve kütüphane yönetimi gibi detayları belirtir. Gradle Settings bu dosyadan okuma yaparak süreci yönetir. Normal bir geliştiricinin bu dosya (ve bu dosyayı ilgilendiren kısımlar) ile gerekmediği sürece hiçbir alakası olmamalıdır.
+### 🧪 GPlayAPI
+
+A helper module that fetches the latest **Instagram Alpha builds** directly from Google Play.  
+Once it detects a new build, it automatically triggers the patching process — this makes the whole release pipeline as hands-free as possible.
+
+---
+
+### 🌐 Website
+
+This contains the code for the **Instafel website** you’re visiting right now.  
+Built with **Next.js** and styled using **shadcn/ui**.
+
+---
+
+## ⚙️ What Is the Instafel Config File?
+
+The config file can be found here:  
+`config/example.ifl_config.json`
+
+It’s used during the build process to define:
+- Version numbers for each module
+- Tag names
+- Gradle dependency behavior
+- Which subprojects to include
+
+Gradle reads this file to know **how to compile and link everything properly**.
+
+> 🛠️ If you're just working on UI or testing features, you probably won’t need to touch this file.
+
+---

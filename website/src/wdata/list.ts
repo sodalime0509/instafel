@@ -173,14 +173,14 @@ const wikiData: WikiCategory[] = [
             slug: "general-info",
             title: "General Info",
             description:
-              "Instafel üzerinde geliştirme yapmadan önce bilmeniz gereken şeyler",
+              "An article outlining key information to understand before working with Instafel's source code.",
             writer: "mamiiblt",
           },
           {
             slug: "building-sources",
             title: "Building sources",
             description:
-              "Kanyak kodlarının nasıl derlenmesi gerektiğine dair bir rehber",
+              "An article detailing the process of compiling the source code for Instafel's components.",
             writer: "mamiiblt",
           },
         ],

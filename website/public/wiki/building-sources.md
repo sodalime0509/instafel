@@ -1,32 +1,42 @@
-## İlk bakış
+## Overview
 
-Instafel projelerini aşağıdaki yönergeleri uygulayarak çok kolayca derleyebilirsiniz. Derleme işlemlerini gerçekleştirirken Java 17+ ve NPM 20+ sürümlerine sahip olduğunuza emin olun.
+You can easily build Instafel projects by following the guidelines below. Ensure you have Java 17+ and NPM 20+ installed before proceeding with the build process.
+
+---
 
 ## App
 
-Gradle Build dosyasını **app/build.gradle.kts** konumunda bulabilirsiniz. Bu proje derlenebilmek için Java 17 ve üstü bir Java gerektirir. App, **Debug** ve **Release** olmak üzere iki farklı kanalda derlenebilir. APK çıktıları daima olarak **app/output/ifl-app-xxxxx-tag.apk** konumuna çıkarılacaktır.
+The Gradle build file is located at **app/build.gradle.kts**. This project requires Java 17 or higher to build. The app can be built in two channels: **Debug** and **Release**. APK outputs will always be generated at **app/output/ifl-app-xxxxx-tag.apk**.
 
-Debug APK çıktısı alabilmek için aşağıdaki komut kullanılmalıdır.
+To generate a Debug APK, use the following command:  
 `./gradlew :app:generate-app-debug`  
-Eğer Release APK almak isterseniz ise şu komutu çalıştırabilirsiniz.
+To generate a Release APK, run this command:  
 `./gradlew :app:generate-app-release`
 
-Ek olarak bilmeniz gereken şey ise bu projenin normal kullanımda Instagram APK'sı ile aynı kütüphanelere sahip olmadığı için (örn Instagram APKları kısıtlanmış bir AndroidX kütüphanesi sunar) davranışlarının değişkenlik gösterebileceğidir.
+Note that this project does not use the same libraries as the official Instagram APK (e.g., Instagram APKs use a restricted AndroidX library), which may result in varying behavior.
+
+---
 
 ## Updater
 
-Gradle Build dosyasını **updater/build.gradle.kts** konumunda bulabilirsiniz. Bu proje derlenebilmek için Java 17 ve üstü bir Java gerektirir. Updater, **Debug** ve **Release** olmak üzere iki farklı kanalda derlenebilir. APK çıktıları daima olarak **updater/output/ifl-updater-xxxxx-tag.apk** konumuna çıkarılacaktır.
+The Gradle build file is located at **updater/build.gradle.kts**. This project requires Java 17 or higher to build. The updater can be built in two channels: **Debug** and **Release**. APK outputs will always be generated at **updater/output/ifl-updater-xxxxx-tag.apk**.
 
-Debug APK çıktısı alabilmek için aşağıdaki komut kullanılmalıdır.
+To generate a Debug APK, use the following command:  
 `./gradlew :updater:generate-app-debug`  
-Eğer Release APK almak isterseniz ise şu komutu çalıştırabilirsiniz.
+To generate a Release APK, run this command:  
 `./gradlew :updater:generate-app-release`
+
+---
 
 ## GPlayAPI
 
-Bu proje standalone bir JAR dosyası üretir. Çıktı dosyası **gplayapi/output/ifl-gplayapi-xxxxx.jar** olarak kaydedilir. JAR dosyası üretebilmek için aşağıdaki komutu çalıştırabilirsiniz.
+This project produces a standalone JAR file. The output file is saved as **gplayapi/output/ifl-gplayapi-xxxxx.jar**. To generate the JAR file, run the following command:  
 `./gradlew :gplayapi:build-jar`
+
+---
 
 ## Website
 
-Websitesi NextJS sayesinde kodlanmıştır, bağımlılıkların kurulumu, paket yönetimi konulara [NextJS Docs](https://nextjs.org/docs) üzerinden erişebilirsiniz. Instafel Websitesi için istisnai bir durum yoktur.
+The website is built using NextJS. For information on dependency installation and package management, refer to the [NextJS Docs](https://nextjs.org/docs). There are no exceptional cases for the Instafel website.
+
+---
