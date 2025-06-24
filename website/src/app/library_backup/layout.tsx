@@ -3,7 +3,7 @@ import { defaultMetadata } from "@/config/metadata";
 
 export const metadata: Metadata = {
   ...defaultMetadata,
-  title: `Instafel Backups`,
+  title: `Backup Library`,
   description: "You can find all backups in here!",
 };
 

@@ -1,14 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import {
   Camera,
   CircleFadingPlus,
   Ellipsis,
-  Flag,
+  FlagIcon,
   GalleryVerticalEnd,
   PhoneCall,
   Play,
@@ -19,6 +19,9 @@ import {
   Wallpaper,
   Wrench,
 } from "lucide-react";
+import { LoadingBar } from "@/components/LoadingBars";
+import { useTranslation } from "react-i18next";
+import Navbar from "@/components/Navbar";
 
 interface ResponseScheme {
   manifest_version: number;
@@ -40,6 +43,7 @@ interface ResponseScheme {
 }
 
 export default function LibraryBackupPage() {
+  const { t } = useTranslation("library_flag");
   const router = useRouter();
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [data, setData] = useState<ResponseScheme | null>(null);
@@ -47,87 +51,87 @@ export default function LibraryBackupPage() {
   const categories = [
     {
       id: 0,
-      name: "All",
+      name: t("categories.all"),
       icon: <Shapes />,
       color: "blue",
     },
     {
       id: 1,
-      name: "Direct",
+      name: t("categories.direct"),
       icon: <Send />,
       color: "violet",
     },
     {
       id: 2,
-      name: "Reels",
+      name: t("categories.reels"),
       icon: <Play />,
       color: "emerald",
     },
     {
       id: 3,
-      name: "Stories",
+      name: t("categories.stories"),
       icon: <CircleFadingPlus />,
       color: "orange",
     },
     {
       id: 4,
-      name: "Feed",
+      name: t("categories.feed"),
       icon: <GalleryVerticalEnd />,
       color: "indigo",
     },
     {
       id: 5,
-      name: "Interface",
+      name: t("categories.interface"),
       icon: <SwatchBook />,
       color: "rose",
     },
     {
       id: 6,
-      name: "Notes",
+      name: t("categories.notes"),
       icon: <StickyNote />,
       color: "fuchsia",
     },
     {
       id: 7,
-      name: "Quality",
+      name: t("categories.quality"),
       icon: <Wallpaper />,
       color: "amber",
     },
     {
       id: 8,
-      name: "Camera",
+      name: t("categories.camera"),
       icon: <Camera />,
       color: "cyan",
     },
     {
       id: 9,
-      name: "Call",
+      name: t("categories.call"),
       icon: <PhoneCall />,
       color: "indigo",
     },
     {
       id: 10,
-      name: "Fixes",
+      name: t("categories.fixes"),
       icon: <Wrench />,
       color: "emerald",
     },
     {
       id: 11,
-      name: "Other",
+      name: t("categories.other"),
       icon: <Ellipsis />,
       color: "teal",
     },
   ];
-  /*useEffect(() => {
+
+  useEffect(() => {
     const fetchData = async () => {
-      var requestUrl = `https://glorious-spoon-7vx9jpprpgpfrxqq-3040.app.github.dev/flag_sizes`;
-      // var requestUrl = `https://iflagapi.mamiiblt.me/flag_sizes`;
+      var requestUrl = `https://flagapi.instafel.app/flag_sizes`;
       const res = await fetch(requestUrl);
       const result: ResponseScheme = await res.json();
       setData(result);
     };
     fetchData();
-  }, []);*/
+  }, []);
 
   const handleCategoryClick = (categoryId: number) => {
     router.push(`/flags?category=${categoryId}`);
@@ -136,81 +140,88 @@ export default function LibraryBackupPage() {
   const getColorClasses = (color: string, isHovered: boolean) => {
     const classes = {
       blue: {
-        bg: isHovered ? "bg-blue-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-blue-500",
-        border: "border-blue-100",
-        badge: "bg-blue-50 text-blue-600",
-        shadow: "hover:shadow-blue-100",
+        bgIsHovered: "bg-blue-500 dark:bg-blue-600",
+        text: isHovered ? "text-white" : "text-blue-500 dark:text-blue-400",
+        badge:
+          "bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-blue-100 dark:hover:shadow-blue-900/20",
       },
       emerald: {
-        bg: isHovered ? "bg-emerald-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-emerald-500",
-        border: "border-emerald-100",
-        badge: "bg-emerald-50 text-emerald-600",
-        shadow: "hover:shadow-emerald-100",
+        bgIsHovered: "bg-emerald-500 dark:bg-emerald-600",
+        text: isHovered
+          ? "text-white"
+          : "text-emerald-500 dark:text-emerald-400",
+        badge:
+          "bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-emerald-100 dark:hover:shadow-emerald-900/20",
       },
       violet: {
-        bg: isHovered ? "bg-violet-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-violet-500",
-        border: "border-violet-100",
-        badge: "bg-violet-50 text-violet-600",
-        shadow: "hover:shadow-violet-100",
+        bgIsHovered: "bg-violet-500 dark:bg-violet-600",
+        text: isHovered ? "text-white" : "text-violet-500 dark:text-violet-400",
+        badge:
+          "bg-violet-50 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-violet-100 dark:hover:shadow-violet-900/20",
       },
       orange: {
-        bg: isHovered ? "bg-orange-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-orange-500",
-        border: "border-orange-100",
-        badge: "bg-orange-50 text-orange-600",
-        shadow: "hover:shadow-orange-100",
+        bgIsHovered: "bg-orange-500 dark:bg-orange-600",
+        text: isHovered ? "text-white" : "text-orange-500 dark:text-orange-400",
+        badge:
+          "bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-orange-100 dark:hover:shadow-orange-900/20",
       },
       rose: {
-        bg: isHovered ? "bg-rose-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-rose-500",
-        border: "border-rose-100",
-        badge: "bg-rose-50 text-rose-600",
-        shadow: "hover:shadow-rose-100",
+        bgIsHovered: "bg-rose-500 dark:bg-rose-600",
+        text: isHovered ? "text-white" : "text-rose-500 dark:text-rose-400",
+        badge:
+          "bg-rose-50 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-rose-100 dark:hover:shadow-rose-900/20",
       },
       teal: {
-        bg: isHovered ? "bg-teal-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-teal-500",
-        border: "border-teal-100",
-        badge: "bg-teal-50 text-teal-600",
-        shadow: "hover:shadow-teal-100",
+        bgIsHovered: "bg-teal-500 dark:bg-teal-600",
+        text: isHovered ? "text-white" : "text-teal-500 dark:text-teal-400",
+        badge:
+          "bg-teal-50 text-teal-600 dark:bg-teal-900/30 dark:text-teal-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-teal-100 dark:hover:shadow-teal-900/20",
       },
       cyan: {
-        bg: isHovered ? "bg-cyan-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-cyan-500",
-        border: "border-cyan-100",
-        badge: "bg-cyan-50 text-cyan-600",
-        shadow: "hover:shadow-cyan-100",
+        bgIsHovered: "bg-cyan-500 dark:bg-cyan-600",
+        text: isHovered ? "text-white" : "text-cyan-500 dark:text-cyan-400",
+        badge:
+          "bg-cyan-50 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-cyan-100 dark:hover:shadow-cyan-900/20",
       },
       indigo: {
-        bg: isHovered ? "bg-indigo-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-indigo-500",
-        border: "border-indigo-100",
-        badge: "bg-indigo-50 text-indigo-600",
-        shadow: "hover:shadow-indigo-100",
+        bgIsHovered: "bg-indigo-500 dark:bg-indigo-600",
+        text: isHovered ? "text-white" : "text-indigo-500 dark:text-indigo-400",
+        badge:
+          "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-indigo-100 dark:hover:shadow-indigo-900/20",
       },
       fuchsia: {
-        bg: isHovered ? "bg-fuchsia-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-fuchsia-500",
-        border: "border-fuchsia-100",
-        badge: "bg-fuchsia-50 text-fuchsia-600",
-        shadow: "hover:shadow-fuchsia-100",
-      },
-      yellow: {
-        bg: isHovered ? "bg-yellow-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-yellow-500",
-        border: "border-yellow-200",
-        badge: "bg-yellow-50 text-yellow-600",
-        shadow: "hover:shadow-yellow-100",
+        bgIsHovered: "bg-fuchsia-500 dark:bg-fuchsia-600",
+        text: isHovered
+          ? "text-white"
+          : "text-fuchsia-500 dark:text-fuchsia-400",
+        badge:
+          "bg-fuchsia-50 text-fuchsia-600 dark:bg-fuchsia-900/30 dark:text-fuchsia-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-fuchsia-100 dark:hover:shadow-fuchsia-900/20",
       },
       amber: {
-        bg: isHovered ? "bg-amber-500" : "bg-white",
-        text: isHovered ? "text-white" : "text-amber-500",
-        border: "border-amber-200",
-        badge: "bg-amber-50 text-amber-600",
-        shadow: "hover:shadow-amber-100",
+        bgIsHovered: "bg-amber-500 dark:bg-amber-600",
+        text: isHovered ? "text-white" : "text-amber-500 dark:text-amber-400",
+        badge:
+          "bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300",
+        shadow:
+          "hover:shadow-lg hover:shadow-amber-100 dark:hover:shadow-amber-900/20",
       },
     };
     return classes[color as keyof typeof classes] || classes.blue;
@@ -220,47 +231,34 @@ export default function LibraryBackupPage() {
     <AnimatePresence>
       {data ? (
         <div>
-          {" "}
-          <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+          <Navbar />
+
+          <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-12">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeOut",
-                  }}
-                  className="bg-gray-600 text-white p-3 rounded-lg inline-block mb-4"
-                >
-                  <Flag size={24} />
-                </motion.div>
-                <motion.h2
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.8,
-                    ease: "easeInOut",
-                  }}
-                  className="text-3xl font-bold mb-4"
-                >
-                  Flag Library
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    delay: 0.2,
-                    duration: 0.8,
-                    ease: "easeOut",
-                  }}
-                  className="text-muted-foreground  max-w-2xl mx-auto"
-                >
-                  You can list the flags in any category or all of them if you
-                  want. Also you can filter flags in category with add date,
-                  author or etc filters.
-                </motion.p>
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-center mb-12"
+              >
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <div
+                      className="absolute inset-0 rounded-full bg-primary/20 animate-ping"
+                      style={{ animationDuration: "3s" }}
+                    ></div>
+                    <div className="relative bg-primary/30 p-5 rounded-full">
+                      <FlagIcon className="h-12 w-12 text-primary" />
+                    </div>
+                  </div>
+                </div>
+                <h1 className="text-4xl font-bold mb-4 text-foreground">
+                  {t("title")}
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  {t("desc")}
+                </p>
+              </motion.div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {categories.map((category) => {
@@ -287,27 +285,31 @@ export default function LibraryBackupPage() {
                         <button
                           onClick={() => handleCategoryClick(category.id)}
                           className={`
-            w-full p-4 h-[160px]
-            flex flex-col items-center justify-center text-center
-            rounded-xl border transition-all duration-300
-            ${colorClasses.bg} ${colorClasses.text} ${colorClasses.border}
-            hover:shadow-lg ${colorClasses.shadow}
-          `}
+                            w-full p-4 h-[160px]
+                            flex flex-col items-center justify-center text-center
+                            rounded-xl border transition-all duration-300
+                            ${
+                              hoveredId == category.id
+                                ? colorClasses.bgIsHovered
+                                : "bg-card"
+                            } ${colorClasses.text}
+                            ${colorClasses.shadow}
+                          `}
                         >
                           <div
                             className={`
-            mb-3 transform transition-transform duration-300
-            ${hoveredId === category.id ? "scale-110" : ""}
-          `}
+                              mb-3 transform transition-transform duration-300
+                              ${hoveredId === category.id ? "scale-110" : ""}
+                            `}
                           >
                             {category.icon}
                           </div>
 
                           <h3
                             className={`
-            font-medium mb-1 transition-colors duration-300
-            ${hoveredId === category.id ? "text-white" : "text-gray-900"}
-          `}
+                              font-medium mb-1 transition-colors duration-300
+                              ${hoveredId === category.id ? "text-white" : ""}
+                            `}
                           >
                             {category.name}
                           </h3>
@@ -315,11 +317,16 @@ export default function LibraryBackupPage() {
                           <div className="mt-2 text-center">
                             <span
                               className={`
-                    text-xs font-medium px-2 py-1 rounded-full
-                    ${colorClasses.badge}
-                  `}
+                                text-xs font-medium px-2 py-1 rounded-full
+                                ${colorClasses.badge}
+                              `}
                             >
-                              {data.flagSizes[category.name.toLowerCase()]} Flag
+                              {t("num_flag", {
+                                fsize:
+                                  data.flagSizes[
+                                    category.name.toLowerCase() as keyof typeof data.flagSizes
+                                  ],
+                              })}
                             </span>
                           </div>
                         </button>
@@ -334,16 +341,8 @@ export default function LibraryBackupPage() {
         </div>
       ) : (
         <div>
-          <div className="flex min-h-screen flex-col items-center justify-center bg-linear-to-b from-gray-50 to-gray-100 p-4">
-            <main className="flex w-full max-w-5xl flex-1 flex-col items-center justify-center text-center">
-              <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl md:text-7xl">
-                Comming soon...
-              </h1>
-              <p className="mt-6 text-lg text-gray-600">
-                This part is still not finished, so we have to wait...
-              </p>
-            </main>
-          </div>
+          <Navbar />
+          <LoadingBar />
           <Footer />
         </div>
       )}

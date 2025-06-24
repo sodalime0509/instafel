@@ -1,0 +1,19 @@
+{
+  "categories": {
+    "all": "All",
+    "direct": "Direct",
+    "reels": "Reels",
+    "stories": "Stories",
+    "feed": "Feed",
+    "interface": "Interface",
+    "notes": "Notes",
+    "quality": "Quality",
+    "camera": "Camera",
+    "call": "Call",
+    "fixes": "Fixes",
+    "other": "Other"
+  },
+  "title": "Flag Library",
+  "desc": "On this page, you can find all the flags available in Instafel's flag library, categorized by type.",
+  "num_flag": "{{fsize}} Flag"
+}
