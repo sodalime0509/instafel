@@ -65,22 +65,24 @@ function InstafelLogoPart() {
             orientation="vertical"
             className="mr-2 data-[orientation=vertical]:h-6"
           />
-          <motion.div
-            initial={{ opacity: 0, rotate: -10 }}
-            animate={{ opacity: 1, rotate: 0 }}
-            transition={{ duration: 0.5 }}
-            whileHover={{ rotate: -10 }}
-          >
-            <LucideInstagram className="h-6 w-6" />
-          </motion.div>
-          <motion.span
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-            className="text-lg font-medium text-foreground"
-          >
-            Instafel
-          </motion.span>
+          <Link href={"/"}>
+            <motion.div
+              initial={{ opacity: 0, rotate: -10 }}
+              animate={{ opacity: 1, rotate: 0 }}
+              transition={{ duration: 0.5 }}
+              whileHover={{ rotate: -10 }}
+            >
+              <LucideInstagram className="h-6 w-6" />
+            </motion.div>
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              className="text-lg font-medium text-foreground"
+            >
+              Instafel
+            </motion.span>
+          </Link>
         </div>
       ) : (
         <Link
