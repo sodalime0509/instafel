@@ -11,9 +11,13 @@
     "camera": "Camera",
     "call": "Call",
     "fixes": "Fixes",
-    "other": "Other"
+    "other": "Other",
+    "comments": "Comments",
+    "profile": "Profile",
+    "professional": "Professional",
+    "livestreams": "Livestreams",
+    "meta-ai": "Meta AI"
   },
   "title": "Flag Library",
-  "desc": "On this page, you can find all the flags available in Instafel's flag library, categorized by type.",
-  "num_flag": "{{fsize}} Flag"
+  "desc": "On this page, you can find all the flags available in Instafel's flag library, categorized by type."
 }
