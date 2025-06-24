@@ -2,6 +2,7 @@
 
 import { WikiCategory } from "@/wdata/wiki";
 import {
+  BookCheck,
   FileCog2,
   FlagIcon,
   GitBranchIcon,
@@ -146,13 +147,15 @@ const wikiData: WikiCategory[] = [
           {
             slug: "exporting-backups",
             title: "Exporting Backups",
-            description: "An article for explaining how you can export your backups.",
+            description:
+              "An article for explaining how you can export your backups.",
             writer: "buraakkcayir",
           },
           {
             slug: "contributing",
             title: "Contributing",
-            description: "An article for explaining how you can contribute to the Backup Library.",
+            description:
+              "An article for explaining how you can contribute to the Backup Library.",
             writer: "buraakkcayir",
           },
         ],
@@ -160,22 +163,27 @@ const wikiData: WikiCategory[] = [
     ],
   },
   {
-    name: "Translation",
+    name: "Source Code",
     subs: [
       {
-        name: "Beginning",
-        icon: GitBranchIcon,
-        pages: [],
-      },
-    ],
-  },
-  {
-    name: "Documentation",
-    subs: [
-      {
-        name: "Beginning",
-        icon: GitBranchIcon,
-        pages: [],
+        name: "Introduction",
+        icon: BookCheck,
+        pages: [
+          {
+            slug: "general-info",
+            title: "General Info",
+            description:
+              "Instafel üzerinde geliştirme yapmadan önce bilmeniz gereken şeyler",
+            writer: "mamiiblt",
+          },
+          {
+            slug: "building-sources",
+            title: "Building sources",
+            description:
+              "Kanyak kodlarının nasıl derlenmesi gerektiğine dair bir rehber",
+            writer: "mamiiblt",
+          },
+        ],
       },
     ],
   },
