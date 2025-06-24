@@ -11,6 +11,8 @@ Developer options include:
 
 These options are critical to understanding how Meta builds, evaluates, and releases features.
 
+---
+
 ### 🛠️ How Instafel Unlocks These Menus
 
 Instafel uses a custom patching process to forcibly unlock developer menus. Rather than injecting external code, it modifies the Alpha APK’s layout and view tree to:
@@ -28,6 +30,8 @@ Examples of these unreleased features:
 - New features related to social interactions
 - etc.
 
+---
+
 ## 🛠️ Accessing Developer Options
 
 ### How to Open Developer Options in Instafel
@@ -37,3 +41,5 @@ Examples of these unreleased features:
 3. **Enter the Developer Options:** Click on the option "Go to Developer Options Page"
 4. **Navigate to Internal Settings:** Look for “MetaConfig Settings & Overrides under “Experimentation.”
 5. **Explore Flags and Toggles:** Inside, you’ll find feature flags, toggle switches, and experimental options that you can enable or disable.
+
+---

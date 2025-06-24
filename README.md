@@ -37,7 +37,7 @@ Provides guides, libraries, and more for Instafel users dynamically.
 You can access all information and documents about Instafel here!
 
 > 📦 [Source Code](https://github.com/mamiiblt/instafel/tree/main/wiki)
-> 🌐 [Website](https://wiki.instafel.app)
+> 🌐 [Website](https://instafel.app/wiki)
 
 ### GPlayAPI
 

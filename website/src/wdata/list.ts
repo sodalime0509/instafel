@@ -34,6 +34,13 @@ const wikiData: WikiCategory[] = [
               "An article for explaining the basic logic of Instafel and Instagram Alpha.",
             writer: "buraakkcayir",
           },
+          {
+            slug: "what-makes-instafel-unique",
+            title: "What Makes Instafel Unique?",
+            description:
+              "An article for explaining the main differences between Instafel and other Instagram mods/clients.",
+            writer: "buraakkcayir",
+          },
         ],
       },
       {

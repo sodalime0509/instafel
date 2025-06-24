@@ -36,6 +36,6 @@ If possible, include:
 
 ### 📥 How to Submit
 
-To contribute your backup file, **directly message [@iamzainnn](https://t.me/iamzainnn) on Telegram**. He will review and help publish your backup to the official library.
+To contribute your backup file, **directly message [@iamzainnnn](https://t.me/iamzainnn) on Telegram**. He will review and help publish your backup to the official library.
 
 ---

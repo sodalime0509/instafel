@@ -2,6 +2,8 @@
 
 Instafel is ideal for those who want early access to experimental features and enhanced control over Instagram.
 
+---
+
 ## 🚀 How Instafel Works
 
 The process behind Instafel is designed to be fast, efficient, and reliable:
@@ -14,6 +16,8 @@ The process behind Instafel is designed to be fast, efficient, and reliable:
 
 3. **Automated Release**  
    After successful testing, the **Instafel Bot** automatically uploads the approved build to our official release channel — making it instantly accessible to users.
+
+---
 
 ## ✨ Features
 
@@ -37,6 +41,8 @@ The process behind Instafel is designed to be fast, efficient, and reliable:
 
   These features can be accessed directly from the **Instafel Menu**.
 
+---
+
 ## 🧰 Getting Started
 
 Follow these steps to install Instafel on your device:
@@ -56,3 +62,5 @@ Follow these steps to install Instafel on your device:
 
 5. **Stay Updated**  
    Use the in-app updater or join our Telegram channel to stay informed about the new releases and updates.
+
+---
