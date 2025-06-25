@@ -3,8 +3,8 @@ import { defaultMetadata } from "@/config/metadata";
 
 export const metadata: Metadata = {
   ...defaultMetadata,
-  title: `Instafel Backups`,
-  description: "You can find all backups in here!",
+  title: `Instafel Flag`,
+  description: "Click this link to visit flag information.",
 };
 
 export default function AboutLayout({

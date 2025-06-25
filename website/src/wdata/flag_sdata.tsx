@@ -2,6 +2,7 @@ import {
   Bot,
   BriefcaseBusiness,
   Camera,
+  CircleEllipsis,
   CircleFadingPlus,
   GalleryVerticalEnd,
   MessageCircleMore,
@@ -76,5 +77,9 @@ export const flagCategories = [
   {
     cif: "livestreams",
     icon: <TvMinimalPlay />,
+  },
+  {
+    cif: "other",
+    icon: <CircleEllipsis />,
   },
 ];
