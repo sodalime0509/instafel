@@ -8,6 +8,7 @@ import { LoadingBar } from "@/components/LoadingBars";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "next/navigation";
 import matter from "gray-matter";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 export default function Page() {
   const { t } = useTranslation("flag");
@@ -60,7 +61,12 @@ export default function Page() {
       <Navbar />
       <FlagDetailPage flagData={flagData}>
         <div className="space-y-4">
-          <p>{content}</p>
+          <MarkdownRenderer
+            content={content}
+            imgSrc={
+              "https://raw.githubusercontent.com/instafel/flags/refs/heads/main/imgs/"
+            }
+          />
         </div>
       </FlagDetailPage>
       <Footer />;

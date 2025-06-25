@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 
-export default function MarkdownRenderer({ content }) {
+export default function MarkdownRenderer({ content, imgSrc }) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -140,7 +140,7 @@ export default function MarkdownRenderer({ content }) {
 
           img: ({ src, alt, ...props }) => (
             <img
-              src={"/wiki-imgs" + src}
+              src={imgSrc + src}
               alt={alt}
               loading="lazy"
               className="rounded-xl shadow-md max-w-full h-auto mb-4"

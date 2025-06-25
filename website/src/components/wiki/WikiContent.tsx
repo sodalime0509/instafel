@@ -52,7 +52,7 @@ export default function WikiContent({
         )}
       </div>
 
-      <MarkdownRenderer content={content} />
+      <MarkdownRenderer content={content} imgSrc={"/wiki-imgs"} />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
