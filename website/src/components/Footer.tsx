@@ -6,6 +6,7 @@ import {
   BookOpenText,
   Download,
   FileCog2Icon,
+  FlagIcon,
   GithubIcon,
   LucideInstagram,
   RefreshCcwDot,
@@ -86,6 +87,18 @@ export default function Footer() {
                     >
                       <FileCog2Icon className="w-4 h-4" />
                       {t("footer.6")}
+                    </Link>
+                  </motion.li>
+                  <motion.li
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    <Link
+                      href="/library_flag"
+                      className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
+                    >
+                      <FlagIcon className="w-4 h-4" />
+                      {t("footer.11")}
                     </Link>
                   </motion.li>
                 </ul>

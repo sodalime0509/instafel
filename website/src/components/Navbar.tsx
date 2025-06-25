@@ -23,6 +23,7 @@ import {
   GithubIcon,
   Box,
   ListCollapse,
+  FlagIcon,
 } from "lucide-react";
 import ThemeSwitcher from "./ThemeSwitcher";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -157,6 +158,10 @@ export default function Navbar() {
       title: t("navbar.items.backups"),
       href: "/library_backup",
     },
+    /*{
+      title: t("navbar.items.flags"),
+      href: "/library_flag",
+    },*/
     {
       title: t("navbar.items.updater"),
       href: "/about_updater",
@@ -304,6 +309,8 @@ export default function Navbar() {
                         MobileIcon = BookOpenText;
                       } else if (link.title == t("navbar.items.backups")) {
                         MobileIcon = FileCog2Icon;
+                      } else if (link.title == t("navbar.items.flags")) {
+                        MobileIcon = FlagIcon;
                       } else if (link.title == t("navbar.items.updater")) {
                         MobileIcon = RefreshCcwDot;
                       } else if (link.title == t("navbar.items.src_code")) {

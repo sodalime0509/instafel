@@ -15,5 +15,9 @@ export const namespaces = [
   "home",
   "library_backup",
   "updater",
+  "library_flag",
+  "fcategories",
+  "flag",
+  "flags",
 ];
 export const cookieName = "WPG_LANG";
