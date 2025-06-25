@@ -11,9 +11,10 @@ import Navbar from "@/components/Navbar";
 import { useTranslation } from "react-i18next";
 
 interface FlagListData {
-  f: string;
-  t: string;
-  a: string;
+  fid: string;
+  title: string;
+  author: string;
+  last_edit: string;
 }
 
 export default function FlagListPage() {
@@ -30,8 +31,16 @@ export default function FlagListPage() {
         const res = await fetch(
           `https://raw.githubusercontent.com/instafel/flags/refs/heads/main/list/_list_contents/${categoryName}.json`
         );
-        const result: FlagListData[] = await res.json();
-        setData(result);
+        const result: [] = await res.json();
+        var data: FlagListData[] = [];
+        result.forEach((item) => data.push({ 
+          fid: item[0],
+          title: item[1],
+          author: item[2],
+          last_edit: item[3]
+        }))
+
+        setData(data);
       } catch (e) {
         console.error("An error occured while sending / reading response:", e);
       }
@@ -90,7 +99,7 @@ export default function FlagListPage() {
                   {data.map((flag, index) => (
                     <Link
                       key={index}
-                      href={"/flag?fid=" + flag.f}
+                      href={"/flag?fid=" + flag.fid}
                       className="group relative"
                     >
                       <div
@@ -105,12 +114,12 @@ export default function FlagListPage() {
                             <div className="flex-12">
                               <div className="flex items-center gap-3">
                                 <h3 className="text-lg font-semibold text-foreground">
-                                  {flag.t}
+                                  {flag.title}
                                 </h3>
                               </div>
                               <div className="mb-2">
                                 <h3 className="text-sm font-regular text-foreground">
-                                  {flag.f}
+                                  {flag.fid}
                                 </h3>
                               </div>
 
@@ -129,7 +138,7 @@ export default function FlagListPage() {
                                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                                     />
                                   </svg>
-                                  {t("added_by", { name: flag.a })}
+                                  {t("added_by", { name: flag.author })}
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <svg
@@ -145,14 +154,7 @@ export default function FlagListPage() {
                                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                     />
                                   </svg>
-                                  {/*{t("uploaded_at", {
-                                    date_str: new Date(flag.addate)
-                                      .toLocaleDateString("en-US")
-                                      .toString(),
-                                  })}*/}
-                                  {t("uploaded_at", {
-                                    date_str: "Example Date",
-                                  })}
+                                  {t("uploaded_at", { date_str: flag.last_edit })}
                                 </div>
                               </div>
                             </div>
