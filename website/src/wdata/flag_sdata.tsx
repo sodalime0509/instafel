@@ -17,6 +17,9 @@ import {
   Wrench,
 } from "lucide-react";
 
+export const flagsRepoContentURL =
+  "https://raw.githubusercontent.com/instafel/flags/refs/heads/main";
+
 export const flagCategories = [
   {
     cif: "direct",

@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useSearchParams } from "next/navigation";
 import matter from "gray-matter";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import { flagsRepoContentURL } from "@/wdata/flag_sdata";
 
 export default function Page() {
   const { t } = useTranslation("flag");
@@ -22,9 +23,7 @@ export default function Page() {
   useEffect(() => {
     const loadFlagData = async () => {
       try {
-        const res = await fetch(
-          `https://raw.githubusercontent.com/instafel/flags/refs/heads/main/list/mds/${ID}.md`
-        );
+        const res = await fetch(`${flagsRepoContentURL}/contents/${ID}.md`);
 
         const { data: frontmatter, content } = matter(await res.text());
         if (content != "404: Not Found") {

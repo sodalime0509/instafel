@@ -9,6 +9,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { useTranslation } from "react-i18next";
+import { flagsRepoContentURL } from "@/wdata/flag_sdata";
 
 interface FlagListData {
   id: string;
@@ -29,7 +30,7 @@ export default function FlagListPage() {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `https://raw.githubusercontent.com/instafel/flags/refs/heads/main/list/dir-list/${categoryName}.json`
+          `${flagsRepoContentURL}/lists/${categoryName}.json`
         );
         const result: [] = await res.json();
         var data: FlagListData[] = [];
@@ -114,7 +115,7 @@ export default function FlagListPage() {
                         <div className="p-4 sm:p-6">
                           <div className="flex items-start justify-between">
                             <div className="flex-12">
-                              <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-3 mb-2">
                                 <h3 className="text-lg font-semibold text-foreground">
                                   {flag.title}
                                 </h3>

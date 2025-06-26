@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { flagCategories } from "@/wdata/flag_sdata";
+import { flagCategories, flagsRepoContentURL } from "@/wdata/flag_sdata";
 import { FlagIcon } from "lucide-react";
 import { LoadingBar } from "@/components/LoadingBars";
 
@@ -17,7 +17,7 @@ export default function LibraryBackupPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      var requestUrl = `https://raw.githubusercontent.com/instafel/flags/refs/heads/main/lists/_sizes.json`;
+      var requestUrl = `${flagsRepoContentURL}/lists/_sizes.json`;
       const res = await fetch(requestUrl);
       const result = await res.json();
       setData(result);
