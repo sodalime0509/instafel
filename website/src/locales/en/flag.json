@@ -1,8 +1,8 @@
 {
   "added_by": "Added by",
-  "last_edit": "Last edit",
+  "last_edit": "Last Edit",
   "added_in": "Added in",
   "removed_in": "Removed in",
-  "incomp_flags": "Incompatible Flags",
+  "used_flags": "Used Flags",
   "not_found": "Flag not found"
 }
