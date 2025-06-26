@@ -1,4 +1,5 @@
 {
   "title": "Flag Library",
-  "desc": "On this page, you can find all the flags available in Instafel's flag library, categorized by type."
+  "desc": "On this page, you can find all the flags available in Instafel's flag library, categorized by type.",
+  "num_flag": "{{fsize}} Flag"
 }
