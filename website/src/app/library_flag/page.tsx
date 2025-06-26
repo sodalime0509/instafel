@@ -13,21 +13,9 @@ import { LoadingBar } from "@/components/LoadingBars";
 export default function LibraryBackupPage() {
   const { t } = useTranslation(["library_flag", "fcategories"]);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [data, setData] = useState<{}>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      var requestUrl = `${flagsRepoContentURL}/lists/_sizes.json`;
-      const res = await fetch(requestUrl);
-      const result = await res.json();
-      setData(result);
-    };
-    fetchData();
-  }, []);
 
   return (
     <AnimatePresence>
-      {data ? (
         <div>
           <Navbar />
           <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
@@ -96,14 +84,6 @@ export default function LibraryBackupPage() {
                           <h3 className="font-medium mb-1 transition-colors duration-300">
                             {t(`${category.cif}`, { ns: "fcategories" })}
                           </h3>
-
-                          <div className="mt-2 text-center">
-                            <span className="text-xs font-medium px-2 py-1 rounded-full bg-muted text-muted-foreground">
-                              {t("num_flag", {
-                                fsize: data[category.cif],
-                              })}
-                            </span>
-                          </div>
                         </button>
                       </Link>
                     </motion.div>
@@ -114,13 +94,6 @@ export default function LibraryBackupPage() {
           </div>
           <Footer />
         </div>
-      ) : (
-        <>
-          <Navbar />
-          <LoadingBar />
-          <Footer />
-        </>
-      )}
     </AnimatePresence>
   );
 }
