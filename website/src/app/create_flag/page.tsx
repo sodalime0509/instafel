@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,10 +12,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import TagInput from "@/components/TagInput";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { flagCategories } from "@/wdata/flag_sdata";
@@ -21,12 +24,18 @@ import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
-
-type Category = {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-};
+import {
+  FileText,
+  Eye,
+  Edit3,
+  Shield,
+  Flag,
+  Info,
+  Calendar,
+  Tag,
+  User,
+  Lock,
+} from "lucide-react";
 
 export default function CreateContentPage() {
   const { t } = useTranslation("fcategories");
@@ -40,9 +49,11 @@ export default function CreateContentPage() {
   const [usedFlags, setUsedFlags] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const payload = {
       title,
@@ -57,7 +68,7 @@ export default function CreateContentPage() {
 
     try {
       const res = await fetch(
-        "https://expert-broccoli-9vj4wg5x4g5fwv7-3000.app.github.dev/ifl/admin/user/create-flag",
+        "https://api.mamiiblt.me/ifl/admin/user/create-flag",
         {
           method: "POST",
           headers: {
@@ -72,7 +83,7 @@ export default function CreateContentPage() {
       const data = await res.json();
 
       if (data.status == "SUCCESS") {
-        toast("Request Sent Succesfully", {
+        toast("Flag Created", {
           description: data.extra.desc,
           action: {
             label: "Okay",
@@ -105,204 +116,333 @@ export default function CreateContentPage() {
         });
       }
     } catch (err) {
-      toast("Error occured", {
-        description: "An error occured while sending / respose of flag\n" + err,
+      toast("Error occurred", {
+        description:
+          "An error occurred while sending / response of flag\n" + err,
         action: {
           label: "Okay",
           onClick: () => {},
         },
       });
       console.error("❌ Error:", err);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <>
       <Navbar />
-      <div className="flex justify-center w-full">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-          className="container py-8 max-w-5xl"
-        >
-          <form onSubmit={handleSubmit}>
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Create New Flag in Flag Library</CardTitle>
-                <CardDescription>
-                  Fill in the metadata of your new content
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="title" className="text-sm font-medium">
-                      Title (*)
-                    </label>
-                    <Input
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Enter feature title"
-                      required
-                    />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-6 sm:py-8 lg:py-12 max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-6 lg:space-y-8"
+          >
+            <div className="text-center space-y-4">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
+                  Create New Flag
+                </h1>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <Card className="shadow-lg border-0 bg-card">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-xl">Informations</CardTitle>
                   </div>
+                  <CardDescription>
+                    Essential details about new flag
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="title"
+                        className="text-sm font-semibold flex items-center gap-2"
+                      >
+                        <FileText className="h-4 w-4" />
+                        Title{" "}
+                        <Badge variant="destructive" className="text-xs">
+                          Required
+                        </Badge>
+                      </label>
+                      <Input
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Enter feature title"
+                        className="h-11"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="category"
+                        className="text-sm font-semibold flex items-center gap-2"
+                      >
+                        <Tag className="h-4 w-4" />
+                        Category{" "}
+                        <Badge variant="destructive" className="text-xs">
+                          Required
+                        </Badge>
+                      </label>
+                      <select
+                        id="category"
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        required
+                      >
+                        <option value="">Select a category</option>
+                        {flagCategories.map((cat, idx) => (
+                          <option key={idx} value={cat.cif}>
+                            {t(cat.cif)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
                     <label
                       htmlFor="description"
-                      className="text-sm font-medium"
+                      className="text-sm font-semibold flex items-center gap-2"
                     >
-                      Description (*)
+                      <Edit3 className="h-4 w-4" />
+                      Description{" "}
+                      <Badge variant="destructive" className="text-xs">
+                        Required
+                      </Badge>
                     </label>
                     <Textarea
                       id="description"
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Enter a brief description of feature"
-                      rows={1}
+                      placeholder="Enter a brief description of the feature"
+                      className="min-h-[80px] resize-none"
                       required
                     />
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <h3 className="font-semibold text-sm">
+                        Version Information
+                      </h3>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="addedIn"
+                          className="text-sm font-medium text-muted-foreground"
+                        >
+                          Added In Version
+                        </label>
+                        <Input
+                          id="addedIn"
+                          value={addedIn}
+                          onChange={(e) => setAddedIn(e.target.value)}
+                          placeholder="e.g., 331.0.0.0.20"
+                          className="h-10"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="removedIn"
+                          className="text-sm font-medium text-muted-foreground"
+                        >
+                          Removed In Version
+                        </label>
+                        <Input
+                          id="removedIn"
+                          value={removedIn}
+                          onChange={(e) => setRemovedIn(e.target.value)}
+                          placeholder="e.g., 385.0.0.0.11"
+                          className="h-10"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
-                    <label htmlFor="category" className="text-sm font-medium">
-                      Flag Category (*)
-                    </label>
-                    <select
-                      id="category"
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      required
+                    <label
+                      htmlFor="usedFlags"
+                      className="text-sm font-semibold flex items-center gap-2"
                     >
-                      <option value="">Select a category</option>
-                      {flagCategories.map((cat, idx) => (
-                        <option key={idx} value={cat.cif}>
-                          {t(cat.cif)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="addedIn" className="text-sm font-medium">
-                      Added In
+                      <Flag className="h-4 w-4" />
+                      Used Flags{" "}
+                      <Badge variant="destructive" className="text-xs">
+                        Required
+                      </Badge>
                     </label>
-                    <Input
-                      id="addedIn"
-                      value={addedIn}
-                      onChange={(e) => setAddedIn(e.target.value)}
-                      placeholder="Version in added (like '331.0.0.0.20')"
+                    <TagInput
+                      id="usedFlags"
+                      tags={usedFlags}
+                      setTags={setUsedFlags}
+                      placeholder="Add flag name (e.g., panavision_nav3)"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="removedIn" className="text-sm font-medium">
-                      Removed In
-                    </label>
-                    <Input
-                      id="removedIn"
-                      value={removedIn}
-                      onChange={(e) => setRemovedIn(e.target.value)}
-                      placeholder="Version in removed (like '385.0.0.0.11')"
-                    />
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg border-0 bg-card">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2">
+                    <Edit3 className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-xl">Content Editor</CardTitle>
                   </div>
-                </div>
+                  <CardDescription>
+                    Write your feature documentation using Markdown format
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Tabs
+                    value={activeTab}
+                    onValueChange={setActiveTab}
+                    className="w-full"
+                  >
+                    <TabsList className="grid w-full grid-cols-2 h-11">
+                      <TabsTrigger
+                        value="edit"
+                        className="flex items-center gap-2"
+                      >
+                        <Edit3 className="h-4 w-4" />
+                        <span className="hidden sm:inline">Edit</span>
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="preview"
+                        className="flex items-center gap-2"
+                      >
+                        <Eye className="h-4 w-4" />
+                        <span className="hidden sm:inline">Preview</span>
+                      </TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="edit" className="mt-4">
+                      <Textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Write your markdown content here..."
+                        className="min-h-[400px] sm:min-h-[500px] font-mono text-sm resize-none"
+                      />
+                    </TabsContent>
+                    <TabsContent value="preview" className="mt-4">
+                      <div className="border rounded-lg p-4 sm:p-6 min-h-[400px] sm:min-h-[500px] overflow-y-auto bg-card">
+                        {content ? (
+                          <MarkdownRenderer
+                            content={content}
+                            imgSrc="https://raw.githubusercontent.com/instafel/flags/refs/heads/main/imgs/"
+                          />
+                        ) : (
+                          <div className="flex items-center justify-center h-full text-muted-foreground">
+                            <div className="text-center space-y-2">
+                              <FileText className="h-12 w-12 mx-auto opacity-50" />
+                              <p>No content to preview</p>
+                              <p className="text-sm">
+                                Start writing in the Edit tab
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
 
-                <div className="space-y-2">
-                  <label htmlFor="usedFlags" className="text-sm font-medium">
-                    Used Flags (*)
-                  </label>
-                  <TagInput
-                    id="usedFlags"
-                    tags={usedFlags}
-                    setTags={setUsedFlags}
-                    placeholder="Add flag name (like panavision_nav3)"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Content</CardTitle>
-                <CardDescription>
-                  Write your feature content, it needs be written with Markdown
-                  format
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Tabs
-                  value={activeTab}
-                  onValueChange={setActiveTab}
-                  className="w-full"
-                >
-                  <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="edit">Edit</TabsTrigger>
-                    <TabsTrigger value="preview">Preview</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="edit" className="mt-4">
-                    <Textarea
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      placeholder="Write your markdown content here..."
-                      className="min-h-[400px] font-mono"
-                      rows={15}
-                    />
-                  </TabsContent>
-                  <TabsContent value="preview" className="mt-4">
-                    <div className="border rounded-lg p-4 min-h-[400px] overflow-y-auto">
-                      <MarkdownRenderer
-                        content={content}
-                        imgSrc={
-                          "https://raw.githubusercontent.com/instafel/flags/refs/heads/main/imgs/"
-                        }
+              <Card className="shadow-lg border-0 bg-card">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    <CardTitle className="text-xl ">
+                      Admin Authentication
+                    </CardTitle>
+                  </div>
+                  <CardDescription>
+                    Admin credentials required for flag creation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="adminUs"
+                        className="text-sm font-semibold flex items-center gap-2"
+                      >
+                        <User className="h-4 w-4" />
+                        Admin Username
+                      </label>
+                      <Input
+                        id="adminUs"
+                        value={adminUsername}
+                        onChange={(e) => setAdminUs(e.target.value)}
+                        placeholder="username"
+                        className="h-11"
                       />
                     </div>
-                  </TabsContent>
-                </Tabs>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  <div className="space-y-2">
-                    <label htmlFor="addedIn" className="text-sm font-medium">
-                      Admin Username
-                    </label>
-                    <Input
-                      id="adminUs"
-                      value={adminUsername}
-                      onChange={(e) => setAdminUs(e.target.value)}
-                      placeholder="@xxxxx"
-                    />
+                    <div className="space-y-2">
+                      <label
+                        htmlFor="adminPass"
+                        className="text-sm font-semibold flex items-center gap-2"
+                      >
+                        <Lock className="h-4 w-4" />
+                        Admin Password
+                      </label>
+                      <Input
+                        id="adminPass"
+                        value={adminPassword}
+                        type="password"
+                        onChange={(e) => setAdminPass(e.target.value)}
+                        placeholder="Enter your password"
+                        className="h-11"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label htmlFor="removedIn" className="text-sm font-medium">
-                      Admin Password
-                    </label>
-                    <Input
-                      id="adminPass"
-                      value={adminPassword}
-                      type="password"
-                      onChange={(e) => setAdminPass(e.target.value)}
-                      placeholder="Super uber duber secret password"
-                    />
-                  </div>
-                </div>
-              </CardContent>
+                </CardContent>
+              </Card>
 
-              <CardFooter>
-                <div className="flex justify-end space-x-2">
-                  <Button type="submit">Create Flag</Button>
-                </div>
-              </CardFooter>
-              <p className="text-muted-foreground mr-6 mb-6 ml-6">
-                You can read TG Admin group logs for follow status
-              </p>
-            </Card>
-          </form>
-        </motion.div>
+              <Card className="shadow-lg border-0 bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20">
+                <CardContent className="pt-6">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-center sm:text-left">
+                      <p className="font-semibold">
+                        Ready to create new flag?
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        You should check telegram API logs after sending request!
+                      </p>
+                    </div>
+                    <Button
+                      type="submit"
+                      size="lg"
+                      disabled={isSubmitting}
+                      className="w-full sm:w-auto min-w-[140px] h-12"
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center gap-2">
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                          Creating...
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Flag className="h-4 w-4" />
+                          Create Flag
+                        </div>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </form>
+          </motion.div>
+        </div>
       </div>
       <Footer />
     </>
