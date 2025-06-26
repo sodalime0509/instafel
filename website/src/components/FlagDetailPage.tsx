@@ -9,11 +9,9 @@ import {
   CalendarIcon,
   UserIcon,
   TagIcon,
-  AlertTriangleIcon,
   PlusIcon,
   MinusIcon,
   FlagIcon,
-  IdCardIcon,
   IdCardLanyardIcon,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -39,7 +37,7 @@ const FlagDetailPage: React.FC<FlagDetailPageProps> = ({
   flagData,
   children,
 }) => {
-  const { t } = useTranslation(["flag", "fcategories"]);
+  const { t, i18n } = useTranslation(["flag", "fcategories"]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -180,7 +178,10 @@ const FlagDetailPage: React.FC<FlagDetailPageProps> = ({
                       {t("last_edit")}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {flagData.last_edit}
+                      {new Intl.DateTimeFormat(i18n.language, {
+                        dateStyle: "medium", 
+                        timeStyle: "short",
+                      }).format(new Date(flagData.last_edit))}
                     </p>
                   </div>
                 </motion.div>

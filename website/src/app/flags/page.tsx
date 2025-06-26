@@ -19,7 +19,7 @@ interface FlagListData {
 }
 
 export default function FlagListPage() {
-  const { t } = useTranslation(["flags", "fcategories"]);
+  const { t, i18n } = useTranslation(["flags", "fcategories"]);
   const [hoveredId] = useState<number | null>(null);
 
   const searchParams = useSearchParams();
@@ -153,7 +153,10 @@ export default function FlagListPage() {
                                     />
                                   </svg>
                                   {t("uploaded_at", {
-                                    date_str: flag.last_edit,
+                                    date_str: new Intl.DateTimeFormat(i18n.language, {
+                                      dateStyle: "medium", 
+                                      timeStyle: "short",
+                                    }).format(new Date(flag.last_edit)),
                                   })}
                                 </div>
                               </div>
