@@ -20,10 +20,12 @@ import {
   Eye,
   FileText,
   Flag,
+  Image,
   Info,
   Loader2,
   Lock,
   Shield,
+  Text,
   UploadIcon,
   User,
 } from "lucide-react";
@@ -37,28 +39,30 @@ import TagInput from "@/components/TagInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
+import Cookies from "js-cookie";
 
 export default function UpdateFlagPage() {
   const [id, setId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [category, setCategory] = useState<string>("");
-  const [content, setContent] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [addedIn, setAddedIn] = useState<string>("");
-  const [adminUsername, setAdminUs] = useState<string>("");
-  const [adminPassword, setAdminPass] = useState<string>("");
   const [removedIn, setRemovedIn] = useState<string>("");
   const [usedFlags, setUsedFlags] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<string>("edit");
   const [isSubmittingForm, setIsSubmittingForm] = useState(false);
+  const [screenshotList, setScreenshotList] = useState<string[]>([]);
 
   const submitFlagID = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setIsLoading(true);
     try {
-      const response = await fetch(`${flagsRepoContentURL}/contents/${id}.md`);
+      const response = await fetch(
+        `${flagsRepoContentURL}/contents/${id}.json`
+      );
 
       if (!response.ok) {
         if (response.status == 404) {
@@ -73,21 +77,13 @@ export default function UpdateFlagPage() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
       } else {
-        const { data: frontmatter, content } = matter(await response.text());
-        setTitle(frontmatter.title);
-        setAddedIn(frontmatter.added_in != null ? frontmatter.added_in : "");
-        setAdminUs(frontmatter.admin_username);
-        setAdminPass(frontmatter.admin_password);
-        setRemovedIn(
-          frontmatter.removed_in != null ? frontmatter.removed_in : ""
-        );
-        setUsedFlags(
-          frontmatter.used_flags != null ? frontmatter.used_flags : []
-        );
-        setCategory(frontmatter.category);
-        var ag = content.split("\n");
-        ag.shift();
-        setContent(ag.join("\n"));
+        const data = await response.json();
+        setTitle(data.title);
+        setDescription(data.description);
+        setAddedIn(data.added_in);
+        setScreenshotList(data.screenshots);
+        setRemovedIn(data.removed_in);
+        setUsedFlags(data.used_flags);
         setHasSubmitted(true);
       }
     } catch (err) {
@@ -110,25 +106,25 @@ export default function UpdateFlagPage() {
     setIsSubmittingForm(true);
 
     const payload = {
-      id,
+      id: parseInt(id),
       title,
-      adminUsername,
-      addedIn,
-      removedIn,
-      usedFlags,
-      content,
-      category: category,
+      description,
+      added_in: addedIn == "" ? null : addedIn,
+      removed_in: removedIn == "" ? null : removedIn,
+      used_flags: usedFlags,
+      screenshots: screenshotList,
     };
 
     try {
+      console.log(payload);
       const res = await fetch(
         "https://api.mamiiblt.me/ifl/admin/user/update-flag",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "ifl-admin-username": btoa(adminUsername),
-            "ifl-admin-password": btoa(adminPassword),
+            "ifl-admin-username": btoa(Cookies.get("a_username")),
+            "ifl-admin-password": btoa(Cookies.get("a_pass")),
           },
           body: JSON.stringify(payload),
         }
@@ -185,7 +181,7 @@ export default function UpdateFlagPage() {
   };
 
   return (
-    <>
+    <AdminLoginProvider>
       {!hasSubmitted ? (
         <>
           <Navbar />
@@ -264,7 +260,7 @@ export default function UpdateFlagPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                      <div>
                         <div className="space-y-2">
                           <label
                             htmlFor="title"
@@ -285,6 +281,64 @@ export default function UpdateFlagPage() {
                             required
                           />
                         </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="description"
+                          className="text-sm font-semibold flex items-center gap-2"
+                        >
+                          <Text className="h-4 w-4" />
+                          Description{" "}
+                          <Badge variant="destructive" className="text-xs">
+                            Required
+                          </Badge>
+                        </label>
+                        <Textarea
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          placeholder="Write a description about flag (like what is that, what is the purpose etc. and more things about that)"
+                          className="min-h-[400px] sm:min-h-[200px] text-sm resize-none"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="usedFlags"
+                          className="text-sm font-semibold flex items-center gap-2"
+                        >
+                          <Flag className="h-4 w-4" />
+                          Used Flags{" "}
+                          <Badge variant="destructive" className="text-xs">
+                            Required
+                          </Badge>
+                        </label>
+                        <TagInput
+                          id="usedFlags"
+                          tags={usedFlags}
+                          setTags={setUsedFlags}
+                          placeholder="Add flag name (e.g., panavision_nav3)"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label
+                          htmlFor="screenshotList"
+                          className="text-sm font-semibold flex items-center gap-2"
+                        >
+                          <Image className="h-4 w-4" />
+                          Screenshot Filenames{" "}
+                          <Badge variant="destructive" className="text-xs">
+                            Required
+                          </Badge>
+                        </label>
+                        <TagInput
+                          id="screenshotList"
+                          tags={screenshotList}
+                          setTags={setScreenshotList}
+                          placeholder="(e.g. test_image.png, hello_world.jpg)"
+                        />
                       </div>
 
                       <div className="space-y-4">
@@ -327,142 +381,6 @@ export default function UpdateFlagPage() {
                           </div>
                         </div>
                       </div>
-
-                      <div className="space-y-2">
-                        <label
-                          htmlFor="usedFlags"
-                          className="text-sm font-semibold flex items-center gap-2"
-                        >
-                          <Flag className="h-4 w-4" />
-                          Used Flags{" "}
-                          <Badge variant="destructive" className="text-xs">
-                            Required
-                          </Badge>
-                        </label>
-                        <TagInput
-                          id="usedFlags"
-                          tags={usedFlags}
-                          setTags={setUsedFlags}
-                          placeholder="Add flag name (e.g., panavision_nav3)"
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="shadow-lg border-0 bg-card">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center gap-2">
-                        <Edit3 className="h-5 w-5 text-primary" />
-                        <CardTitle className="text-xl">
-                          Content Editor
-                        </CardTitle>
-                      </div>
-                      <CardDescription>
-                        Write your feature documentation using Markdown format
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <Tabs
-                        value={activeTab}
-                        onValueChange={setActiveTab}
-                        className="w-full"
-                      >
-                        <TabsList className="grid w-full grid-cols-2 h-11">
-                          <TabsTrigger
-                            value="edit"
-                            className="flex items-center gap-2"
-                          >
-                            <Edit3 className="h-4 w-4" />
-                            <span className="hidden sm:inline">Edit</span>
-                          </TabsTrigger>
-                          <TabsTrigger
-                            value="preview"
-                            className="flex items-center gap-2"
-                          >
-                            <Eye className="h-4 w-4" />
-                            <span className="hidden sm:inline">Preview</span>
-                          </TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="edit" className="mt-4">
-                          <Textarea
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder="Write your markdown content here..."
-                            className="min-h-[400px] sm:min-h-[500px] font-mono text-sm resize-none"
-                          />
-                        </TabsContent>
-                        <TabsContent value="preview" className="mt-4">
-                          <div className="border rounded-lg p-4 sm:p-6 min-h-[400px] sm:min-h-[500px] overflow-y-auto bg-card">
-                            {content ? (
-                              <MarkdownRenderer
-                                content={content}
-                                imgSrc="https://raw.githubusercontent.com/instafel/flags/refs/heads/main/imgs/"
-                              />
-                            ) : (
-                              <div className="flex items-center justify-center h-full text-muted-foreground">
-                                <div className="text-center space-y-2">
-                                  <FileText className="h-12 w-12 mx-auto opacity-50" />
-                                  <p>No content to preview</p>
-                                  <p className="text-sm">
-                                    Start writing in the Edit tab
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </TabsContent>
-                      </Tabs>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="shadow-lg border-0 bg-card">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center gap-2">
-                        <Shield className="h-5 w-5" />
-                        <CardTitle className="text-xl ">
-                          Admin Authentication
-                        </CardTitle>
-                      </div>
-                      <CardDescription>
-                        Admin credentials required for flag creation
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label
-                            htmlFor="adminUs"
-                            className="text-sm font-semibold flex items-center gap-2"
-                          >
-                            <User className="h-4 w-4" />
-                            Admin Username
-                          </label>
-                          <Input
-                            id="adminUs"
-                            value={adminUsername}
-                            onChange={(e) => setAdminUs(e.target.value)}
-                            placeholder="username"
-                            className="h-11"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label
-                            htmlFor="adminPass"
-                            className="text-sm font-semibold flex items-center gap-2"
-                          >
-                            <Lock className="h-4 w-4" />
-                            Admin Password
-                          </label>
-                          <Input
-                            id="adminPass"
-                            value={adminPassword}
-                            type="password"
-                            onChange={(e) => setAdminPass(e.target.value)}
-                            placeholder="Enter your password"
-                            className="h-11"
-                          />
-                        </div>
-                      </div>
                     </CardContent>
                   </Card>
 
@@ -474,6 +392,9 @@ export default function UpdateFlagPage() {
                           <p className="text-sm text-muted-foreground">
                             You should check telegram API logs after sending
                             request!
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-2">
+                            Logged as <b>{Cookies.get("a_username")}</b>
                           </p>
                         </div>
                         <Button
@@ -504,6 +425,6 @@ export default function UpdateFlagPage() {
           <Footer />
         </>
       )}
-    </>
+    </AdminLoginProvider>
   );
 }
