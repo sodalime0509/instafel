@@ -158,10 +158,10 @@ export default function Navbar() {
       title: t("navbar.items.backups"),
       href: "/library_backup",
     },
-    /*{
+    {
       title: t("navbar.items.flags"),
       href: "/library_flag",
-    },*/
+    },
     {
       title: t("navbar.items.updater"),
       href: "/about_updater",
