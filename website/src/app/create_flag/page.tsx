@@ -82,8 +82,7 @@ export default function CreateContentPage() {
     try {
       console.log(payload);
       const res = await fetch(
-        // "https://api.mamiiblt.me/ifl/admin/user/create-flag",
-        "https://expert-broccoli-9vj4wg5x4g5fwv7-3000.app.github.dev/ifl/admin/user/create-flag",
+        "https://api.mamiiblt.me/ifl/admin/user/create-flag",
         {
           method: "POST",
           headers: {
