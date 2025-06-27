@@ -122,8 +122,7 @@ export default function UpdateFlagPage() {
 
     try {
       const res = await fetch(
-        // "https://api.mamiiblt.me/ifl/admin/user/edit-flag",
-        "https://expert-broccoli-9vj4wg5x4g5fwv7-3000.app.github.dev/ifl/admin/user/update-flag",
+        "https://api.mamiiblt.me/ifl/admin/user/edit-flag",
         {
           method: "POST",
           headers: {
