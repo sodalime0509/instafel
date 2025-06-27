@@ -41,7 +41,6 @@ export default function CreateContentPage() {
   const { t } = useTranslation("fcategories");
   const [content, setContent] = useState<string>("");
   const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
   const [addedIn, setAddedIn] = useState<string>("");
   const [adminUsername, setAdminUs] = useState<string>("");
   const [adminPassword, setAdminPass] = useState<string>("");
@@ -57,7 +56,6 @@ export default function CreateContentPage() {
 
     const payload = {
       title,
-      description,
       adminUsername,
       addedIn,
       removedIn,
@@ -208,27 +206,6 @@ export default function CreateContentPage() {
                         ))}
                       </select>
                     </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="description"
-                      className="text-sm font-semibold flex items-center gap-2"
-                    >
-                      <Edit3 className="h-4 w-4" />
-                      Description{" "}
-                      <Badge variant="destructive" className="text-xs">
-                        Required
-                      </Badge>
-                    </label>
-                    <Textarea
-                      id="description"
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Enter a brief description of the feature"
-                      className="min-h-[80px] resize-none"
-                      required
-                    />
                   </div>
 
                   <div className="space-y-4">

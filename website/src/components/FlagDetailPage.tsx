@@ -20,7 +20,6 @@ interface FlagData {
   id: string;
   category: string;
   title: string;
-  desc: string;
   author: string;
   added_in: string;
   removed_in?: string;
@@ -97,15 +96,7 @@ const FlagDetailPage: React.FC<FlagDetailPageProps> = ({
                       {flagData.title}
                     </CardTitle>
                   </motion.div>
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut", delay: 0.4 }}
-                  >
-                    <p className="text-muted-foreground leading-relaxed">
-                      {flagData.desc}
-                    </p>
-                  </motion.div>
+
                   <motion.div
                     className="flex items-center gap-2"
                     initial={{ opacity: 0, x: -20 }}
