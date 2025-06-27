@@ -63,7 +63,7 @@ export default function Page() {
           <MarkdownRenderer
             content={content}
             imgSrc={
-              "https://raw.githubusercontent.com/instafel/flags/refs/heads/main/imgs/"
+              "https://raw.githubusercontent.com/instafel/images/refs/heads/main/flag-library/"
             }
           />
         </div>

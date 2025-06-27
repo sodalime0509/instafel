@@ -315,7 +315,7 @@ export default function CreateContentPage() {
                         {content ? (
                           <MarkdownRenderer
                             content={content}
-                            imgSrc="https://raw.githubusercontent.com/instafel/flags/refs/heads/main/imgs/"
+                            imgSrc="https://raw.githubusercontent.com/instafel/images/refs/heads/main/flag-library/"
                           />
                         ) : (
                           <div className="flex items-center justify-center h-full text-muted-foreground">
