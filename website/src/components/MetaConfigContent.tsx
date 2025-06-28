@@ -40,13 +40,13 @@ export default function MetaConfigContent({
             </div>
 
             <div className="divide-y">
-              {flag.properties.map((propery, idx) => (
+              {flag.properties.map((property, idx) => (
                 <div key={idx} className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold">
-                          {propery.title}
+                          {property.name}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -54,7 +54,7 @@ export default function MetaConfigContent({
                           variant="ghost"
                           size="sm"
                           className="h-5 w-5 p-0 hover:bg-muted"
-                          onClick={() => copyToClipboard(propery.title)}
+                          onClick={() => copyToClipboard(property.name)}
                         >
                           <Copy className="h-3 w-3" />
                         </Button>
@@ -63,7 +63,14 @@ export default function MetaConfigContent({
                         </span>
                       </div>
                     </div>
-                    <Switch checked={propery.value} disabled />
+                    {typeof property.value_bool === "boolean" ? (
+                      <Switch
+                        checked={property.value_bool}
+                        onChange={() => {}}
+                      />
+                    ) : (
+                      <span className="text-sm">{property.value_text}</span>
+                    )}
                   </div>
                 </div>
               ))}

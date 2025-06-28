@@ -1,7 +1,7 @@
 export interface FlagContProperty {
-  title: string;
-  subtitle: string;
-  value: boolean;
+  name: string;
+  value_text?: string;
+  value_bool?: boolean;
 }
 
 export interface FlagCont {

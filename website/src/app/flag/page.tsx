@@ -29,7 +29,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Switch } from "@/components/ui/switch";
+import { FlagCont } from "@/wdata/mconfig";
 import MetaConfigContent from "@/components/MetaConfigContent";
 
 interface FlagData {
@@ -41,7 +41,7 @@ interface FlagData {
   description: string;
   added_in?: string;
   removed_in?: string;
-  used_flags: string[];
+  flags: FlagCont[];
   screenshots: string[];
 }
 
@@ -316,8 +316,7 @@ export default function FlagInfoPage() {
                                 icon: PlusIcon,
                                 label: t("added_in"),
                                 value: flagData.added_in,
-                                bg: "bg-green-50 dark:bg-green-950/20 hover:bg-green-100 dark:hover:bg-green-950/30",
-                                iconColor: "text-green-600 dark:text-green-400",
+                                bg: "bg-muted/50 hover:bg-muted/70",
                               },
                             ]
                           : []),
@@ -327,8 +326,7 @@ export default function FlagInfoPage() {
                                 icon: MinusIcon,
                                 label: t("removed_in"),
                                 value: flagData.removed_in,
-                                bg: "bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/30",
-                                iconColor: "text-red-600 dark:text-red-400",
+                                bg: "bg-muted/50 hover:bg-muted/70",
                               },
                             ]
                           : []),
@@ -344,11 +342,7 @@ export default function FlagInfoPage() {
                           }}
                           whileHover={{ scale: 1.02 }}
                         >
-                          <item.icon
-                            className={`w-4 h-4 mt-0.5 ${
-                              item.iconColor || "text-muted-foreground"
-                            }`}
-                          />
+                          <item.icon className={`w-4 h-4 mt-0.5`} />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-foreground">
                               {item.label}
@@ -390,97 +384,17 @@ export default function FlagInfoPage() {
                       transition={{ duration: 0.3, delay: 0.9 }}
                     >
                       <Badge variant="secondary" className="ml-2">
-                        2 Flag
+                        {flagData.flags.length + " "}Flag
                       </Badge>
                     </motion.div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <MetaConfigContent
-                    configData={[
-                      {
-                        name: "comments craft h2 2023",
-                        properties: [
-                          {
-                            title: "disable show keyboard on feed",
-                            subtitle: "(override, default, latest)",
-                            value: false,
-                          },
-                        ],
-                      },
-                      {
-                        name: "nsx nearby spaces",
-                        properties: [
-                          {
-                            title: "is enabled",
-                            subtitle: "(override, default, latest)",
-                            value: false,
-                          },
-                          {
-                            title: "new map pog ui",
-                            subtitle: "(override, default, latest)",
-                            value: true,
-                          },
-                        ],
-                      },
-                    ]}
-                  />
+                  <MetaConfigContent configData={flagData.flags} />
                 </CardContent>
               </Card>
             </motion.div>
           </motion.div>
-
-          {/*<motion.div
-            className="mt-6"
-            {...fadeInUp}
-            transition={{ duration: 0.6, delay: 0.7 }}
-          >
-            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-              <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <FlagIcon className="w-5 h-5 text-primary" />
-                    {t("used_flags")}
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: 0.9 }}
-                    >
-                      <Badge variant="secondary" className="ml-2">
-                        {flagData.used_flags.length}
-                      </Badge>
-                    </motion.div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {flagData.used_flags.map((flag, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        transition={{
-                          duration: 0.4,
-                          delay: 1.0 + index * 0.05,
-                          type: "spring",
-                          stiffness: 200,
-                        }}
-                        whileHover={{ scale: 1.05, y: -2 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Badge
-                          variant="outline"
-                          className="font-mono text-sm px-3 py-1 hover:bg-primary/10 hover:border-primary/30 transition-colors cursor-default"
-                        >
-                          {flag}
-                        </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>*/}
 
           {flagData.screenshots && flagData.screenshots.length > 0 && (
             <motion.div
