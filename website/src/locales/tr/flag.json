@@ -4,5 +4,8 @@
   "added_in": "Eklendiği Sürüm",
   "removed_in": "Kaldırıldığı Sürüm",
   "used_flags": "Kullanılan Bayraklar",
-  "not_found": "Bayrak bulunamadı"
+  "description": "Açıklama",
+  "screenshots": "Ekran Görüntüleri",
+  "not_found": "Bayrak bulunamadı",
+  "not_found_desc": "Aradığınız bayrak artık mevcut değil veya kaldırıldı."
 }

@@ -4,5 +4,8 @@
   "added_in": "Added in",
   "removed_in": "Removed in",
   "used_flags": "Used Flags",
-  "not_found": "Flag not found"
+  "description": "Description",
+  "screenshots": "Screenshots",
+  "not_found": "Flag not found",
+  "not_found_desc": "The flag you're looking for doesn't exist or has been removed."
 }
