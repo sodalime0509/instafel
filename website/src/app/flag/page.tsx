@@ -1,27 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { LoadingBar } from "@/components/LoadingBars";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "next/navigation";
 import { flagsRepoContentURL } from "@/wdata/flag_sdata";
 import {
-  CalendarIcon,
   Flag,
   FlagIcon,
-  IdCardLanyardIcon,
+  BadgeIcon as IdCardLanyardIcon,
   MinusIcon,
   PlusIcon,
   TagIcon,
   Text,
   UserIcon,
+  AlertCircle,
+  Clock,
+  Info,
+  ImageIcon,
+  ZoomIn,
+  X,
+  TrashIcon,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import MetaConfigContent from "@/components/MetaConfigContent";
 
 interface FlagData {
   id: number;
@@ -40,82 +49,116 @@ export default function FlagInfoPage() {
   const { t, i18n } = useTranslation(["flag", "fcategories"]);
   const searchParams = useSearchParams();
   const ID = searchParams.get("id") ?? "0";
-  const [flagData, setFlagData] = useState<FlagData>(null);
+  const [flagData, setFlagData] = useState<FlagData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [imageLoadErrors, setImageLoadErrors] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
     const loadFlagData = async () => {
       try {
         const res = await fetch(`${flagsRepoContentURL}/contents/${ID}.json`);
-
-        if (res.status != 404) {
+        if (res.status !== 404) {
           const data: FlagData = await res.json();
           setFlagData(data);
         }
       } catch (error) {
-        console.error("Error loading flag data:", error);
+        console.error("An error occured while loading flag data:", error);
       } finally {
         setLoading(false);
       }
     };
+
     loadFlagData();
-  }, []);
+  }, [ID]);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-        staggerChildren: 0.1,
-      },
-    },
+  const handleImageError = (url: string) => {
+    setImageLoadErrors((prev) => new Set([...prev, url]));
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
+  const getImageUrl = (screenshot: string) => {
+    return `https://raw.githubusercontent.com/instafel/images/refs/heads/main/flag-library/${screenshot}`;
   };
 
-  const badgeVariants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.4,
-        ease: "easeOut",
-      },
-    },
+  const fadeInUp = {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, ease: "easeOut" },
   };
+
+  const slideInLeft = {
+    initial: { opacity: 0, x: -30 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.6, ease: "easeOut" },
+  };
+
+  const slideInRight = {
+    initial: { opacity: 0, x: 30 },
+    animate: { opacity: 1, x: 0 },
+    transition: { duration: 0.6, ease: "easeOut" },
+  };
+
   if (loading) {
-    return <LoadingBar />;
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-center space-y-4"
+          >
+            <div className="relative">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <Flag className="h-8 w-8 text-primary animate-pulse" />
+              </div>
+              <div className="absolute inset-0 w-16 h-16 mx-auto rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold">
+                {t("loading_flag_info")}
+              </h3>
+              <p className="text-sm text-muted-foreground">{t("pls_wait")}</p>
+            </div>
+          </motion.div>
+        </div>
+        <Footer />
+      </>
+    );
   }
 
   if (!flagData) {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-background flex items-center justify-center p-4">
-          <Card className="w-full max-w-md">
-            <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-              <div className="mb-4 p-3 rounded-full bg-muted">
-                <Flag className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h2 className="text-xl font-semibold mb-2">{t("not_found")}</h2>
-              <p className="text-muted-foreground text-sm">
-                {t("not_found_desc")}
-              </p>
-            </CardContent>
-          </Card>
+        <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Card className="w-full max-w-md shadow-lg border-destructive/20">
+              <CardContent className="flex flex-col items-center justify-center p-8 text-center space-y-4">
+                <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <AlertCircle className="h-8 w-8 text-destructive" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-xl font-semibold text-foreground">
+                    {t("not_found")}
+                  </h2>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {t("not_found_desc")}
+                  </p>
+                </div>
+                <Button variant="outline" onClick={() => window.history.back()}>
+                  {t("go_back")}
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
         <Footer />
       </>
@@ -125,225 +168,422 @@ export default function FlagInfoPage() {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-background text-foreground">
+      <div>
         <motion.div
-          className="container mx-auto p-6 max-w-4xl"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
+          className="container mx-auto p-2 max-w-4xl"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
         >
-          <motion.div variants={itemVariants}>
-            <Card className="mb-6 border-border bg-card">
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        duration: 0.6,
-                        ease: "easeOut",
-                        delay: 0.2,
-                      }}
-                    >
-                      <CardTitle className="text-2xl font-bold text-card-foreground">
-                        {flagData.title}
-                      </CardTitle>
-                    </motion.div>
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <div className="text-center space-y-4">
+              <motion.h1
+                className="text-4xl font-bold"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                {flagData.title}
+              </motion.h1>
 
-                    <motion.div
-                      className="flex items-center gap-2"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{
-                        duration: 0.6,
-                        ease: "easeOut",
-                        delay: 0.3,
-                      }}
-                    >
-                      <motion.div variants={badgeVariants}>
-                        <Badge
-                          variant={"default"}
-                          className="bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/80"
-                        >
-                          <TagIcon className="w-3 h-3 mr-1" />
-                          {t(flagData.category, { ns: "fcategories" })}
-                        </Badge>
-                      </motion.div>
-
-                      <motion.div variants={badgeVariants}>
-                        <Badge
-                          variant={"default"}
-                          className="bg-secondary text-secondary-foreground transition-colors hover:bg-secondary/80"
-                        >
-                          <IdCardLanyardIcon className="w-3 h-3 mr-1" />
-                          {flagData.id}
-                        </Badge>
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </div>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <>
-                  <motion.div
-                    initial={{ opacity: 0, scaleX: 0 }}
-                    animate={{ opacity: 1, scaleX: 1 }}
-                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.7 }}
-                  >
-                    <Separator className="bg-border" />
-                  </motion.div>
-
-                  <motion.div
-                    className="space-y-3"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut", delay: 0.8 }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Text className="w-4 h-4" />
-                      <p className="text-sm font-medium text-card-foreground">
-                        {t("description")}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <p className="text-sm text-muted-foreground">
-                        {flagData.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                </>
+              <motion.div
+                className="flex items-center justify-center gap-3 flex-wrap"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
                 <motion.div
-                  initial={{ opacity: 0, scaleX: 0 }}
-                  animate={{ opacity: 1, scaleX: 1 }}
-                  transition={{ duration: 0.4, ease: "easeOut", delay: 0.5 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Separator className="bg-border" />
+                  <Badge variant="secondary" className="px-3 py-1">
+                    <TagIcon className="w-3 h-3 mr-1" />
+                    {t(flagData.category, { ns: "fcategories" })}
+                  </Badge>
                 </motion.div>
 
+                {flagData.removed_in && (
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, delay: 0.5 }}
+                  >
+                    <Badge variant="destructive" className="px-3 py-1">
+                      <TrashIcon className="w-3 h-3 mr-1" />
+                      {t("removed")}
+                    </Badge>
+                  </motion.div>
+                )}
+
                 <motion.div
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, ease: "easeOut", delay: 0.6 }}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <motion.div
-                    className="flex items-center gap-3"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <UserIcon className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium text-card-foreground">
-                        {t("added_by")}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {flagData.author}
-                      </p>
-                    </div>
-                  </motion.div>
-
-                  <motion.div
-                    className="flex items-center gap-3"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.2, ease: "easeOut" }}
-                  >
-                    <CalendarIcon className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-sm font-medium text-card-foreground">
-                        {t("last_edit")}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {new Intl.DateTimeFormat(i18n.language, {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        }).format(new Date(flagData.last_edit))}
-                      </p>
-                    </div>
-                  </motion.div>
-
-                  {flagData.added_in && (
-                    <motion.div
-                      className="flex items-center gap-3"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                    >
-                      <PlusIcon className="w-4 h-4" />
-                      <div>
-                        <p className="text-sm font-medium text-card-foreground">
-                          {t("added_in")}
-                        </p>
-                        <p className="text-sm text-muted-foreground font-mono">
-                          {flagData.added_in}
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {flagData.removed_in && (
-                    <motion.div
-                      className="flex items-center gap-3"
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.2, ease: "easeOut" }}
-                    >
-                      <MinusIcon className="w-4 h-4" />
-                      <div>
-                        <p className="text-sm font-medium text-card-foreground">
-                          {t("removed_in")}
-                        </p>
-                        <p className="text-sm text-muted-foreground font-mono">
-                          {flagData.removed_in}
-                        </p>
-                      </div>
-                    </motion.div>
-                  )}
+                  <Badge variant="outline" className="px-3 py-1">
+                    <IdCardLanyardIcon className="w-3 h-3 mr-1" />
+                    {flagData.id}
+                  </Badge>
                 </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
 
-                <>
-                  <motion.div
-                    initial={{ opacity: 0, scaleX: 0 }}
-                    animate={{ opacity: 1, scaleX: 1 }}
-                    transition={{ duration: 0.4, ease: "easeOut", delay: 0.7 }}
-                  >
-                    <Separator className="bg-border" />
-                  </motion.div>
-                  <motion.div
-                    className="space-y-3"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, ease: "easeOut", delay: 0.8 }}
-                  >
-                    <div className="flex items-center gap-2">
-                      <FlagIcon className="w-4 h-4" />
-                      <p className="text-sm font-medium text-card-foreground">
-                        {t("used_flags")}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {flagData.used_flags.map((flag, index) => (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            <motion.div
+              className="lg:col-span-2 h-full"
+              {...slideInLeft}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
+              <motion.div
+                className="h-full"
+                whileHover={{
+                  y: -5,
+                  boxShadow:
+                    "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className="h-full shadow-md transition-shadow duration-300">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Text className="w-5 h-5 text-primary" />
+                      {t("description")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <motion.p
+                      className="text-muted-foreground leading-relaxed text-base"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6, delay: 0.7 }}
+                    >
+                      {flagData.description}
+                    </motion.p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              className="h-full"
+              {...slideInRight}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              <motion.div
+                className="h-full"
+                whileHover={{
+                  y: -5,
+                  boxShadow:
+                    "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className="h-full shadow-md transition-shadow duration-300">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <Info className="w-5 h-5 text-primary" />
+                      {t("information")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4 flex-1">
+                    <div className="space-y-3">
+                      {[
+                        {
+                          icon: UserIcon,
+                          label: t("added_by"),
+                          value: flagData.author,
+                          bg: "bg-muted/50 hover:bg-muted/70",
+                        },
+                        {
+                          icon: Clock,
+                          label: t("last_edit"),
+                          value: new Intl.DateTimeFormat(i18n.language, {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          }).format(new Date(flagData.last_edit)),
+                          bg: "bg-muted/50 hover:bg-muted/70",
+                        },
+                        ...(flagData.added_in
+                          ? [
+                              {
+                                icon: PlusIcon,
+                                label: t("added_in"),
+                                value: flagData.added_in,
+                                bg: "bg-green-50 dark:bg-green-950/20 hover:bg-green-100 dark:hover:bg-green-950/30",
+                                iconColor: "text-green-600 dark:text-green-400",
+                              },
+                            ]
+                          : []),
+                        ...(flagData.removed_in
+                          ? [
+                              {
+                                icon: MinusIcon,
+                                label: t("removed_in"),
+                                value: flagData.removed_in,
+                                bg: "bg-red-50 dark:bg-red-950/20 hover:bg-red-100 dark:hover:bg-red-950/30",
+                                iconColor: "text-red-600 dark:text-red-400",
+                              },
+                            ]
+                          : []),
+                      ].map((item, index) => (
                         <motion.div
                           key={index}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
+                          className={`flex items-start gap-3 p-3 rounded-lg ${item.bg} transition-colors`}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
                           transition={{
                             duration: 0.4,
-                            ease: "easeOut",
-                            delay: 0.9 + index * 0.1,
+                            delay: 0.8 + index * 0.1,
                           }}
-                          whileHover={{ scale: 1.05 }}
+                          whileHover={{ scale: 1.02 }}
                         >
-                          <Badge variant="outline" className="font-mono">
-                            {flag}
-                          </Badge>
+                          <item.icon
+                            className={`w-4 h-4 mt-0.5 ${
+                              item.iconColor || "text-muted-foreground"
+                            }`}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">
+                              {item.label}
+                            </p>
+                            <p
+                              className={`text-sm text-muted-foreground ${
+                                item.value === flagData.added_in ||
+                                item.value === flagData.removed_in
+                                  ? "font-mono"
+                                  : ""
+                              } truncate`}
+                            >
+                              {item.value}
+                            </p>
+                          </div>
                         </motion.div>
                       ))}
                     </div>
-                  </motion.div>
-                </>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
+          </div>
+
+          <motion.div
+            className="mt-6"
+            {...fadeInUp}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+              <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <FlagIcon className="w-5 h-5 text-primary" />
+                    MetaConfig Values
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.9 }}
+                    >
+                      <Badge variant="secondary" className="ml-2">
+                        2 Flag
+                      </Badge>
+                    </motion.div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MetaConfigContent
+                    configData={[
+                      {
+                        name: "comments craft h2 2023",
+                        properties: [
+                          {
+                            title: "disable show keyboard on feed",
+                            subtitle: "(override, default, latest)",
+                            value: false,
+                          },
+                        ],
+                      },
+                      {
+                        name: "nsx nearby spaces",
+                        properties: [
+                          {
+                            title: "is enabled",
+                            subtitle: "(override, default, latest)",
+                            value: false,
+                          },
+                          {
+                            title: "new map pog ui",
+                            subtitle: "(override, default, latest)",
+                            value: true,
+                          },
+                        ],
+                      },
+                    ]}
+                  />
+                </CardContent>
+              </Card>
+            </motion.div>
           </motion.div>
+
+          {/*<motion.div
+            className="mt-6"
+            {...fadeInUp}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+              <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <FlagIcon className="w-5 h-5 text-primary" />
+                    {t("used_flags")}
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: 0.9 }}
+                    >
+                      <Badge variant="secondary" className="ml-2">
+                        {flagData.used_flags.length}
+                      </Badge>
+                    </motion.div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {flagData.used_flags.map((flag, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          delay: 1.0 + index * 0.05,
+                          type: "spring",
+                          stiffness: 200,
+                        }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Badge
+                          variant="outline"
+                          className="font-mono text-sm px-3 py-1 hover:bg-primary/10 hover:border-primary/30 transition-colors cursor-default"
+                        >
+                          {flag}
+                        </Badge>
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>*/}
+
+          {flagData.screenshots && flagData.screenshots.length > 0 && (
+            <motion.div
+              className="mt-6"
+              {...fadeInUp}
+              transition={{ duration: 0.6, delay: 0.8 }}
+            >
+              <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+                <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="flex items-center gap-2 text-xl">
+                      <ImageIcon className="w-5 h-5 text-primary" />
+                      {t("screenshots")}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {flagData.screenshots.map((screenshot, index) => (
+                        <motion.div
+                          key={index}
+                          className="group relative aspect-video bg-muted rounded-lg overflow-hidden border hover:border-primary/30 transition-all duration-300"
+                          initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          transition={{
+                            duration: 0.5,
+                            delay: 1.1 + index * 0.1,
+                            type: "spring",
+                            stiffness: 100,
+                          }}
+                          whileHover={{
+                            scale: 1.03,
+                            y: -5,
+                            transition: { duration: 0.2 },
+                          }}
+                        >
+                          {!imageLoadErrors.has(screenshot) ? (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <div className="relative cursor-pointer h-full">
+                                  <img
+                                    src={
+                                      getImageUrl(screenshot) ||
+                                      "/placeholder.svg"
+                                    }
+                                    alt={`Screenshot ${index + 1} of ${
+                                      flagData.title
+                                    }`}
+                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                    onError={() => handleImageError(screenshot)}
+                                    loading="lazy"
+                                  />
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                                    <ZoomIn className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                  </div>
+                                  <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    {index + 1} / {flagData.screenshots.length}
+                                  </div>
+                                </div>
+                              </DialogTrigger>
+                              <DialogContent
+                                className="max-w-4xl w-full p-4 bg-background border"
+                                showCloseButton={false}
+                              >
+                                <motion.div
+                                  className="flex"
+                                  initial={{ opacity: 0, scale: 0.9 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ duration: 0.3 }}
+                                >
+                                  <img
+                                    src={
+                                      getImageUrl(screenshot) ||
+                                      "/placeholder.svg"
+                                    }
+                                    className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+                                  />
+                                  <DialogPrimitive.Close data-slot="dialog-close">
+                                    <div
+                                      className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 size-9 absolute top-2 right-2 bg-background/80 hover:bg-background border"
+                                      onClick={() => setSelectedImage(null)}
+                                    >
+                                      <X className="h-4 w-4" />
+                                    </div>
+                                  </DialogPrimitive.Close>
+                                </motion.div>
+                              </DialogContent>
+                            </Dialog>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-muted/50">
+                              <ImageIcon className="w-8 h-8 mb-2" />
+                              <p className="text-xs text-center px-2">
+                                {t("failed_load_img")}
+                              </p>
+                            </div>
+                          )}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </motion.div>
+          )}
         </motion.div>
       </div>
       <Footer />

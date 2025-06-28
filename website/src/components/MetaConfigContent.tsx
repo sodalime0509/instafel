@@ -1,0 +1,76 @@
+import { Card, CardContent } from "./ui/card";
+import { FlagCont } from "@/wdata/mconfig";
+import { Switch } from "./ui/switch";
+import { Button } from "./ui/button";
+import { Copy } from "lucide-react";
+import { toast } from "sonner";
+
+interface MetaConfigContentProps {
+  configData: FlagCont[];
+}
+
+export default function MetaConfigContent({
+  configData,
+}: MetaConfigContentProps) {
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast("Property copied to clipboard", {
+      description: "Flag property copied to clipboard",
+      action: {
+        label: "Okay",
+        onClick: () => {},
+      },
+    });
+  };
+
+  return (
+    <div>
+      {configData.map((flag, idx) => (
+        <Card
+          key={idx}
+          className={`text-foreground ${
+            configData.length != idx + 1 ? "mb-4" : ""
+          }`}
+        >
+          <CardContent className="p-0">
+            <div className="flex items-center justify-between p-4 border-b">
+              <div className="flex items-center gap-2">
+                <span className="text-sm italic">{flag.name}</span>
+              </div>
+            </div>
+
+            <div className="divide-y">
+              {flag.properties.map((propery, idx) => (
+                <div key={idx} className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold">
+                          {propery.title}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-5 w-5 p-0 hover:bg-muted"
+                          onClick={() => copyToClipboard(propery.title)}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                        <span className="text-xs text-foreground">
+                          Copy to clipboard
+                        </span>
+                      </div>
+                    </div>
+                    <Switch checked={propery.value} disabled />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}

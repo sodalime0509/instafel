@@ -7,5 +7,11 @@
   "description": "Description",
   "screenshots": "Screenshots",
   "not_found": "Flag not found",
-  "not_found_desc": "The flag you're looking for doesn't exist or has been removed."
+  "not_found_desc": "The flag you're looking for doesn't exist or has been removed.",
+  "go_back": "Go back",
+  "removed": "Removed",
+  "information": "Information",
+  "loading_flag_info": "Loading flag information...",
+  "pls_wait": "Please wait while we fetch the details",
+  "failed_load_img": "Failed to load image"
 }
