@@ -27,13 +27,17 @@ import {
   Info,
   Calendar,
   Tag,
-  User,
-  Lock,
   Text,
   Image,
+  Edit2Icon,
 } from "lucide-react";
 import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
 import Cookies from "js-cookie";
+import { FlagCont } from "@/wdata/mconfig";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { FlagDataEditor } from "@/components/FlagDataEditor";
 
 export default function CreateContentPage() {
   const { t } = useTranslation("fcategories");
@@ -41,7 +45,7 @@ export default function CreateContentPage() {
   const [description, setDescription] = useState<string>("");
   const [addedIn, setAddedIn] = useState<string>("");
   const [removedIn, setRemovedIn] = useState<string>("");
-  const [usedFlags, setUsedFlags] = useState<string[]>([]);
+  const [flags, setFlags] = useState<FlagCont[]>([]);
   const [screenshotList, setScreenshotList] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,6 +68,27 @@ export default function CreateContentPage() {
     }
   };
 
+  const checkFlagsValidity = (flags: FlagCont[]) => {
+    var pass = true;
+    if (flags.length == 0) {
+      pass = false;
+    }
+    flags.forEach((flagItem) => {
+      if (flagItem.name == "" || flagItem.properties.length == 0) {
+        pass = false;
+      }
+      flagItem.properties.forEach((prop) => {
+        if (prop.name == "") {
+          pass = false;
+        }
+        if (prop.value_bool != undefined && prop.value_text == "") {
+          pass = false;
+        }
+      });
+    });
+    return pass;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -75,54 +100,63 @@ export default function CreateContentPage() {
       category: selectedCategory,
       added_in: addedIn == "" ? null : addedIn,
       removed_in: removedIn == "" ? null : removedIn,
-      used_flags: usedFlags,
+      flags,
       screenshots: screenshotList,
     };
 
     try {
-      console.log(payload);
-      const res = await fetch(
-        "https://api.mamiiblt.me/ifl/admin/user/create-flag",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "ifl-admin-username": btoa(adminUsername),
-            "ifl-admin-password": btoa(adminPassword),
-          },
-          body: JSON.stringify(payload),
+      if (checkFlagsValidity(flags)) {
+        const res = await fetch(
+          "https://api.mamiiblt.me/ifl/admin/user/create-flag",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ifl-admin-username": btoa(adminUsername),
+              "ifl-admin-password": btoa(adminPassword),
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+        const data = await res.json();
+
+        if (data.status == "SUCCESS") {
+          toast("Flag Created", {
+            description: data.extra.desc,
+            action: {
+              label: "Okay",
+              onClick: () => {},
+            },
+          });
+        } else if (data.status == "AUTHENTICATION_REJECTED") {
+          toast("Authentication Rejected", {
+            description: "Please write true admin login credentials",
+            action: {
+              label: "Okay",
+              onClick: () => {},
+            },
+          });
+        } else if (data.status == "FAILURE") {
+          toast("Failure on API side", {
+            description: data.extra.desc,
+            action: {
+              label: "Okay",
+              onClick: () => {},
+            },
+          });
+        } else {
+          toast("Unknown Response", {
+            description: JSON.stringify(data),
+            action: {
+              label: "Okay",
+              onClick: () => {},
+            },
+          });
         }
-      );
-
-      const data = await res.json();
-
-      if (data.status == "SUCCESS") {
-        toast("Flag Created", {
-          description: data.extra.desc,
-          action: {
-            label: "Okay",
-            onClick: () => {},
-          },
-        });
-      } else if (data.status == "AUTHENTICATION_REJECTED") {
-        toast("Authentication Rejected", {
-          description: "Please write true admin login credentials",
-          action: {
-            label: "Okay",
-            onClick: () => {},
-          },
-        });
-      } else if (data.status == "FAILURE") {
-        toast("Failure on API side", {
-          description: data.extra.desc,
-          action: {
-            label: "Okay",
-            onClick: () => {},
-          },
-        });
       } else {
-        toast("Unknown Response", {
-          description: JSON.stringify(data),
+        toast("Flags are invalid", {
+          description: "You has missing fields in flags editor",
           action: {
             label: "Okay",
             onClick: () => {},
@@ -247,25 +281,6 @@ export default function CreateContentPage() {
 
                     <div className="space-y-2">
                       <label
-                        htmlFor="usedFlags"
-                        className="text-sm font-semibold flex items-center gap-2"
-                      >
-                        <Flag className="h-4 w-4" />
-                        Used Flags{" "}
-                        <Badge variant="destructive" className="text-xs">
-                          Required
-                        </Badge>
-                      </label>
-                      <TagInput
-                        id="usedFlags"
-                        tags={usedFlags}
-                        setTags={setUsedFlags}
-                        placeholder="(e.g. panavision nav3, is enabled, example prop)"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <label
                         htmlFor="screenshotList"
                         className="text-sm font-semibold flex items-center gap-2"
                       >
@@ -327,6 +342,24 @@ export default function CreateContentPage() {
                         </div>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-lg border-0 bg-card">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-2">
+                      <Edit2Icon className="h-5 w-5 text-primary" />
+                      <CardTitle className="text-xl">Flags Editor</CardTitle>
+                    </div>
+                    <CardDescription>
+                      Add MetaConfig flag informations manually
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <FlagDataEditor
+                      initialFlags={flags}
+                      onFlagsChange={(flags: FlagCont[]) => setFlags(flags)}
+                    />
                   </CardContent>
                 </Card>
 
