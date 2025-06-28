@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import Image from "next/image";
 
 export default function MarkdownRenderer({ content, imgSrc }) {
   const [isMounted, setIsMounted] = useState(false);

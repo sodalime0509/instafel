@@ -34,9 +34,6 @@ import {
 import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
 import Cookies from "js-cookie";
 import { FlagCont } from "@/wdata/mconfig";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { FlagDataEditor } from "@/components/FlagDataEditor";
 
 export default function CreateContentPage() {
