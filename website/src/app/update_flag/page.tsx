@@ -3,7 +3,7 @@
 import type React from "react";
 
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -13,18 +13,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
-  Calendar,
-  Edit3,
-  Eye,
+  ChevronDownIcon,
+  Clock,
+  Edit2Icon,
   FileText,
-  Flag,
   Image,
   Info,
   Loader2,
-  Lock,
-  Shield,
   Text,
   UploadIcon,
   User,
@@ -33,14 +29,24 @@ import { flagsRepoContentURL } from "@/wdata/flag_sdata";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
-import matter from "gray-matter";
 import { Badge } from "@/components/ui/badge";
 import TagInput from "@/components/TagInput";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import MarkdownRenderer from "@/components/MarkdownRenderer";
 import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
 import Cookies from "js-cookie";
+import { FlagCont } from "@/wdata/mconfig";
+import { handleVersionInput } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FlagDataEditor } from "@/components/FlagDataEditor";
 
 export default function UpdateFlagPage() {
   const [id, setId] = useState("");
@@ -50,10 +56,46 @@ export default function UpdateFlagPage() {
   const [title, setTitle] = useState<string>("");
   const [addedIn, setAddedIn] = useState<string>("");
   const [removedIn, setRemovedIn] = useState<string>("");
-  const [usedFlags, setUsedFlags] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("edit");
+  const [flags, setFlags] = useState<FlagCont[]>([]);
   const [isSubmittingForm, setIsSubmittingForm] = useState(false);
   const [screenshotList, setScreenshotList] = useState<string[]>([]);
+  const [lastEdit, setLastEdit] = useState<Date>(new Date());
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [useCurrentTime, setUseCurrentTime] = useState(true);
+  const [customTime, setCustomTime] = useState("10:30:00");
+  const [addedBy, setAddedBy] = useState<string>("");
+
+  useEffect(() => {
+    if (useCurrentTime) {
+      setLastEdit(new Date());
+    }
+  }, [useCurrentTime]);
+
+  const handleTimeChange = (timeString: string) => {
+    setCustomTime(timeString);
+    if (!useCurrentTime && lastEdit) {
+      const [hours, minutes, seconds] = timeString.split(":").map(Number);
+      const newDate = new Date(lastEdit);
+      newDate.setHours(hours, minutes, seconds || 0);
+      setLastEdit(newDate);
+    }
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    if (date && !useCurrentTime) {
+      const [hours, minutes, seconds] = customTime.split(":").map(Number);
+      date.setHours(hours, minutes, seconds || 0);
+      setLastEdit(date);
+    }
+    setDatePickerOpen(false);
+  };
+
+  const handleUseCurrentTimeChange = (checked: boolean) => {
+    setUseCurrentTime(checked);
+    if (checked) {
+      setLastEdit(new Date());
+    }
+  };
 
   const submitFlagID = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +125,8 @@ export default function UpdateFlagPage() {
         setAddedIn(data.added_in);
         setScreenshotList(data.screenshots);
         setRemovedIn(data.removed_in);
-        setUsedFlags(data.used_flags);
+        setFlags(data.flags);
+        setAddedBy(data.added_by);
         setHasSubmitted(true);
       }
     } catch (err) {
@@ -108,10 +151,12 @@ export default function UpdateFlagPage() {
     const payload = {
       id: parseInt(id),
       title,
+      added_by: addedBy,
+      last_edit: lastEdit,
       description,
       added_in: addedIn == "" ? null : addedIn,
       removed_in: removedIn == "" ? null : removedIn,
-      used_flags: usedFlags,
+      flags,
       screenshots: screenshotList,
     };
 
@@ -260,7 +305,7 @@ export default function UpdateFlagPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                      <div>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                         <div className="space-y-2">
                           <label
                             htmlFor="title"
@@ -281,6 +326,114 @@ export default function UpdateFlagPage() {
                             required
                           />
                         </div>
+
+                        <div className="space-y-2">
+                          <label
+                            htmlFor="addedBy"
+                            className="text-sm font-semibold flex items-center gap-2"
+                          >
+                            <User className="h-4 w-4" />
+                            Added by (TG Nickname){" "}
+                            <Badge variant="destructive" className="text-xs">
+                              Required
+                            </Badge>
+                          </label>
+                          <Input
+                            id="addedBy"
+                            value={addedBy}
+                            onChange={(e) => setAddedBy(e.target.value)}
+                            placeholder="Directly pass telegram username (without t.me)"
+                            className="h-11"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <h3 className="font-semibold text-sm">
+                            Last Edit Time
+                          </h3>
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="use-current-time"
+                            checked={useCurrentTime}
+                            onCheckedChange={handleUseCurrentTimeChange}
+                          />
+                          <Label
+                            htmlFor="use-current-time"
+                            className="text-sm font-medium"
+                          >
+                            Use current date and time (If not needed, don't
+                            disable that)
+                          </Label>
+                        </div>
+
+                        {useCurrentTime ? (
+                          <div className="p-3 bg-muted/50 rounded-md border">
+                            <p className="text-sm text-muted-foreground">
+                              Current time:{" "}
+                              <span className="font-medium text-foreground">
+                                {lastEdit.toLocaleString()}
+                              </span>
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                            <div className="flex flex-col gap-3">
+                              <Label htmlFor="date-picker" className="px-1">
+                                Date
+                              </Label>
+                              <Popover
+                                open={datePickerOpen}
+                                onOpenChange={setDatePickerOpen}
+                              >
+                                <PopoverTrigger asChild>
+                                  <Button
+                                    variant="outline"
+                                    id="date-picker"
+                                    className="w-full justify-between font-normal bg-transparent"
+                                  >
+                                    {lastEdit
+                                      ? lastEdit.toLocaleDateString()
+                                      : "Select date"}
+                                    <ChevronDownIcon className="h-4 w-4" />
+                                  </Button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto overflow-hidden p-0"
+                                  align="start"
+                                >
+                                  <Calendar
+                                    mode="single"
+                                    selected={lastEdit}
+                                    captionLayout="dropdown"
+                                    onSelect={handleDateChange}
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                              <Label htmlFor="time-picker" className="px-1">
+                                Time
+                              </Label>
+                              <Input
+                                type="time"
+                                id="time-picker"
+                                step="1"
+                                value={customTime}
+                                onChange={(e) =>
+                                  handleTimeChange(e.target.value)
+                                }
+                                className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       <div className="space-y-2">
@@ -305,25 +458,6 @@ export default function UpdateFlagPage() {
 
                       <div className="space-y-2">
                         <label
-                          htmlFor="usedFlags"
-                          className="text-sm font-semibold flex items-center gap-2"
-                        >
-                          <Flag className="h-4 w-4" />
-                          Used Flags{" "}
-                          <Badge variant="destructive" className="text-xs">
-                            Required
-                          </Badge>
-                        </label>
-                        <TagInput
-                          id="usedFlags"
-                          tags={usedFlags}
-                          setTags={setUsedFlags}
-                          placeholder="Add flag name (e.g., panavision_nav3)"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <label
                           htmlFor="screenshotList"
                           className="text-sm font-semibold flex items-center gap-2"
                         >
@@ -343,7 +477,7 @@ export default function UpdateFlagPage() {
 
                       <div className="space-y-4">
                         <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                           <h3 className="font-semibold text-sm">
                             Version Information
                           </h3>
@@ -359,7 +493,9 @@ export default function UpdateFlagPage() {
                             <Input
                               id="addedIn"
                               value={addedIn}
-                              onChange={(e) => setAddedIn(e.target.value)}
+                              onChange={(e) =>
+                                handleVersionInput(e.target.value, setAddedIn)
+                              }
                               placeholder="e.g., 331.0.0.0.20"
                               className="h-10"
                             />
@@ -374,13 +510,33 @@ export default function UpdateFlagPage() {
                             <Input
                               id="removedIn"
                               value={removedIn}
-                              onChange={(e) => setRemovedIn(e.target.value)}
+                              onChange={(e) =>
+                                handleVersionInput(e.target.value, setRemovedIn)
+                              }
                               placeholder="e.g., 385.0.0.0.11"
                               className="h-10"
                             />
                           </div>
                         </div>
                       </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="shadow-lg border-0 bg-card">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center gap-2">
+                        <Edit2Icon className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-xl">Flags Editor</CardTitle>
+                      </div>
+                      <CardDescription>
+                        Add MetaConfig flag informations manually
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <FlagDataEditor
+                        initialFlags={flags}
+                        onFlagsChange={(flags: FlagCont[]) => setFlags(flags)}
+                      />
                     </CardContent>
                   </Card>
 

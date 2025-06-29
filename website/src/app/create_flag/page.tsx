@@ -42,6 +42,8 @@ import { PopoverTrigger } from "@radix-ui/react-popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { checkFlagsValidity } from "@/components/MetaConfigContent";
+import { handleVersionInput } from "@/lib/utils";
 
 export default function CreateContentPage() {
   const { t } = useTranslation("fcategories");
@@ -67,22 +69,11 @@ export default function CreateContentPage() {
     setAddedBy(Cookies.get("a_username"));
   }, []);
 
-  // Update lastEdit when useCurrentTime changes
   useEffect(() => {
     if (useCurrentTime) {
       setLastEdit(new Date());
     }
   }, [useCurrentTime]);
-
-  const handleVersionInput = (
-    value: string,
-    setter: (value: string) => void
-  ) => {
-    const regex = /^[0-9.]*$/;
-    if (regex.test(value)) {
-      setter(value);
-    }
-  };
 
   const handleTimeChange = (timeString: string) => {
     setCustomTime(timeString);
@@ -108,27 +99,6 @@ export default function CreateContentPage() {
     if (checked) {
       setLastEdit(new Date());
     }
-  };
-
-  const checkFlagsValidity = (flags: FlagCont[]) => {
-    var pass = true;
-    if (flags.length == 0) {
-      pass = false;
-    }
-    flags.forEach((flagItem) => {
-      if (flagItem.name == "" || flagItem.properties.length == 0) {
-        pass = false;
-      }
-      flagItem.properties.forEach((prop) => {
-        if (prop.name == "") {
-          pass = false;
-        }
-        if (prop.value_bool != undefined && prop.value_text == "") {
-          pass = false;
-        }
-      });
-    });
-    return pass;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -234,7 +204,7 @@ export default function CreateContentPage() {
               <div className="text-center space-y-4">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-                    Create New Flag
+                    Create Flag
                   </h1>
                 </div>
               </div>

@@ -9,6 +9,27 @@ interface MetaConfigContentProps {
   configData: FlagCont[];
 }
 
+export const checkFlagsValidity = (flags: FlagCont[]) => {
+  var pass = true;
+  if (flags.length == 0) {
+    pass = false;
+  }
+  flags.forEach((flagItem) => {
+    if (flagItem.name == "" || flagItem.properties.length == 0) {
+      pass = false;
+    }
+    flagItem.properties.forEach((prop) => {
+      if (prop.name == "") {
+        pass = false;
+      }
+      if (prop.value_bool != undefined && prop.value_text == "") {
+        pass = false;
+      }
+    });
+  });
+  return pass;
+};
+
 export default function MetaConfigContent({
   configData,
 }: MetaConfigContentProps) {
