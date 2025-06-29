@@ -201,7 +201,7 @@ export default function CreateContentPage() {
     try {
       if (checkFlagsValidity(flags)) {
         console.log(screenshotList);
-        /*const res = await fetch(
+        const res = await fetch(
           "https://api.mamiiblt.me/ifl/admin/user/create-flag",
           {
             method: "POST",
@@ -246,7 +246,7 @@ export default function CreateContentPage() {
               onClick: () => {},
             },
           });
-        }*/
+        }
       } else {
         toast("Flags are invalid", {
           description: "You has missing fields in flags editor",
