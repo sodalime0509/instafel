@@ -347,6 +347,7 @@ export function FlagDataEditor({
                 {flags.length !== 0 && (
                   <Button
                     onClick={addFlag}
+                    variant={"secondary"}
                     type="button"
                     className="flex items-center gap-2"
                   >
