@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import TagInput from "@/components/TagInput";
 import { flagCategories } from "@/wdata/flag_sdata";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
@@ -26,11 +25,11 @@ import {
   Info,
   Tag,
   Text,
-  ImageIcon,
   Edit2Icon,
   ChevronDownIcon,
   Clock,
   User,
+  Image,
 } from "lucide-react";
 import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
 import Cookies from "js-cookie";
@@ -44,6 +43,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { checkFlagsValidity } from "@/components/MetaConfigContent";
 import { handleVersionInput } from "@/lib/utils";
+import ImageUploadInterface, {
+  UploadedFile,
+} from "@/components/ImageUploadInterface";
+
+interface UploadFileInf {
+  uploading: boolean;
+  name: string;
+}
 
 export default function CreateContentPage() {
   const { t } = useTranslation("fcategories");
@@ -62,6 +69,80 @@ export default function CreateContentPage() {
   const [useCurrentTime, setUseCurrentTime] = useState(true);
   const [customTime, setCustomTime] = useState("10:30:00");
   const [addedBy, setAddedBy] = useState<string>("");
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [isProcessed, setIsProcessed] = useState(false);
+  const [fUploadData, setFUploadData] = useState<UploadFileInf>({
+    uploading: false,
+    name: undefined,
+  });
+
+  const handleFilesChange = (files: UploadedFile[]) => {
+    setUploadedFiles(files);
+  };
+
+  const handleImageUpload = async () => {
+    console.log("Uploading files:", uploadedFiles);
+
+    if (!isProcessed && uploadedFiles.length > 0) {
+      setIsProcessed(true);
+    }
+
+    var errorCatch = false;
+    try {
+      for (const file of uploadedFiles) {
+        setFUploadData({ uploading: true, name: file.name });
+
+        const formData = new FormData();
+        formData.append("image", file.file);
+        formData.append("name", file.name);
+
+        const fUploadResp = await fetch(
+          "https://api.mamiiblt.me/ifl/admin/user/upload-image",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              "ifl-admin-username": btoa(adminUsername),
+              "ifl-admin-password": btoa(adminPassword),
+            },
+          }
+        );
+
+        const resp = await fUploadResp.json();
+        console.log(resp);
+        if (resp.status !== "SUCCESS") {
+          throw new Error(resp.extra.desc);
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, 120)); // cooldown
+      }
+    } catch (err) {
+      console.error(err);
+      toast("Failed to upload", {
+        description:
+          `An error occured while uploading images into server\n\n` + err,
+        action: {
+          label: "Okay",
+          onClick: () => {},
+        },
+      });
+      setFUploadData({ uploading: true, name: "error" });
+      errorCatch = true;
+    }
+
+    if (!errorCatch) {
+      toast("All images uploaded", {
+        description: "Images uploaded succesfully",
+        action: {
+          label: "Okay",
+          onClick: () => {},
+        },
+      });
+
+      setFUploadData({ uploading: false, name: undefined });
+      setScreenshotList(uploadedFiles.map((file) => file.name));
+    }
+  };
 
   useEffect(() => {
     setAdminUsername(Cookies.get("a_username"));
@@ -119,7 +200,8 @@ export default function CreateContentPage() {
 
     try {
       if (checkFlagsValidity(flags)) {
-        const res = await fetch(
+        console.log(screenshotList);
+        /*const res = await fetch(
           "https://api.mamiiblt.me/ifl/admin/user/create-flag",
           {
             method: "POST",
@@ -164,7 +246,7 @@ export default function CreateContentPage() {
               onClick: () => {},
             },
           });
-        }
+        }*/
       } else {
         toast("Flags are invalid", {
           description: "You has missing fields in flags editor",
@@ -296,7 +378,10 @@ export default function CreateContentPage() {
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <h3 className="font-semibold text-sm">
-                          Last Edit Time
+                          Last Edit Time{" "}
+                          <Badge variant="destructive" className="text-xs">
+                            Required
+                          </Badge>
                         </h3>
                       </div>
 
@@ -310,8 +395,8 @@ export default function CreateContentPage() {
                           htmlFor="use-current-time"
                           className="text-sm font-medium"
                         >
-                          Use current date and time (If not needed, don't
-                          disable that)
+                          Use current date and time (If not needed, don't edit
+                          that)
                         </Label>
                       </div>
 
@@ -397,25 +482,6 @@ export default function CreateContentPage() {
                       />
                     </div>
 
-                    <div className="space-y-2">
-                      <label
-                        htmlFor="screenshotList"
-                        className="text-sm font-semibold flex items-center gap-2"
-                      >
-                        <ImageIcon className="h-4 w-4" />
-                        Screenshot Filenames{" "}
-                        <Badge variant="destructive" className="text-xs">
-                          Required
-                        </Badge>
-                      </label>
-                      <TagInput
-                        id="screenshotList"
-                        tags={screenshotList}
-                        setTags={setScreenshotList}
-                        placeholder="(e.g. test_image.png, hello_world.jpg)"
-                      />
-                    </div>
-
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-muted-foreground" />
@@ -467,10 +533,15 @@ export default function CreateContentPage() {
                   <CardHeader className="pb-4">
                     <div className="flex items-center gap-2">
                       <Edit2Icon className="h-5 w-5 text-primary" />
-                      <CardTitle className="text-xl">Flags Editor</CardTitle>
+                      <CardTitle className="text-xl">
+                        Flags Editor{" "}
+                        <Badge variant="destructive" className="text-xs">
+                          Required
+                        </Badge>
+                      </CardTitle>
                     </div>
                     <CardDescription>
-                      Add MetaConfig flag informations manually
+                      Add MetaConfig flag informations
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -478,6 +549,86 @@ export default function CreateContentPage() {
                       initialFlags={flags}
                       onFlagsChange={(flags: FlagCont[]) => setFlags(flags)}
                     />
+                  </CardContent>
+                </Card>
+
+                <Card className="shadow-lg border-0 bg-card">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center gap-2">
+                      <Image className="h-5 w-5 text-primary" />
+                      <CardTitle className="text-xl">
+                        Screenshots{" "}
+                        <Badge variant={"secondary"} className="text-xs">
+                          Not Required
+                        </Badge>
+                      </CardTitle>
+                    </div>
+                    <CardDescription>
+                      Upload images about related flag
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ImageUploadInterface
+                      onFilesChange={handleFilesChange}
+                      maxFiles={5}
+                      disabled={isProcessed}
+                    />
+
+                    {uploadedFiles.length > 0 && (
+                      <div className="space-y-4">
+                        {uploadedFiles.length > 0 && !isProcessed && (
+                          <Button
+                            onClick={handleImageUpload}
+                            className="w-full"
+                          >
+                            Upload Files
+                          </Button>
+                        )}
+
+                        {isProcessed && (
+                          <>
+                            {fUploadData.uploading ? (
+                              <>
+                                {fUploadData.name == "error" ? (
+                                  <div className="space-y-2">
+                                    <div className="items-center justify-center text-center p-4 bg-card-50 border rounded-lg ">
+                                      <a className="text-foreground-muted text-center text-red-500 w-full font-italic">
+                                        An error occured while uploading
+                                        images..
+                                      </a>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="space-y-2">
+                                    <div className="items-center justify-center text-center p-4 bg-card-50 border rounded-lg ">
+                                      <a className="text-green-800 flex items-center justify-center w-full mt-3 mb-3">
+                                        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                                      </a>
+                                      <a className="text-foreground-muted text-center w-full font-italic">
+                                        Uploading {fUploadData.name}
+                                      </a>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            ) : (
+                              <div className="space-y-2">
+                                <div className="items-center justify-center text-center p-4 bg-card-50 border rounded-lg">
+                                  <a className="text-green-800 text-center w-full">
+                                    Files have been uploaded successfully!
+                                  </a>
+                                  <br />
+                                  <a className="text-foreground-muted text-center w-full font-italic text-xs">
+                                    Now, you can't upload more images about this
+                                    flag.
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
 
