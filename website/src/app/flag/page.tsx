@@ -23,6 +23,7 @@ import {
   ZoomIn,
   X,
   TrashIcon,
+  UserPen,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -80,7 +81,7 @@ export default function FlagInfoPage() {
   };
 
   const getImageUrl = (screenshot: string) => {
-    return `https://raw.githubusercontent.com/instafel/images/refs/heads/main/flag-library/${screenshot}`;
+    return `https://raw.githubusercontent.com/instafel/images/refs/heads/main/flib/${screenshot}`;
   };
 
   const fadeInUp = {
@@ -300,7 +301,6 @@ export default function FlagInfoPage() {
                           icon: UserIcon,
                           label: t("added_by"),
                           value: flagData.added_by,
-                          bg: "bg-muted/50 hover:bg-muted/70",
                         },
                         {
                           icon: Clock,
@@ -309,7 +309,6 @@ export default function FlagInfoPage() {
                             dateStyle: "medium",
                             timeStyle: "short",
                           }).format(new Date(flagData.last_edit)),
-                          bg: "bg-muted/50 hover:bg-muted/70",
                         },
                         ...(flagData.added_in
                           ? [
@@ -317,7 +316,6 @@ export default function FlagInfoPage() {
                                 icon: PlusIcon,
                                 label: t("added_in"),
                                 value: "v" + flagData.added_in,
-                                bg: "bg-muted/50 hover:bg-muted/70",
                               },
                             ]
                           : []),
@@ -327,14 +325,13 @@ export default function FlagInfoPage() {
                                 icon: MinusIcon,
                                 label: t("removed_in"),
                                 value: "v" + flagData.removed_in,
-                                bg: "bg-muted/50 hover:bg-muted/70",
                               },
                             ]
                           : []),
                       ].map((item, index) => (
                         <motion.div
                           key={index}
-                          className={`flex items-start gap-3 p-3 rounded-lg ${item.bg} transition-colors`}
+                          className={`flex items-start gap-3 p-3 rounded-lg bg-muted/50 transition-colors`}
                           initial={{ opacity: 0, x: 20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{
