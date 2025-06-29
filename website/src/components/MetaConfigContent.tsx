@@ -14,8 +14,8 @@ export default function MetaConfigContent({
 }: MetaConfigContentProps) {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast("Property copied to clipboard", {
-      description: "Flag property copied to clipboard",
+    toast("Property name copied", {
+      description: "Flag property name copied to clipboard",
       action: {
         label: "Okay",
         onClick: () => {},
@@ -43,7 +43,10 @@ export default function MetaConfigContent({
               {flag.properties.map((property, idx) => (
                 <div key={idx} className="p-4">
                   <div className="flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
+                    <div
+                      className="flex flex-col gap-1"
+                      onClick={() => copyToClipboard(property.name)}
+                    >
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold">
                           {property.name}
@@ -54,7 +57,6 @@ export default function MetaConfigContent({
                           variant="ghost"
                           size="sm"
                           className="h-5 w-5 p-0 hover:bg-muted"
-                          onClick={() => copyToClipboard(property.name)}
                         >
                           <Copy className="h-3 w-3" />
                         </Button>

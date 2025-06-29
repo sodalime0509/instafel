@@ -31,12 +31,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { FlagCont } from "@/wdata/mconfig";
 import MetaConfigContent from "@/components/MetaConfigContent";
+import Link from "next/link";
 
 interface FlagData {
   id: number;
   last_edit: string;
   category: string;
-  author: string;
+  added_by: string;
   title: string;
   description: string;
   added_in?: string;
@@ -298,7 +299,7 @@ export default function FlagInfoPage() {
                         {
                           icon: UserIcon,
                           label: t("added_by"),
-                          value: flagData.author,
+                          value: flagData.added_by,
                           bg: "bg-muted/50 hover:bg-muted/70",
                         },
                         {
@@ -315,7 +316,7 @@ export default function FlagInfoPage() {
                               {
                                 icon: PlusIcon,
                                 label: t("added_in"),
-                                value: flagData.added_in,
+                                value: "v" + flagData.added_in,
                                 bg: "bg-muted/50 hover:bg-muted/70",
                               },
                             ]
@@ -325,7 +326,7 @@ export default function FlagInfoPage() {
                               {
                                 icon: MinusIcon,
                                 label: t("removed_in"),
-                                value: flagData.removed_in,
+                                value: "v" + flagData.removed_in,
                                 bg: "bg-muted/50 hover:bg-muted/70",
                               },
                             ]
@@ -347,16 +348,29 @@ export default function FlagInfoPage() {
                             <p className="text-sm font-medium text-foreground">
                               {item.label}
                             </p>
-                            <p
-                              className={`text-sm text-muted-foreground ${
-                                item.value === flagData.added_in ||
-                                item.value === flagData.removed_in
-                                  ? "font-mono"
-                                  : ""
-                              } truncate`}
-                            >
-                              {item.value}
-                            </p>
+                            {item.value == flagData.added_by ? (
+                              <Link
+                                href={`https://t.me/${flagData.added_by}`}
+                                target="_blank"
+                              >
+                                <p
+                                  className={`text-sm text-muted-foreground underline truncate`}
+                                >
+                                  {item.value}
+                                </p>
+                              </Link>
+                            ) : (
+                              <p
+                                className={`text-sm text-muted-foreground ${
+                                  item.value === flagData.added_in ||
+                                  item.value === flagData.removed_in
+                                    ? "font-mono"
+                                    : ""
+                                } truncate`}
+                              >
+                                {item.value}
+                              </p>
+                            )}
                           </div>
                         </motion.div>
                       ))}
@@ -377,16 +391,7 @@ export default function FlagInfoPage() {
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FlagIcon className="w-5 h-5 text-primary" />
-                    MetaConfig Values
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: 0.9 }}
-                    >
-                      <Badge variant="secondary" className="ml-2">
-                        {flagData.flags.length + " "}Flag
-                      </Badge>
-                    </motion.div>
+                    MetaConfig Options
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

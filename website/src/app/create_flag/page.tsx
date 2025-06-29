@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
@@ -25,16 +24,24 @@ import {
   FileText,
   Flag,
   Info,
-  Calendar,
   Tag,
   Text,
-  Image,
+  ImageIcon,
   Edit2Icon,
+  ChevronDownIcon,
+  Clock,
+  User,
 } from "lucide-react";
 import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
 import Cookies from "js-cookie";
-import { FlagCont } from "@/wdata/mconfig";
+import type { FlagCont } from "@/wdata/mconfig";
 import { FlagDataEditor } from "@/components/FlagDataEditor";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent } from "@/components/ui/popover";
+import { PopoverTrigger } from "@radix-ui/react-popover";
+import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Calendar as CalendarIcon } from "lucide-react";
 
 export default function CreateContentPage() {
   const { t } = useTranslation("fcategories");
@@ -48,20 +55,58 @@ export default function CreateContentPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [adminUsername, setAdminUsername] = useState<string>("");
   const [adminPassword, setAdminPassword] = useState<string>("");
+  const [lastEdit, setLastEdit] = useState<Date>(new Date());
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [useCurrentTime, setUseCurrentTime] = useState(true);
+  const [customTime, setCustomTime] = useState("10:30:00");
+  const [addedBy, setAddedBy] = useState<string>("");
 
   useEffect(() => {
     setAdminUsername(Cookies.get("a_username"));
     setAdminPassword(Cookies.get("a_pass"));
+    setAddedBy(Cookies.get("a_username"));
   }, []);
+
+  // Update lastEdit when useCurrentTime changes
+  useEffect(() => {
+    if (useCurrentTime) {
+      setLastEdit(new Date());
+    }
+  }, [useCurrentTime]);
 
   const handleVersionInput = (
     value: string,
     setter: (value: string) => void
   ) => {
     const regex = /^[0-9.]*$/;
-
     if (regex.test(value)) {
       setter(value);
+    }
+  };
+
+  const handleTimeChange = (timeString: string) => {
+    setCustomTime(timeString);
+    if (!useCurrentTime && lastEdit) {
+      const [hours, minutes, seconds] = timeString.split(":").map(Number);
+      const newDate = new Date(lastEdit);
+      newDate.setHours(hours, minutes, seconds || 0);
+      setLastEdit(newDate);
+    }
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    if (date && !useCurrentTime) {
+      const [hours, minutes, seconds] = customTime.split(":").map(Number);
+      date.setHours(hours, minutes, seconds || 0);
+      setLastEdit(date);
+    }
+    setDatePickerOpen(false);
+  };
+
+  const handleUseCurrentTimeChange = (checked: boolean) => {
+    setUseCurrentTime(checked);
+    if (checked) {
+      setLastEdit(new Date());
     }
   };
 
@@ -93,12 +138,13 @@ export default function CreateContentPage() {
     const payload = {
       title,
       description,
-      author: adminUsername,
+      added_by: addedBy,
       category: selectedCategory,
       added_in: addedIn == "" ? null : addedIn,
       removed_in: removedIn == "" ? null : removedIn,
       flags,
       screenshots: screenshotList,
+      last_edit: lastEdit.toISOString(),
     };
 
     try {
@@ -115,9 +161,7 @@ export default function CreateContentPage() {
             body: JSON.stringify(payload),
           }
         );
-
         const data = await res.json();
-
         if (data.status == "SUCCESS") {
           toast("Flag Created", {
             description: data.extra.desc,
@@ -228,6 +272,7 @@ export default function CreateContentPage() {
                           required
                         />
                       </div>
+
                       <div className="space-y-2">
                         <label
                           htmlFor="category"
@@ -258,6 +303,112 @@ export default function CreateContentPage() {
 
                     <div className="space-y-2">
                       <label
+                        htmlFor="addedBy"
+                        className="text-sm font-semibold flex items-center gap-2"
+                      >
+                        <User className="h-4 w-4" />
+                        Added by (TG Nickname){" "}
+                        <Badge variant="destructive" className="text-xs">
+                          Required
+                        </Badge>
+                      </label>
+                      <Input
+                        id="addedBy"
+                        value={addedBy}
+                        onChange={(e) => setAddedBy(e.target.value)}
+                        placeholder="Directly pass telegram username (without t.me)"
+                        className="h-11"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="font-semibold text-sm">
+                          Last Edit Time
+                        </h3>
+                      </div>
+
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="use-current-time"
+                          checked={useCurrentTime}
+                          onCheckedChange={handleUseCurrentTimeChange}
+                        />
+                        <Label
+                          htmlFor="use-current-time"
+                          className="text-sm font-medium"
+                        >
+                          Use current date and time (If not needed, don't
+                          disable that)
+                        </Label>
+                      </div>
+
+                      {useCurrentTime ? (
+                        <div className="p-3 bg-muted/50 rounded-md border">
+                          <p className="text-sm text-muted-foreground">
+                            Current time:{" "}
+                            <span className="font-medium text-foreground">
+                              {lastEdit.toLocaleString()}
+                            </span>
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                          <div className="flex flex-col gap-3">
+                            <Label htmlFor="date-picker" className="px-1">
+                              Date
+                            </Label>
+                            <Popover
+                              open={datePickerOpen}
+                              onOpenChange={setDatePickerOpen}
+                            >
+                              <PopoverTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  id="date-picker"
+                                  className="w-full justify-between font-normal bg-transparent"
+                                >
+                                  {lastEdit
+                                    ? lastEdit.toLocaleDateString()
+                                    : "Select date"}
+                                  <ChevronDownIcon className="h-4 w-4" />
+                                </Button>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                className="w-auto overflow-hidden p-0"
+                                align="start"
+                              >
+                                <Calendar
+                                  mode="single"
+                                  selected={lastEdit}
+                                  captionLayout="dropdown"
+                                  onSelect={handleDateChange}
+                                />
+                              </PopoverContent>
+                            </Popover>
+                          </div>
+
+                          <div className="flex flex-col gap-3">
+                            <Label htmlFor="time-picker" className="px-1">
+                              Time
+                            </Label>
+                            <Input
+                              type="time"
+                              id="time-picker"
+                              step="1"
+                              value={customTime}
+                              onChange={(e) => handleTimeChange(e.target.value)}
+                              className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <label
                         htmlFor="description"
                         className="text-sm font-semibold flex items-center gap-2"
                       >
@@ -281,7 +432,7 @@ export default function CreateContentPage() {
                         htmlFor="screenshotList"
                         className="text-sm font-semibold flex items-center gap-2"
                       >
-                        <Image className="h-4 w-4" />
+                        <ImageIcon className="h-4 w-4" />
                         Screenshot Filenames{" "}
                         <Badge variant="destructive" className="text-xs">
                           Required
@@ -297,7 +448,7 @@ export default function CreateContentPage() {
 
                     <div className="space-y-4">
                       <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                         <h3 className="font-semibold text-sm">
                           Version Information
                         </h3>
