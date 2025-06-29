@@ -31,7 +31,7 @@ import {
   User,
   Image,
 } from "lucide-react";
-import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
+import AdminLoginProvider from "@/components/AdminLoginProvider";
 import Cookies from "js-cookie";
 import type { FlagCont } from "@/wdata/mconfig";
 import { FlagDataEditor } from "@/components/FlagDataEditor";

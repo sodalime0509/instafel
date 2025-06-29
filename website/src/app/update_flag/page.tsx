@@ -30,10 +30,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import TagInput from "@/components/TagInput";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import AdminLoginProvider from "@/components/ui/AdminLoginProvider";
+import AdminLoginProvider from "@/components/AdminLoginProvider";
 import Cookies from "js-cookie";
 import { FlagCont } from "@/wdata/mconfig";
 import { handleVersionInput } from "@/lib/utils";
@@ -58,7 +56,6 @@ export default function UpdateFlagPage() {
   const [removedIn, setRemovedIn] = useState<string>("");
   const [flags, setFlags] = useState<FlagCont[]>([]);
   const [isSubmittingForm, setIsSubmittingForm] = useState(false);
-  const [screenshotList, setScreenshotList] = useState<string[]>([]);
   const [lastEdit, setLastEdit] = useState<Date>(new Date());
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [useCurrentTime, setUseCurrentTime] = useState(true);
@@ -123,10 +120,9 @@ export default function UpdateFlagPage() {
         setTitle(data.title);
         setDescription(data.description);
         setAddedIn(data.added_in);
-        setScreenshotList(data.screenshots);
-        setRemovedIn(data.removed_in);
+        setRemovedIn(data.removed_in == null ? "" : data.removed_in);
         setFlags(data.flags);
-        setAddedBy(data.added_by);
+        setAddedBy(data.added_by == null ? "" : data.added_by);
         setHasSubmitted(true);
       }
     } catch (err) {
@@ -157,7 +153,6 @@ export default function UpdateFlagPage() {
       added_in: addedIn == "" ? null : addedIn,
       removed_in: removedIn == "" ? null : removedIn,
       flags,
-      screenshots: screenshotList,
     };
 
     try {
@@ -456,25 +451,6 @@ export default function UpdateFlagPage() {
                         />
                       </div>
 
-                      <div className="space-y-2">
-                        <label
-                          htmlFor="screenshotList"
-                          className="text-sm font-semibold flex items-center gap-2"
-                        >
-                          <Image className="h-4 w-4" />
-                          Screenshot Filenames{" "}
-                          <Badge variant="destructive" className="text-xs">
-                            Required
-                          </Badge>
-                        </label>
-                        <TagInput
-                          id="screenshotList"
-                          tags={screenshotList}
-                          setTags={setScreenshotList}
-                          placeholder="(e.g. test_image.png, hello_world.jpg)"
-                        />
-                      </div>
-
                       <div className="space-y-4">
                         <div className="flex items-center gap-2">
                           <CalendarIcon className="h-4 w-4 text-muted-foreground" />
@@ -544,7 +520,7 @@ export default function UpdateFlagPage() {
                     <CardContent className="pt-6">
                       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="text-center sm:text-left">
-                          <p className="font-semibold">Ready to update flag?</p>
+                          <p className="font-semibold">Send API Request</p>
                           <p className="text-sm text-muted-foreground">
                             You should check telegram API logs after sending
                             request!
