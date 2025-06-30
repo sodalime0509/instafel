@@ -4,6 +4,7 @@ import { Switch } from "./ui/switch";
 import { Button } from "./ui/button";
 import { Copy } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 interface MetaConfigContentProps {
   configData: FlagCont[];
@@ -33,10 +34,13 @@ export const checkFlagsValidity = (flags: FlagCont[]) => {
 export default function MetaConfigContent({
   configData,
 }: MetaConfigContentProps) {
+  const { t } = useTranslation("flag");
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast("Property name copied", {
-      description: "Flag property name copied to clipboard",
+    toast(t("content.block_contents.metaconf_options.prop_name_copied"), {
+      description: t(
+        "content.block_contents.metaconf_options.prop_name_copied_desc"
+      ),
       action: {
         label: "Okay",
         onClick: () => {},
@@ -82,7 +86,9 @@ export default function MetaConfigContent({
                           <Copy className="h-3 w-3" />
                         </Button>
                         <span className="text-xs text-foreground">
-                          Copy to clipboard
+                          {t(
+                            "content.block_contents.metaconf_options.copy_to_clipboard"
+                          )}
                         </span>
                       </div>
                     </div>

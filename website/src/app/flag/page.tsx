@@ -23,7 +23,6 @@ import {
   ZoomIn,
   X,
   TrashIcon,
-  UserPen,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -120,10 +119,10 @@ export default function FlagInfoPage() {
               <div className="absolute inset-0 w-16 h-16 mx-auto rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold">
-                {t("loading_flag_info")}
-              </h3>
-              <p className="text-sm text-muted-foreground">{t("pls_wait")}</p>
+              <h3 className="text-lg font-semibold">{t("loading.title")}</h3>
+              <p className="text-sm text-muted-foreground">
+                {t("loading.description")}
+              </p>
             </div>
           </motion.div>
         </div>
@@ -149,14 +148,14 @@ export default function FlagInfoPage() {
                 </div>
                 <div className="space-y-2">
                   <h2 className="text-xl font-semibold text-foreground">
-                    {t("not_found")}
+                    {t("not_found.title")}
                   </h2>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    {t("not_found_desc")}
+                    {t("not_found.description")}
                   </p>
                 </div>
                 <Button variant="outline" onClick={() => window.history.back()}>
-                  {t("go_back")}
+                  {t("not_found.go_back")}
                 </Button>
               </CardContent>
             </Card>
@@ -219,7 +218,7 @@ export default function FlagInfoPage() {
                   >
                     <Badge variant="destructive" className="px-3 py-1">
                       <TrashIcon className="w-3 h-3 mr-1" />
-                      {t("removed")}
+                      {t("badges.removed")}
                     </Badge>
                   </motion.div>
                 )}
@@ -256,7 +255,7 @@ export default function FlagInfoPage() {
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-xl">
                       <Text className="w-5 h-5 text-primary" />
-                      {t("description")}
+                      {t("content.block_titles.description")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1">
@@ -291,7 +290,7 @@ export default function FlagInfoPage() {
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-xl">
                       <Info className="w-5 h-5 text-primary" />
-                      {t("information")}
+                      {t("content.block_titles.information")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 flex-1">
@@ -299,12 +298,12 @@ export default function FlagInfoPage() {
                       {[
                         {
                           icon: UserIcon,
-                          label: t("added_by"),
+                          label: t("content.block_contents.info.added_by"),
                           value: flagData.added_by,
                         },
                         {
                           icon: Clock,
-                          label: t("last_edit"),
+                          label: t("content.block_contents.info.last_edit"),
                           value: new Intl.DateTimeFormat(i18n.language, {
                             dateStyle: "medium",
                             timeStyle: "short",
@@ -314,7 +313,9 @@ export default function FlagInfoPage() {
                           ? [
                               {
                                 icon: PlusIcon,
-                                label: t("added_in"),
+                                label: t(
+                                  "content.block_contents.info.added_in"
+                                ),
                                 value: "v" + flagData.added_in,
                               },
                             ]
@@ -323,7 +324,9 @@ export default function FlagInfoPage() {
                           ? [
                               {
                                 icon: MinusIcon,
-                                label: t("removed_in"),
+                                label: t(
+                                  "content.block_contents.info.removed_in"
+                                ),
                                 value: "v" + flagData.removed_in,
                               },
                             ]
@@ -388,7 +391,7 @@ export default function FlagInfoPage() {
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-xl">
                     <FlagIcon className="w-5 h-5 text-primary" />
-                    MetaConfig Options
+                    {t("content.block_titles.metaconf_options")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -409,7 +412,7 @@ export default function FlagInfoPage() {
                   <CardHeader className="pb-4">
                     <CardTitle className="flex items-center gap-2 text-xl">
                       <ImageIcon className="w-5 h-5 text-primary" />
-                      {t("screenshots")}
+                      {t("content.block_titles.screenshots")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -488,7 +491,9 @@ export default function FlagInfoPage() {
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground bg-muted/50">
                               <ImageIcon className="w-8 h-8 mb-2" />
                               <p className="text-xs text-center px-2">
-                                {t("failed_load_img")}
+                                {t(
+                                  "content.block_contents.screenshot.failed_load_img"
+                                )}
                               </p>
                             </div>
                           )}
