@@ -123,6 +123,8 @@ export default function UpdateFlagPage() {
         setRemovedIn(data.removed_in == null ? "" : data.removed_in);
         setFlags(data.flags);
         setAddedBy(data.added_by == null ? "" : data.added_by);
+        setLastEdit(new Date(data.last_edit));
+        setUseCurrentTime(false);
         setHasSubmitted(true);
       }
     } catch (err) {
