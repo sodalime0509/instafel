@@ -1,7 +1,4 @@
 {
-  "search_flag": "Bayrak adını gir...",
-  "all_users": "Tüm Yaratıcılar",
-  "clear_filters": "Filtreleri Kaldır",
   "added_by": "{{name}} tarafından eklendi",
   "uploaded_at": "{{date_str}} tarihinde eklendi",
   "removed_with": "Sürüm v{{version}} ile kaldırıldı",

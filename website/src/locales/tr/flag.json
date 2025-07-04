@@ -14,7 +14,6 @@
   "content": {
     "block_titles": {
       "information": "Bilgiler",
-      "description": "Açıklama",
       "metaconf_options": "MetaConfig Seçenekleri",
       "screenshots": "Ekran Görüntüleri"
     },
@@ -23,7 +22,8 @@
         "added_by": "Ekleyen",
         "last_edit": "Son Düzenleme",
         "added_in": "Eklendiği Sürüm",
-        "removed_in": "Kaldırıldığı Sürüm"
+        "removed_in": "Kaldırıldığı Sürüm",
+        "unknown": "Bilinmiyor"
       },
       "screenshot": {
         "failed_load_img": "Resim yüklenirken bir sorun oluştu"

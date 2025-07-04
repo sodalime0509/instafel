@@ -6,18 +6,25 @@ import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import { flagCategories, flagsRepoContentURL } from "@/wdata/flag_sdata";
+import {
+  flagAPIURL,
+  flagCategories,
+  flagsRepoContentURL,
+} from "@/wdata/flag_sdata";
 import { FlagIcon } from "lucide-react";
 import { LoadingBar } from "@/components/LoadingBars";
 
 export default function LibraryBackupPage() {
   const { t } = useTranslation(["library_flag", "fcategories"]);
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [data, setData] = useState<{}>(null);
+  const [data, setData] = useState<{
+    total: number;
+    categorized: Record<string, number>;
+  } | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      var requestUrl = `${flagsRepoContentURL}/sizes.json`;
+      var requestUrl = `${flagAPIURL}/flag_sizes`;
       const res = await fetch(requestUrl);
       const result = await res.json();
       setData(result);
@@ -59,57 +66,61 @@ export default function LibraryBackupPage() {
                 </motion.div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {flagCategories.map((category, idx) => {
-                    return (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                          delay: 0.4 + idx * 0.1,
-                          duration: 0.8,
-                          ease: "easeOut",
-                        }}
-                      >
-                        <Link
-                          href={`/flags?category=${category.cif}`}
-                          onMouseEnter={() => setHoveredId(idx)}
-                          onMouseLeave={() => setHoveredId(null)}
+                  {Object.entries(data.categorized).map(
+                    (category_data, idx) => {
+                      const category = flagCategories[category_data[0]];
+                      console.log(category_data[0]);
+                      return (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            delay: 0.4 + idx * 0.1,
+                            duration: 0.8,
+                            ease: "easeOut",
+                          }}
                         >
-                          <button
-                            className={`
+                          <Link
+                            href={`/flags?category=${category_data[0]}&page=1`}
+                            onMouseEnter={() => setHoveredId(idx)}
+                            onMouseLeave={() => setHoveredId(null)}
+                          >
+                            <button
+                              className={`
                                   w-full p-4 h-[160px]
                                   flex flex-col items-center justify-center text-center
                                   rounded-xl border border-border transition-all duration-300
                                   bg-card text-foreground
                                   hover:shadow-lg hover:scale-105
                                 `}
-                          >
-                            <div
-                              className={`
+                            >
+                              <div
+                                className={`
                                     mb-3 transform transition-transform duration-300
                                     ${hoveredId === idx ? "scale-110" : ""}
                                   `}
-                            >
-                              {category.icon}
-                            </div>
+                              >
+                                {category.icon}
+                              </div>
 
-                            <h3 className="font-medium mb-1 transition-colors duration-300">
-                              {t(`${category.cif}`, { ns: "fcategories" })}
-                            </h3>
+                              <h3 className="font-medium mb-1 transition-colors duration-300">
+                                {t(`${category.cif}`, { ns: "fcategories" })}
+                              </h3>
 
-                            <div className="mt-2 text-center">
-                              <span className="text-xs font-medium px-2 py-1 rounded-full bg-muted text-muted-foreground">
-                                {t("num_flag", {
-                                  fsize: data[category.cif],
-                                })}
-                              </span>
-                            </div>
-                          </button>
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
+                              <div className="mt-2 text-center">
+                                <span className="text-xs font-medium px-2 py-1 rounded-full bg-muted text-muted-foreground">
+                                  {t("num_flag", {
+                                    fsize: category_data[1],
+                                  })}
+                                </span>
+                              </div>
+                            </button>
+                          </Link>
+                        </motion.div>
+                      );
+                    }
+                  )}
                 </div>
               </div>
             </div>

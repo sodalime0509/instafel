@@ -14,7 +14,6 @@
   "content": {
     "block_titles": {
       "information": "Information",
-      "description": "Description",
       "metaconf_options": "MetaConfig Options",
       "screenshots": "Screenshots"
     },
@@ -23,7 +22,8 @@
         "added_by": "Added by",
         "last_edit": "Last Edit",
         "added_in": "Added in",
-        "removed_in": "Removed in"
+        "removed_in": "Removed in",
+        "unknown": "Unknown"
       },
       "screenshot": {
         "failed_load_img": "Failed to load image"

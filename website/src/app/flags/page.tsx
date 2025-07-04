@@ -9,13 +9,29 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { useTranslation } from "react-i18next";
-import { flagsRepoContentURL } from "@/wdata/flag_sdata";
+import { flagAPIURL, flagCategories } from "@/wdata/flag_sdata";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Trash } from "lucide-react";
 
-interface FlagListData {
-  id: string;
-  title: string;
-  author: string;
-  last_edit: string;
+interface RespTF {
+  page: number;
+  category_size: number;
+  page_size: number;
+  flags: {
+    id: number;
+    title: string;
+    last_edit: string;
+    added_by: string;
+    removed_in: string;
+  }[];
 }
 
 export default function FlagListPage() {
@@ -23,26 +39,18 @@ export default function FlagListPage() {
   const [hoveredId] = useState<number | null>(null);
 
   const searchParams = useSearchParams();
-  const categoryName = searchParams.get("category") ?? "0";
-  const [data, setData] = useState<FlagListData[] | null>(null);
+  const categoryID = searchParams.get("category") ?? "0";
+  const page = Number(searchParams.get("page")) ?? 1;
+  const [data, setData] = useState<RespTF | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${flagsRepoContentURL}/lists/${categoryName}.json`
+          `${flagAPIURL}/flag_list?category_id=${categoryID}&page=${page}`
         );
-        const result: [] = await res.json();
-        var data: FlagListData[] = [];
-        result.forEach((item) =>
-          data.push({
-            id: item[0],
-            title: item[1],
-            author: item[2],
-            last_edit: item[3],
-          })
-        );
-
+        const data: RespTF = await res.json();
+        console.log(data);
         setData(data);
       } catch (e) {
         console.error("An error occured while sending / reading response:", e);
@@ -51,6 +59,7 @@ export default function FlagListPage() {
     fetchData();
   }, []);
 
+  const categoryData = flagCategories[categoryID];
   return (
     <AnimatePresence>
       {data ? (
@@ -59,6 +68,20 @@ export default function FlagListPage() {
           <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto">
               <div className="text-center mb-16">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.6,
+                    ease: "easeOut",
+                  }}
+                  className="mb-6 flex justify-center"
+                >
+                  <div className="w-16 h-16 rounded-2xl bg-card border border/10 flex items-center justify-center backdrop-blur-sm">
+                    {categoryData.icon}
+                  </div>
+                </motion.div>
+
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -69,7 +92,7 @@ export default function FlagListPage() {
                   }}
                   className="text-5xl font-bold tracking-tight mb-4 text-foreground"
                 >
-                  {t(categoryName, { ns: "fcategories" })}
+                  {t(categoryData.cif, { ns: "fcategories" })}
                 </motion.h1>
 
                 <motion.div
@@ -82,13 +105,13 @@ export default function FlagListPage() {
                   }}
                   className="flex items-center justify-center gap-3 text-muted-foreground"
                 >
-                  <div className="h-[1px] w-10 bg-border" />
+                  <div className="h-[1px] w-5" />
                   <p className="text-lg">
                     {t("flag_found", {
-                      fcount: data.length,
+                      fcount: data.category_size,
                     })}
                   </p>
-                  <div className="h-[1px] w-10 bg-border" />
+                  <div className="h-[1px] w-5" />
                 </motion.div>
               </div>
 
@@ -99,7 +122,7 @@ export default function FlagListPage() {
                 className="grid gap-4 mb-6"
               >
                 <div className="grid gap-4 mb-6">
-                  {data.map((flag, index) => (
+                  {data.flags.map((flag, index) => (
                     <Link
                       key={index}
                       href={`/flag?id=${flag.id}`}
@@ -136,7 +159,7 @@ export default function FlagListPage() {
                                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                                     />
                                   </svg>
-                                  {t("added_by", { name: flag.author })}
+                                  {t("added_by", { name: flag.added_by })}
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <svg
@@ -153,12 +176,23 @@ export default function FlagListPage() {
                                     />
                                   </svg>
                                   {t("uploaded_at", {
-                                    date_str: new Intl.DateTimeFormat(i18n.language, {
-                                      dateStyle: "medium", 
-                                      timeStyle: "short",
-                                    }).format(new Date(flag.last_edit)),
+                                    date_str: new Intl.DateTimeFormat(
+                                      i18n.language,
+                                      {
+                                        dateStyle: "medium",
+                                        timeStyle: "short",
+                                      }
+                                    ).format(new Date(flag.last_edit)),
                                   })}
                                 </div>
+                                {flag.removed_in != null && (
+                                  <div className="flex items-center gap-2">
+                                    <Trash className="w-4 h-4" />
+                                    {t("removed_with", {
+                                      version: flag.removed_in,
+                                    })}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -175,6 +209,56 @@ export default function FlagListPage() {
                   ))}
                 </div>
               </motion.div>
+
+              <Pagination>
+                <PaginationContent>
+                  {page > 1 && (
+                    <PaginationItem>
+                      <PaginationPrevious
+                        aria-disabled
+                        href={`/flags?category=${categoryID}&page=${page - 1}`}
+                      />
+                    </PaginationItem>
+                  )}
+                  {Array.from({ length: data.page_size }).map((_, index) => (
+                    <PaginationItem key={index}>
+                      <PaginationLink
+                        href={`/flags?category=${categoryID}&page=${index + 1}`}
+                        isActive={page === index + 1}
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  {page != data.page_size && (
+                    <PaginationItem>
+                      <PaginationNext
+                        href={`/flags?category=${categoryID}&page=${page + 1}`}
+                      />
+                    </PaginationItem>
+                  )}
+                  {/*<PaginationItem>
+                    <PaginationPrevious href="#" />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">1</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive>
+                      2
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">3</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext href="#" />
+                  </PaginationItem>*/}
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
           <Footer />

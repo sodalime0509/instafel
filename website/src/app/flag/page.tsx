@@ -6,7 +6,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "next/navigation";
-import { flagsRepoContentURL } from "@/wdata/flag_sdata";
+import {
+  flagAPIURL,
+  flagCategories,
+  flagsRepoContentURL,
+} from "@/wdata/flag_sdata";
 import {
   Flag,
   FlagIcon,
@@ -36,7 +40,7 @@ import Link from "next/link";
 interface FlagData {
   id: number;
   last_edit: string;
-  category: string;
+  category_id: string;
   added_by: string;
   title: string;
   description: string;
@@ -60,7 +64,7 @@ export default function FlagInfoPage() {
   useEffect(() => {
     const loadFlagData = async () => {
       try {
-        const res = await fetch(`${flagsRepoContentURL}/contents/${ID}.json`);
+        const res = await fetch(`${flagAPIURL}/flag/${ID}`);
         if (res.status !== 404) {
           const data: FlagData = await res.json();
           setFlagData(data);
@@ -204,7 +208,9 @@ export default function FlagInfoPage() {
                 >
                   <Badge variant="secondary" className="px-3 py-1">
                     <TagIcon className="w-3 h-3 mr-1" />
-                    {t(flagData.category, { ns: "fcategories" })}
+                    {t(flagCategories[flagData.category_id].cif, {
+                      ns: "fcategories",
+                    })}
                   </Badge>
                 </motion.div>
 
@@ -252,13 +258,7 @@ export default function FlagInfoPage() {
                 transition={{ duration: 0.2 }}
               >
                 <Card className="h-full shadow-md transition-shadow duration-300">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-xl">
-                      <Text className="w-5 h-5 text-primary" />
-                      {t("content.block_titles.description")}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-1">
+                  <CardContent className="flex-1 pt-6">
                     <motion.p
                       className="text-muted-foreground leading-relaxed text-base"
                       initial={{ opacity: 0 }}
@@ -319,7 +319,15 @@ export default function FlagInfoPage() {
                                 value: "v" + flagData.added_in,
                               },
                             ]
-                          : []),
+                          : [
+                              {
+                                icon: PlusIcon,
+                                label: t(
+                                  "content.block_contents.info.added_in"
+                                ),
+                                value: t("content.block_contents.info.unknown"),
+                              },
+                            ]),
                         ...(flagData.removed_in
                           ? [
                               {
@@ -380,26 +388,6 @@ export default function FlagInfoPage() {
               </motion.div>
             </motion.div>
           </div>
-
-          <motion.div
-            className="mt-6"
-            {...fadeInUp}
-            transition={{ duration: 0.6, delay: 0.7 }}
-          >
-            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
-              <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <FlagIcon className="w-5 h-5 text-primary" />
-                    {t("content.block_titles.metaconf_options")}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <MetaConfigContent configData={flagData.flags} />
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
 
           {flagData.screenshots && flagData.screenshots.length > 0 && (
             <motion.div
@@ -505,6 +493,26 @@ export default function FlagInfoPage() {
               </motion.div>
             </motion.div>
           )}
+
+          <motion.div
+            className="mt-6"
+            {...fadeInUp}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.2 }}>
+              <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-xl">
+                    <FlagIcon className="w-5 h-5 text-primary" />
+                    {t("content.block_titles.metaconf_options")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <MetaConfigContent configData={flagData.flags} />
+                </CardContent>
+              </Card>
+            </motion.div>
+          </motion.div>
         </motion.div>
       </div>
       <Footer />
