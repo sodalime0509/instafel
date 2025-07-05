@@ -23,6 +23,10 @@ export const flagsRepoContentURL =
 export const flagAPIURL = "http://127.0.0.1:3000";
 
 export const flagCategories = {
+  "2589": {
+    cif: "all",
+    icon: <GalleryVerticalEnd />,
+  },
   "0": {
     cif: "direct",
     icon: <Send />,

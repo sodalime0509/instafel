@@ -64,7 +64,7 @@ export default function FlagInfoPage() {
   useEffect(() => {
     const loadFlagData = async () => {
       try {
-        const res = await fetch(`${flagAPIURL}/flag/${ID}`);
+        const res = await fetch(`${flagAPIURL}/content/flag/${ID}`);
         if (res.status !== 404) {
           const data: FlagData = await res.json();
           setFlagData(data);

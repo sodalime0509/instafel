@@ -344,11 +344,11 @@ export default function CreateContentPage() {
                           required
                         >
                           <option value="">Select a category</option>
-                          {flagCategories.map((cat, idx) => (
+                          {/*{flagCategories.map((cat, idx) => (
                             <option key={idx} value={cat.cif}>
                               {t(cat.cif)}
                             </option>
-                          ))}
+                          ))}*/}
                         </select>
                       </div>
                     </div>

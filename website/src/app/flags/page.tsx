@@ -13,13 +13,12 @@ import { flagAPIURL, flagCategories } from "@/wdata/flag_sdata";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Trash } from "lucide-react";
+import { Copy, Trash } from "lucide-react";
 
 interface RespTF {
   page: number;
@@ -31,6 +30,7 @@ interface RespTF {
     last_edit: string;
     added_by: string;
     removed_in: string;
+    category_id?: number; // all prop
   }[];
 }
 
@@ -39,16 +39,19 @@ export default function FlagListPage() {
   const [hoveredId] = useState<number | null>(null);
 
   const searchParams = useSearchParams();
-  const categoryID = searchParams.get("category") ?? "0";
+  const categoryID = Number(searchParams.get("category")) ?? 0;
   const page = Number(searchParams.get("page")) ?? 1;
   const [data, setData] = useState<RespTF | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(
-          `${flagAPIURL}/flag_list?category_id=${categoryID}&page=${page}`
-        );
+        const requestUrl =
+          categoryID != 2589
+            ? `${flagAPIURL}/content/list?category_id=${categoryID}&page=${page}`
+            : `${flagAPIURL}/content/list_all?page=${page}`;
+        console.log(requestUrl);
+        const res = await fetch(requestUrl);
         const data: RespTF = await res.json();
         console.log(data);
         setData(data);
@@ -193,6 +196,17 @@ export default function FlagListPage() {
                                     })}
                                   </div>
                                 )}
+                                {flag.category_id != null && (
+                                  <div className="flex items-center gap-2">
+                                    <Copy className="w-4 h-4" />
+                                    {t(
+                                      `${flagCategories[flag.category_id].cif}`,
+                                      {
+                                        ns: "fcategories",
+                                      }
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -237,26 +251,6 @@ export default function FlagListPage() {
                       />
                     </PaginationItem>
                   )}
-                  {/*<PaginationItem>
-                    <PaginationPrevious href="#" />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#">1</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#" isActive>
-                      2
-                    </PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#">3</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationNext href="#" />
-                  </PaginationItem>*/}
                 </PaginationContent>
               </Pagination>
             </div>
