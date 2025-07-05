@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Bot,
   BriefcaseBusiness,
@@ -17,10 +19,7 @@ import {
   Wrench,
 } from "lucide-react";
 
-export const flagsRepoContentURL =
-  "https://raw.githubusercontent.com/instafel/flags/refs/heads/main";
-
-export const flagAPIURL = "http://127.0.0.1:3000";
+export const flagAPIURL = "https://flagapi.instafel.app";
 
 export const flagCategories = {
   "2589": {

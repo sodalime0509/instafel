@@ -25,7 +25,7 @@ import {
   UploadIcon,
   User,
 } from "lucide-react";
-import { flagsRepoContentURL } from "@/wdata/flag_sdata";
+import { flagAPIURL } from "@/wdata/flag_sdata";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { toast } from "sonner";
@@ -99,9 +99,7 @@ export default function UpdateFlagPage() {
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${flagsRepoContentURL}/contents/${id}.json`
-      );
+      const response = await fetch(`${flagAPIURL}/content/flag/${id}`);
 
       if (!response.ok) {
         if (response.status == 404) {
@@ -159,18 +157,15 @@ export default function UpdateFlagPage() {
 
     try {
       console.log(payload);
-      const res = await fetch(
-        "https://api.mamiiblt.me/ifl/admin/user/update-flag",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "ifl-admin-username": btoa(Cookies.get("a_username")),
-            "ifl-admin-password": btoa(Cookies.get("a_pass")),
-          },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(`${flagAPIURL}/creator/update-flag`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "ifl-admin-username": btoa(Cookies.get("a_username")),
+          "ifl-admin-password": btoa(Cookies.get("a_pass")),
+        },
+        body: JSON.stringify(payload),
+      });
 
       const data = await res.json();
 

@@ -9,7 +9,6 @@ import { useSearchParams } from "next/navigation";
 import {
   flagAPIURL,
   flagCategories,
-  flagsRepoContentURL,
 } from "@/wdata/flag_sdata";
 import {
   Flag,

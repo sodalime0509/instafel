@@ -14,7 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { flagCategories } from "@/wdata/flag_sdata";
+import { flagAPIURL, flagCategories } from "@/wdata/flag_sdata";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -187,32 +187,30 @@ export default function CreateContentPage() {
     setIsSubmitting(true);
 
     const payload = {
+      category_id: Number(selectedCategory),
       title,
       description,
       added_by: addedBy,
-      category: selectedCategory,
       added_in: addedIn == "" ? null : addedIn,
       removed_in: removedIn == "" ? null : removedIn,
+      last_edit: lastEdit.toISOString(),
       flags,
       screenshots: screenshotList,
-      last_edit: lastEdit.toISOString(),
     };
+
+    console.log(payload);
 
     try {
       if (checkFlagsValidity(flags)) {
-        console.log(screenshotList);
-        const res = await fetch(
-          "https://api.mamiiblt.me/ifl/admin/user/create-flag",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "ifl-admin-username": btoa(adminUsername),
-              "ifl-admin-password": btoa(adminPassword),
-            },
-            body: JSON.stringify(payload),
-          }
-        );
+        const res = await fetch(`${flagAPIURL}/creator/create-flag`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ifl-admin-username": btoa(adminUsername),
+            "ifl-admin-password": btoa(adminPassword),
+          },
+          body: JSON.stringify(payload),
+        });
         const data = await res.json();
         if (data.status == "SUCCESS") {
           toast("Flag Created", {
@@ -344,11 +342,13 @@ export default function CreateContentPage() {
                           required
                         >
                           <option value="">Select a category</option>
-                          {/*{flagCategories.map((cat, idx) => (
-                            <option key={idx} value={cat.cif}>
-                              {t(cat.cif)}
-                            </option>
-                          ))}*/}
+                          {Object.entries(flagCategories)
+                            .filter(([key]) => key !== "2589")
+                            .map(([key, { cif }]) => (
+                              <option key={key} value={key}>
+                                {t(`${cif}`, { ns: "fcategories" })}
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>

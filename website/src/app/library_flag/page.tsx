@@ -6,11 +6,7 @@ import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
-import {
-  flagAPIURL,
-  flagCategories,
-  flagsRepoContentURL,
-} from "@/wdata/flag_sdata";
+import { flagAPIURL, flagCategories } from "@/wdata/flag_sdata";
 import { FlagIcon, GalleryVerticalEnd } from "lucide-react";
 import { LoadingBar } from "@/components/LoadingBars";
 import FlagLibraryCategoryItem from "@/components/FlagLibraryCategoryItem";
