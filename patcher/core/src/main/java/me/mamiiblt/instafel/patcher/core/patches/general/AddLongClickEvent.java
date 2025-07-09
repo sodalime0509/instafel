@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils;
 import me.mamiiblt.instafel.patcher.core.utils.Log;
 import me.mamiiblt.instafel.patcher.core.utils.SmaliUtils;
 import me.mamiiblt.instafel.patcher.core.utils.Utils;
-import me.mamiiblt.instafel.patcher.core.utils.models.LineData;
 import me.mamiiblt.instafel.patcher.core.utils.patch.InstafelPatch;
 import me.mamiiblt.instafel.patcher.core.utils.patch.InstafelTask;
 import me.mamiiblt.instafel.patcher.core.utils.patch.PInfos;
@@ -19,7 +18,7 @@ import me.mamiiblt.instafel.patcher.core.utils.patch.PInfos;
     shortname = "add_long_click_event",
     desc = "This patch must be applied for Instafel Menu",
     author = "mamiiblt",
-    isSingle = true
+    isSingle = false
 )
 public class AddLongClickEvent extends InstafelPatch {
 
@@ -45,7 +44,7 @@ public class AddLongClickEvent extends InstafelPatch {
                 if (
                     fContent.get(i).contains("new-instance") &&
                     fContent.get(i + 2).contains("invoke-direct") &&
-                    fContent.get(i + 7).contains("null cannot be cast to non-null type android.content.Context") // for be sure we searching right line :)
+                    fContent.get(i + 7).contains("Landroid/content/Context") // for be sure we searching right line :)
                 ) {
                     String vNameRw = fContent.get(i).trim().split(" ")[1];
                     String veriablePart = vNameRw.substring(0, vNameRw.length() - 1);
