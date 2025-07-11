@@ -1,11 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import type React from "react";
 import { useEffect, useState } from "react";
 import { LoadingBar } from "@/components/LoadingBars";
 import Footer from "@/components/Footer";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { useTranslation } from "react-i18next";
@@ -17,40 +16,41 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationEllipsis,
 } from "@/components/ui/pagination";
-import { Copy, Trash } from "lucide-react";
+import {
+  Copy,
+  Trash,
+  ChevronLeft,
+  ChevronRight,
+  SearchCheckIcon,
+} from "lucide-react";
 
 interface RespTF {
-  page: number;
-  category_size: number;
-  page_size: number;
+  result_size: number;
   flags: {
     id: number;
     title: string;
-    last_edit: string;
     added_by: string;
+    last_edit: string;
     removed_in: string;
-    category_id?: number; // all prop
+    category_id: number;
   }[];
 }
 
 export default function FlagListPage() {
   const { t, i18n } = useTranslation(["flags", "fcategories"]);
   const [hoveredId] = useState<number | null>(null);
-
   const searchParams = useSearchParams();
-  const categoryID = Number(searchParams.get("category")) ?? 0;
-  const page = Number(searchParams.get("page")) ?? 1;
+  const search = String(searchParams.get("searchQuery"));
   const [data, setData] = useState<RespTF | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const requestUrl =
-          categoryID != 2589
-            ? `${flagAPIURL}/content/list?category_id=${categoryID}&page=${page}`
-            : `${flagAPIURL}/content/list_all?page=${page}`;
-        console.log(requestUrl);
+        const requestUrl = `http://localhost:3001/content/filter?sQuery=${encodeURIComponent(
+          search
+        )}`;
         const res = await fetch(requestUrl);
         const data: RespTF = await res.json();
         console.log(data);
@@ -60,9 +60,8 @@ export default function FlagListPage() {
       }
     };
     fetchData();
-  }, []);
+  }, [data]);
 
-  const categoryData = flagCategories[categoryID];
   return (
     <AnimatePresence>
       {data ? (
@@ -81,10 +80,9 @@ export default function FlagListPage() {
                   className="mb-6 flex justify-center"
                 >
                   <div className="w-16 h-16 rounded-2xl bg-card border border/10 flex items-center justify-center backdrop-blur-sm">
-                    {categoryData.icon}
+                    <SearchCheckIcon />
                   </div>
                 </motion.div>
-
                 <motion.h1
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -95,9 +93,8 @@ export default function FlagListPage() {
                   }}
                   className="text-5xl font-bold tracking-tight mb-4 text-foreground"
                 >
-                  {t(categoryData.cif, { ns: "fcategories" })}
+                  {t("results")}
                 </motion.h1>
-
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -110,8 +107,9 @@ export default function FlagListPage() {
                 >
                   <div className="h-[1px] w-5" />
                   <p className="text-lg">
-                    {t("flag_found", {
-                      fcount: data.category_size,
+                    {t("s_flag_found", {
+                      fcount: data.result_size,
+                      query: decodeURIComponent(search),
                     })}
                   </p>
                   <div className="h-[1px] w-5" />
@@ -122,13 +120,13 @@ export default function FlagListPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.8, ease: "easeInOut" }}
-                className="grid gap-4 mb-6"
+                className="grid gap-4 mb-4"
               >
                 <div className="grid gap-4 mb-6">
                   {data.flags.map((flag, index) => (
                     <Link
                       key={index}
-                      href={`/flag?id=${flag.id}`}
+                      href={`/library/flag/view?id=${flag.id}`}
                       className="group relative"
                     >
                       <div
@@ -146,7 +144,6 @@ export default function FlagListPage() {
                                   {flag.title}
                                 </h3>
                               </div>
-
                               <div className="items-center gap-4 text-sm text-muted-foreground">
                                 <div className="flex items-center gap-2">
                                   <svg
@@ -211,48 +208,28 @@ export default function FlagListPage() {
                             </div>
                           </div>
                         </div>
-
                         <div
                           className={`
               absolute inset-0
               bg-gradient-to-tr from-muted/0 via-muted/0 to-muted/50
-              transition-opacity duration-300`}
+              transition-opacity duration-300
+            `}
                         />
                       </div>
                     </Link>
                   ))}
                 </div>
               </motion.div>
-
-              <Pagination>
-                <PaginationContent>
-                  {page > 1 && (
-                    <PaginationItem>
-                      <PaginationPrevious
-                        aria-disabled
-                        href={`/flags?category=${categoryID}&page=${page - 1}`}
-                      />
-                    </PaginationItem>
-                  )}
-                  {Array.from({ length: data.page_size }).map((_, index) => (
-                    <PaginationItem key={index}>
-                      <PaginationLink
-                        href={`/flags?category=${categoryID}&page=${index + 1}`}
-                        isActive={page === index + 1}
-                      >
-                        {index + 1}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
-                  {page != data.page_size && (
-                    <PaginationItem>
-                      <PaginationNext
-                        href={`/flags?category=${categoryID}&page=${page + 1}`}
-                      />
-                    </PaginationItem>
-                  )}
-                </PaginationContent>
-              </Pagination>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1, duration: 0.6 }}
+                className="text-center text-sm text-muted-foreground"
+              >
+                {data.result_size < 15
+                  ? t("found_footer.down", { size: data.result_size })
+                  : t("found_footer.up", { size: data.result_size })}
+              </motion.div>
             </div>
           </div>
           <Footer />

@@ -50,7 +50,7 @@ A simple module for retrieve latest Alpha APKs directly from the Google Play Sto
 - 🌐 [Website](https://instafel.app)
 - 📚 [Wiki](https://wiki.instafel.app)
 - 💬 [Instafel Community](https://t.me/instafel)
-- 🗂️ [Backup Library](https://instafel.app/library_backup)
+- 🗂️ [Backup Library](https://instafel.app/library/backup)
 
 ## Disclaimer
 

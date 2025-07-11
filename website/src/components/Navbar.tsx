@@ -156,11 +156,11 @@ export default function Navbar() {
     },
     {
       title: t("navbar.items.backups"),
-      href: "/library_backup",
+      href: "/library/backup",
     },
     {
       title: t("navbar.items.flags"),
-      href: "/library_flag",
+      href: "/library/flag",
     },
     {
       title: t("navbar.items.updater"),

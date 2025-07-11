@@ -15,7 +15,7 @@ export default function FlagLibraryCategoryItem({
 
   return (
     <Link
-      href={`/flags?category=${cid}&page=1`}
+      href={`/library/flag/category?cid=${cid}&page=1`}
       onMouseEnter={() => setHoveredId(idx)}
       onMouseLeave={() => setHoveredId(null)}
     >

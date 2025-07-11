@@ -9,8 +9,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
     "/",
     "/wiki",
-    "/library_backup",
-    "/library_flag",
+    "/library/backup",
+    "/library/flag",
     "/about_updater",
     "/download?version=latest",
   ].map((route) => ({

@@ -2,7 +2,7 @@
   "page": {
     "title": "Instafel'i İndir",
     "version": "Sürüm v{{version}}",
-    "version_latest": "Sürüm v{{version}} (güncel)"
+    "version_latest": "Sürüm v{{version}} (en güncel)"
   },
   "variants": {
     "unclone": {

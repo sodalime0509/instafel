@@ -38,6 +38,26 @@ const nextConfig: NextConfig = {
         destination: "/wiki",
         permanent: true,
       },
+      {
+        source: "/library_backup",
+        destination: "/library/backup",
+        permanent: true,
+      },
+      {
+        source: "/library_flag",
+        destination: "/library/flag",
+        permanent: true,
+      },
+      {
+        source: "/flag",
+        destination: "/library/flag/view",
+        permanent: true,
+      },
+      {
+        source: "/backup",
+        destination: "/library/backup/view",
+        permanent: true,
+      },
     ];
   },
 };

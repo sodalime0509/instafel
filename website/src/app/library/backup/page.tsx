@@ -101,7 +101,7 @@ export default function LibraryBackupContent() {
                             className="transition-all duration-300"
                           >
                             <Link
-                              href={`/backup?id=${backup.id}`}
+                              href={`/library/backup/view?id=${backup.id}`}
                               className="block p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-lg transition-colors"
                             >
                               <div className="flex items-start">

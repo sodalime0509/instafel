@@ -82,7 +82,7 @@ export default function Footer() {
                     transition={{ type: "spring", stiffness: 400 }}
                   >
                     <Link
-                      href="/library_backup"
+                      href="/library/backup"
                       className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
                     >
                       <FileCog2Icon className="w-4 h-4" />
@@ -94,7 +94,7 @@ export default function Footer() {
                     transition={{ type: "spring", stiffness: 400 }}
                   >
                     <Link
-                      href="/library_flag"
+                      href="/library/flag"
                       className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
                     >
                       <FlagIcon className="w-4 h-4" />

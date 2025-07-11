@@ -5,7 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { LoadingBar } from "@/components/LoadingBars";
 import Footer from "@/components/Footer";
 import {
@@ -39,6 +39,7 @@ interface Resp {
 
 export default function PageBackup() {
   const { t } = useTranslation("backup");
+  const params = useParams();
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id") ?? "null";
@@ -99,7 +100,7 @@ export default function PageBackup() {
           <p className="text-muted-foreground mb-6">
             {t("notFound.description")}
           </p>
-          <Link href="/library_backup">
+          <Link href="/library/backup">
             <Button>{t("notFound.returnButton")}</Button>
           </Link>
         </Card>
@@ -121,7 +122,7 @@ export default function PageBackup() {
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
             <Link
-              href="/library_backup"
+              href="/library/backup"
               className="text-primary hover:underline flex items-center"
             >
               <FileSpreadsheet className="mr-2 h-4 w-4" />
@@ -341,7 +342,7 @@ export default function PageBackup() {
             className="mt-6 sm:mt-10 text-center"
           >
             <Button asChild variant="outline">
-              <Link href="/library_backup" className="flex items-center">
+              <Link href="/library/backup" className="flex items-center">
                 <FileSpreadsheet className="mr-2 h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 {t("viewAllBackups")}
               </Link>

@@ -30,9 +30,9 @@ This enables community-based experimentation and shared discoveries.
 
 ### 🔍 How to Access the Flag Library and Backup Library?
 
-- The Flag Library is being established on the website (still WIP) at [Flag Library](https://instafel.app/library_flag)
+- The Flag Library is being established on the website (still WIP) at [Flag Library](https://instafel.app/library/flag)
 - The most used flags can also be found via the [Telegram Community](https://t.me/instafel/34335)
-- The Backup Library is accessible here: [Backup Library](https://instafel.app/library_backup)
+- The Backup Library is accessible here: [Backup Library](https://instafel.app/library/backup)
 - You can apply any backup files via the Instafel Menu.
 
 ---
@@ -50,7 +50,7 @@ The Instafel Menu is a special settings panel added to the regular Instagram Alp
 1. **Open Instafel App:** Launch Instafel on your device.
 2. **Go to Your Profile:** Tap your profile icon at the bottom right.
 3. **Open the Side Navigation Drawer:** **Press and hold** the hamburger (☰) icon in the top-right corner to open the Instafel menu.
-![Hamburger Button](/hamburger-button.jpg)
+   ![Hamburger Button](/hamburger-button.jpg)
 4. **Access Instafel Features:** The advanced Instafel menu will appear, giving you access to backups, libraries, updater controls, and more.
 
 ---

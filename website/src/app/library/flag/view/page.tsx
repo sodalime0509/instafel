@@ -6,10 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "next/navigation";
-import {
-  flagAPIURL,
-  flagCategories,
-} from "@/wdata/flag_sdata";
+import { flagAPIURL, flagCategories } from "@/wdata/flag_sdata";
 import {
   Flag,
   FlagIcon,
@@ -201,17 +198,21 @@ export default function FlagInfoPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <Link
+                  href={`/library/flag/category?cid=${flagData.category_id}&page=1`}
                 >
-                  <Badge variant="secondary" className="px-3 py-1">
-                    <TagIcon className="w-3 h-3 mr-1" />
-                    {t(flagCategories[flagData.category_id].cif, {
-                      ns: "fcategories",
-                    })}
-                  </Badge>
-                </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Badge variant="secondary" className="px-3 py-1">
+                      <TagIcon className="w-3 h-3 mr-1" />
+                      {t(flagCategories[flagData.category_id].cif, {
+                        ns: "fcategories",
+                      })}
+                    </Badge>
+                  </motion.div>
+                </Link>
 
                 {flagData.removed_in && (
                   <motion.div
