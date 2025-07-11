@@ -54,24 +54,61 @@ jobs:
     - name: Download Instagram Bundle/APK
       run: |
         echo "Downloading Instagram file..."
-        wget -O instagram-file "${{ github.event.inputs.instagram_apk_url }}"
+        
+        # Use curl with user agent and headers to bypass basic bot detection
+        curl -L \
+          -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
+          -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" \
+          -H "Accept-Language: en-US,en;q=0.5" \
+          -H "Accept-Encoding: gzip, deflate" \
+          -H "Connection: keep-alive" \
+          -o instagram-file \
+          "${{ github.event.inputs.instagram_apk_url }}"
+        
+        # Check if download was successful
+        if [ ! -f instagram-file ] || [ ! -s instagram-file ]; then
+          echo "❌ Download failed or file is empty"
+          echo "This might be due to:"
+          echo "1. APKMirror's anti-bot protection"
+          echo "2. Invalid/expired download URL"
+          echo "3. Network issues"
+          echo ""
+          echo "💡 Solutions:"
+          echo "1. Try getting the direct download URL from APKMirror's download page"
+          echo "2. Use a different APK source (APKPure, APKMonk)"
+          echo "3. Upload the APK file to your repository and use a GitHub raw URL"
+          exit 1
+        fi
+        
+        # Check file size (should be > 50MB for Instagram)
+        file_size=$(stat -c%s instagram-file)
+        if [ $file_size -lt 50000000 ]; then
+          echo "⚠️ File seems too small (${file_size} bytes)"
+          echo "This might be an error page instead of the actual APK/AAB"
+          echo "Content preview:"
+          head -n 20 instagram-file
+          echo ""
+          echo "💡 Try getting a fresh download URL from APKMirror"
+          exit 1
+        fi
         
         # Check if it's an AAB or APK
         file_type=$(file instagram-file)
         echo "File type: $file_type"
+        echo "File size: $(du -h instagram-file | cut -f1)"
         
         if [[ $file_type == *"Zip archive"* ]] || [[ $file_type == *"Android"* ]]; then
           if [[ "${{ github.event.inputs.instagram_apk_url }}" == *".aab"* ]] || [[ $file_type == *"Android App Bundle"* ]]; then
-            echo "Detected Android App Bundle (AAB)"
+            echo "✅ Detected Android App Bundle (AAB)"
             mv instagram-file instagram-alpha.aab
             echo "BUNDLE_TYPE=aab" >> $GITHUB_ENV
           else
-            echo "Detected APK"
+            echo "✅ Detected APK"
             mv instagram-file instagram-alpha.apk
             echo "BUNDLE_TYPE=apk" >> $GITHUB_ENV
           fi
         else
-          echo "Unknown file type, assuming APK"
+          echo "🤔 Unknown file type, assuming APK"
           mv instagram-file instagram-alpha.apk
           echo "BUNDLE_TYPE=apk" >> $GITHUB_ENV
         fi
