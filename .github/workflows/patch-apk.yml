@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       instagram_apk_url:
-        description: 'Instagram Alpha APK Download URL'
+        description: 'Instagram Alpha APK/AAB Download URL'
         required: true
         type: string
       apk_version:
@@ -36,7 +36,7 @@ jobs:
         api-level: 33
         build-tools: 33.0.0
     
-    - name: Install APK Tools
+    - name: Install APK Tools & Bundle Tool
       run: |
         sudo apt-get update
         sudo apt-get install -y apktool aapt zipalign
@@ -45,12 +45,38 @@ jobs:
         wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
         chmod +x uber-apk-signer-1.3.0.jar
         sudo mv uber-apk-signer-1.3.0.jar /usr/local/bin/uber-apk-signer.jar
+        
+        # Download bundletool for converting AAB to APK
+        wget https://github.com/google/bundletool/releases/download/1.15.6/bundletool-all-1.15.6.jar
+        chmod +x bundletool-all-1.15.6.jar
+        sudo mv bundletool-all-1.15.6.jar /usr/local/bin/bundletool.jar
     
-    - name: Download Instagram APK
+    - name: Download Instagram Bundle/APK
       run: |
-        echo "Downloading Instagram APK..."
-        wget -O instagram-alpha.apk "${{ github.event.inputs.instagram_apk_url }}"
-        ls -la instagram-alpha.apk
+        echo "Downloading Instagram file..."
+        wget -O instagram-file "${{ github.event.inputs.instagram_apk_url }}"
+        
+        # Check if it's an AAB or APK
+        file_type=$(file instagram-file)
+        echo "File type: $file_type"
+        
+        if [[ $file_type == *"Zip archive"* ]] || [[ $file_type == *"Android"* ]]; then
+          if [[ "${{ github.event.inputs.instagram_apk_url }}" == *".aab"* ]] || [[ $file_type == *"Android App Bundle"* ]]; then
+            echo "Detected Android App Bundle (AAB)"
+            mv instagram-file instagram-alpha.aab
+            echo "BUNDLE_TYPE=aab" >> $GITHUB_ENV
+          else
+            echo "Detected APK"
+            mv instagram-file instagram-alpha.apk
+            echo "BUNDLE_TYPE=apk" >> $GITHUB_ENV
+          fi
+        else
+          echo "Unknown file type, assuming APK"
+          mv instagram-file instagram-alpha.apk
+          echo "BUNDLE_TYPE=apk" >> $GITHUB_ENV
+        fi
+        
+        ls -la instagram-alpha.*
     
     - name: Setup Gradle
       run: |
@@ -66,14 +92,29 @@ jobs:
         # Find the built patcher JAR
         find . -name "*.jar" -type f | grep -E "(patcher|instafel)" | head -5
     
-    - name: Extract and Patch APK
+    - name: Convert Bundle to APK (if needed) and Patch
       run: |
         # Create working directory
         mkdir -p workspace
         cd workspace
         
-        # Copy APK to workspace
-        cp ../instagram-alpha.apk ./
+        if [[ "$BUNDLE_TYPE" == "aab" ]]; then
+          echo "Converting AAB to APK..."
+          cp ../instagram-alpha.aab ./
+          
+          # Convert AAB to APKs using bundletool
+          java -jar /usr/local/bin/bundletool.jar build-apks --bundle=instagram-alpha.aab --output=instagram-alpha.apks --mode=universal
+          
+          # Extract the universal APK
+          unzip instagram-alpha.apks
+          cp universal.apk instagram-alpha.apk
+          
+          echo "Conversion completed. APK size:"
+          ls -lh instagram-alpha.apk
+        else
+          echo "Using provided APK..."
+          cp ../instagram-alpha.apk ./
+        fi
         
         # Decompile APK
         echo "Decompiling APK..."
