@@ -48,7 +48,7 @@ export default function FlagListPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const requestUrl = `http://localhost:3001/content/filter?sQuery=${encodeURIComponent(
+        const requestUrl = `${flagAPIURL}/content/filter?sQuery=${encodeURIComponent(
           search
         )}`;
         const res = await fetch(requestUrl);
