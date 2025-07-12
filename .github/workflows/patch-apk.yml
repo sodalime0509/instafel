@@ -154,45 +154,60 @@ jobs:
         mkdir -p workspace
         cd workspace
 
+        # Debug: Check what files are available
+        echo "Files in parent directory:"
+        ls -la ../
+        
         # Handle different bundle types
         if [[ "$BUNDLE_TYPE" == "xapk" ]]; then
           echo "Processing XAPK file..."
-          unzip ../instagram-alpha.xapk -d xapk
-          # Find the main APK (usually the largest one)
-          main_apk=$(find xapk -name "*.apk" -type f -exec ls -la {} \; | sort -nrk5 | head -n1 | awk '{print $9}')
-          if [ -z "$main_apk" ]; then
-            main_apk=$(find xapk -name "*.apk" | head -n1)
-          fi
-          cp "$main_apk" instagram-alpha.apk
-          echo "Selected APK: $main_apk"
-        elif [[ "$BUNDLE_TYPE" == "apkm" ]]; then
-          echo "Processing APKM file..."
-          unzip ../instagram-alpha.apkm -d apkm
-          
-          # Look for architecture-specific APK based on user selection
-          if [ "${{ github.event.inputs.target_arch }}" = "arm64-v8a" ]; then
-            arch_apk=$(find apkm -name "*arm64*" -o -name "*v8a*" | head -n1)
-          elif [ "${{ github.event.inputs.target_arch }}" = "armeabi-v7a" ]; then
-            arch_apk=$(find apkm -name "*armeabi*" -o -name "*v7a*" | head -n1)
-          fi
-          
-          if [ -n "$arch_apk" ] && [ -f "$arch_apk" ]; then
-            cp "$arch_apk" instagram-alpha.apk
-            echo "Selected architecture-specific APK: $arch_apk"
-          else
-            main_apk=$(find apkm -name "*.apk" -type f -exec ls -la {} \; | sort -nrk5 | head -n1 | awk '{print $9}')
+          if [ -f "../instagram-alpha.xapk" ]; then
+            unzip ../instagram-alpha.xapk -d xapk
+            # Find the main APK (usually the largest one)
+            main_apk=$(find xapk -name "*.apk" -type f -exec ls -la {} \; | sort -nrk5 | head -n1 | awk '{print $9}')
             if [ -z "$main_apk" ]; then
-              main_apk=$(find apkm -name "*.apk" | head -n1)
+              main_apk=$(find xapk -name "*.apk" | head -n1)
             fi
             cp "$main_apk" instagram-alpha.apk
-            echo "Selected main APK: $main_apk"
+            echo "Selected APK: $main_apk"
+          else
+            echo "❌ XAPK file not found"
+            exit 1
+          fi
+        elif [[ "$BUNDLE_TYPE" == "apkm" ]]; then
+          echo "Processing APKM file..."
+          if [ -f "../instagram-alpha.apkm" ]; then
+            unzip ../instagram-alpha.apkm -d apkm
+            
+            # Look for architecture-specific APK based on user selection
+            if [ "${{ github.event.inputs.target_arch }}" = "arm64-v8a" ]; then
+              arch_apk=$(find apkm -name "*arm64*" -o -name "*v8a*" | head -n1)
+            elif [ "${{ github.event.inputs.target_arch }}" = "armeabi-v7a" ]; then
+              arch_apk=$(find apkm -name "*armeabi*" -o -name "*v7a*" | head -n1)
+            fi
+            
+            if [ -n "$arch_apk" ] && [ -f "$arch_apk" ]; then
+              cp "$arch_apk" instagram-alpha.apk
+              echo "Selected architecture-specific APK: $arch_apk"
+            else
+              main_apk=$(find apkm -name "*.apk" -type f -exec ls -la {} \; | sort -nrk5 | head -n1 | awk '{print $9}')
+              if [ -z "$main_apk" ]; then
+                main_apk=$(find apkm -name "*.apk" | head -n1)
+              fi
+              cp "$main_apk" instagram-alpha.apk
+              echo "Selected main APK: $main_apk"
+            fi
+          else
+            echo "❌ APKM file not found"
+            exit 1
           fi
         elif [[ "$BUNDLE_TYPE" == "aab" ]]; then
           echo "Processing AAB file..."
-          cp ../instagram-alpha.aab ./
-          
-          # Create device-specific configuration
-          cat > device-spec.json <<EOF
+          if [ -f "../instagram-alpha.aab" ]; then
+            cp ../instagram-alpha.aab ./
+            
+            # Create device-specific configuration
+            cat > device-spec.json <<EOF
         {
           "supportedAbis": ["${{ github.event.inputs.target_arch }}"],
           "supportedLocales": ["en"],
@@ -200,18 +215,27 @@ jobs:
           "sdkVersion": 34
         }
         EOF
-          
-          # Extract universal APK
-          java -jar /usr/local/bin/bundletool.jar build-apks \
-            --bundle=instagram-alpha.aab \
-            --output=instagram-alpha.apks \
-            --device-spec=device-spec.json \
-            --mode=universal
-          unzip instagram-alpha.apks
-          cp universal.apk instagram-alpha.apk
+            
+            # Extract universal APK
+            java -jar /usr/local/bin/bundletool.jar build-apks \
+              --bundle=instagram-alpha.aab \
+              --output=instagram-alpha.apks \
+              --device-spec=device-spec.json \
+              --mode=universal
+            unzip instagram-alpha.apks
+            cp universal.apk instagram-alpha.apk
+          else
+            echo "❌ AAB file not found"
+            exit 1
+          fi
         else
           echo "Processing APK file..."
-          cp ../instagram-alpha.apk ./
+          if [ -f "../instagram-alpha.apk" ]; then
+            cp ../instagram-alpha.apk ./
+          else
+            echo "❌ APK file not found"
+            exit 1
+          fi
         fi
 
         # Verify APK file
@@ -232,91 +256,116 @@ jobs:
       run: |
         cd workspace
         
+        # Debug: Check current directory and files
+        echo "Current directory: $(pwd)"
+        echo "Files in workspace:"
+        ls -la
+        
+        # Verify APK file exists
+        if [ ! -f "instagram-alpha.apk" ]; then
+          echo "❌ instagram-alpha.apk not found in workspace"
+          echo "Looking for APK files..."
+          find . -name "*.apk" -type f
+          exit 1
+        fi
+        
         # Create backup
         cp instagram-alpha.apk instagram-alpha-backup.apk
+        echo "✅ Created backup of original APK"
         
         # Try minimal patching first (preserves more compatibility)
         echo "🔄 Attempting minimal patching..."
         
-        # Extract APK
-        mkdir -p temp_extract
-        cd temp_extract
-        unzip -q ../instagram-alpha.apk
+        # Use aapt to dump current manifest info
+        echo "🔍 Analyzing APK manifest..."
+        if $ANDROID_HOME/build-tools/34.0.0/aapt dump badging instagram-alpha.apk > apk_info.txt 2>&1; then
+          echo "✅ Successfully extracted APK info"
+          cat apk_info.txt | head -10
+        else
+          echo "⚠️ Could not extract APK info with aapt, continuing with minimal info"
+          touch apk_info.txt
+        fi
         
-        # Check if AndroidManifest.xml exists
-        if [ -f "AndroidManifest.xml" ]; then
-          echo "✅ Found AndroidManifest.xml, attempting direct modification..."
+        # Extract current values with multiple fallback methods
+        current_target=$(grep -o "targetSdkVersion:'[0-9]*'" apk_info.txt | cut -d"'" -f2 | head -1)
+        current_min=$(grep -o "minSdkVersion:'[0-9]*'" apk_info.txt | cut -d"'" -f2 | head -1)
+        
+        # Alternative extraction patterns
+        if [ -z "$current_target" ]; then
+          current_target=$(grep -o "sdkVersion:'[0-9]*'" apk_info.txt | cut -d"'" -f2 | head -1)
+        fi
+        if [ -z "$current_target" ]; then
+          current_target=$(grep -o "compileSdkVersion:'[0-9]*'" apk_info.txt | cut -d"'" -f2 | head -1)
+        fi
+        
+        # Set safe defaults if extraction fails
+        if [ -z "$current_target" ] || ! [[ "$current_target" =~ ^[0-9]+$ ]]; then
+          current_target="28"  # Assume older SDK if we can't detect
+          echo "⚠️ Could not detect target SDK, assuming $current_target"
+        fi
+        if [ -z "$current_min" ] || ! [[ "$current_min" =~ ^[0-9]+$ ]]; then
+          current_min="21"  # Safe minimum
+          echo "⚠️ Could not detect min SDK, assuming $current_min"
+        fi
+        
+        echo "Current targetSdkVersion: $current_target"
+        echo "Current minSdkVersion: $current_min"
+        
+        # Only patch if necessary (with proper integer comparison)
+        if [ "$current_target" -lt "30" ] 2>/dev/null; then
+          echo "⚠️ Target SDK too low ($current_target), patching required..."
           
-          # Use aapt to dump current manifest
-          $ANDROID_HOME/build-tools/34.0.0/aapt dump xmltree ../instagram-alpha.apk AndroidManifest.xml > manifest_dump.txt
-          
-          # Extract current values
-          current_target=$(grep -o 'targetSdkVersion=[0-9]*' manifest_dump.txt | cut -d'=' -f2 | head -1)
-          current_min=$(grep -o 'minSdkVersion=[0-9]*' manifest_dump.txt | cut -d'=' -f2 | head -1)
-          
-          echo "Current targetSdkVersion: $current_target"
-          echo "Current minSdkVersion: $current_min"
-          
-          # Only patch if necessary
-          if [ "$current_target" -lt "30" ]; then
-            echo "⚠️ Target SDK too low, patching required..."
-            cd ..
+          # Full decompilation approach
+          echo "🔄 Performing full decompilation..."
+          if apktool d instagram-alpha.apk -o instagram-decompiled --force-all; then
+            echo "✅ Full decompilation successful"
             
-            # Full decompilation approach
-            echo "🔄 Performing full decompilation..."
-            if apktool d instagram-alpha.apk -o instagram-decompiled --force-all; then
-              echo "✅ Full decompilation successful"
+            manifest="instagram-decompiled/AndroidManifest.xml"
+            if [ -f "$manifest" ]; then
+              echo "📝 Modifying AndroidManifest.xml..."
+              cp "$manifest" "${manifest}.bak"
               
-              manifest="instagram-decompiled/AndroidManifest.xml"
-              if [ -f "$manifest" ]; then
-                echo "📝 Modifying AndroidManifest.xml..."
-                cp "$manifest" "${manifest}.bak"
-                
-                # Conservative SDK updates
-                sed -i 's/android:targetSdkVersion="[0-9]*"/android:targetSdkVersion="33"/' "$manifest"
-                sed -i 's/android:minSdkVersion="[0-9]*"/android:minSdkVersion="21"/' "$manifest"
-                
-                # Add essential permissions for Android 15
-                if ! grep -q "android.permission.POST_NOTIFICATIONS" "$manifest"; then
-                  sed -i '/<uses-permission android:name="android.permission.INTERNET"/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$manifest"
-                fi
-                
-                # Remove problematic permissions
-                sed -i '/android:name="android.permission.WRITE_EXTERNAL_STORAGE"/d' "$manifest"
-                
-                # Update application tag for Android 15
-                sed -i 's/android:requestLegacyExternalStorage="true"//g' "$manifest"
-                
-                echo "✅ Manifest modifications completed"
+              # Conservative SDK updates
+              sed -i 's/android:targetSdkVersion="[0-9]*"/android:targetSdkVersion="33"/' "$manifest"
+              sed -i 's/android:minSdkVersion="[0-9]*"/android:minSdkVersion="21"/' "$manifest"
+              
+              # Add essential permissions for Android 15
+              if ! grep -q "android.permission.POST_NOTIFICATIONS" "$manifest"; then
+                sed -i '/<uses-permission android:name="android.permission.INTERNET"/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$manifest"
               fi
+              
+              # Remove problematic permissions
+              sed -i '/android:name="android.permission.WRITE_EXTERNAL_STORAGE"/d' "$manifest"
+              
+              # Update application tag for Android 15
+              sed -i 's/android:requestLegacyExternalStorage="true"//g' "$manifest"
+              
+              echo "✅ Manifest modifications completed"
+            fi
 
-              # Update apktool.yml
-              apktool_yml="instagram-decompiled/apktool.yml"
-              if [ -f "$apktool_yml" ]; then
-                sed -i 's/targetSdkVersion: .*/targetSdkVersion: 33/' "$apktool_yml"
-                sed -i 's/minSdkVersion: .*/minSdkVersion: 21/' "$apktool_yml"
-              fi
+            # Update apktool.yml
+            apktool_yml="instagram-decompiled/apktool.yml"
+            if [ -f "$apktool_yml" ]; then
+              sed -i 's/targetSdkVersion: .*/targetSdkVersion: 33/' "$apktool_yml"
+              sed -i 's/minSdkVersion: .*/minSdkVersion: 21/' "$apktool_yml"
+            fi
 
-              # Rebuild APK
-              echo "🔄 Rebuilding APK..."
-              if apktool b instagram-decompiled -o instagram-patched-unsigned.apk --use-aapt2; then
-                echo "✅ APK rebuilt successfully with aapt2"
-              elif apktool b instagram-decompiled -o instagram-patched-unsigned.apk; then
-                echo "✅ APK rebuilt successfully with aapt1"
-              else
-                echo "⚠️ Rebuild failed, using original APK"
-                cp instagram-alpha.apk instagram-patched-unsigned.apk
-              fi
+            # Rebuild APK
+            echo "🔄 Rebuilding APK..."
+            if apktool b instagram-decompiled -o instagram-patched-unsigned.apk --use-aapt2; then
+              echo "✅ APK rebuilt successfully with aapt2"
+            elif apktool b instagram-decompiled -o instagram-patched-unsigned.apk; then
+              echo "✅ APK rebuilt successfully with aapt1"
             else
-              echo "⚠️ Decompilation failed, using original APK"
+              echo "⚠️ Rebuild failed, using original APK"
               cp instagram-alpha.apk instagram-patched-unsigned.apk
             fi
           else
-            echo "✅ APK already compatible, using original"
+            echo "⚠️ Decompilation failed, using original APK"
             cp instagram-alpha.apk instagram-patched-unsigned.apk
           fi
         else
-          echo "⚠️ Binary manifest found, using original APK"
+          echo "✅ APK already compatible (target SDK: $current_target), using original"
           cp instagram-alpha.apk instagram-patched-unsigned.apk
         fi
 
