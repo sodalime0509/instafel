@@ -409,17 +409,48 @@ jobs:
         fi
     
     - name: Sign APK
+      env:
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       run: |
         cd workspace
         
-        # Generate a keystore for signing (for demo purposes)
-        keytool -genkey -v -keystore release-key.keystore -alias alias_name -keyalg RSA -keysize 2048 -validity 10000 -storepass password -keypass password -dname "CN=Developer, OU=Development, O=Company, L=City, S=State, C=US"
+        # Create keystore using the secrets
+        echo "Creating keystore with provided credentials..."
+        keytool -genkey -v -keystore release-key.keystore \
+          -alias "$KEY_ALIAS" \
+          -keyalg RSA \
+          -keysize 2048 \
+          -validity 10000 \
+          -storepass "$KEYSTORE_PASSWORD" \
+          -keypass "$KEY_PASSWORD" \
+          -dname "CN=Developer, OU=Development, O=Company, L=City, ST=State, C=US"
         
-        # Sign the APK
-        java -jar /usr/local/bin/uber-apk-signer.jar --apks instagram-patched-unsigned.apk --ks release-key.keystore --ksAlias alias_name --ksPass password --keyPass password
+        # Sign the APK using the secrets
+        echo "Signing APK with provided credentials..."
+        java -jar /usr/local/bin/uber-apk-signer.jar \
+          --apks instagram-patched-unsigned.apk \
+          --ks release-key.keystore \
+          --ksAlias "$KEY_ALIAS" \
+          --ksPass "$KEYSTORE_PASSWORD" \
+          --keyPass "$KEY_PASSWORD"
         
-        # Rename the signed APK
-        mv instagram-patched-unsigned-aligned-debugSigned.apk instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+        # Find the signed APK (uber-apk-signer creates different naming patterns)
+        signed_apk=$(find . -name "*signed*.apk" -o -name "*aligned*.apk" | head -1)
+        
+        if [ -n "$signed_apk" ]; then
+          echo "Found signed APK: $signed_apk"
+          mv "$signed_apk" instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+        else
+          echo "❌ Could not find signed APK"
+          echo "Available APK files:"
+          ls -la *.apk
+          exit 1
+        fi
+        
+        echo "✅ APK signing completed"
+        ls -la instagram-instafel-${{ github.event.inputs.apk_version }}.apk
     
     - name: Upload Patched APK
       uses: actions/upload-artifact@v4
