@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       instagram_apk_url:
-        description: 'Instagram Alpha APK/AAB/APKM Download URL'
+        description: 'Instagram APK/AAB/APKM/XAPK Download URL'
         required: true
         type: string
       apk_version:
@@ -40,6 +40,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y apktool aapt zipalign unzip
+        
+        # Install additional tools for XAPK handling
+        sudo apt-get install -y jq
         
         # Download and install apksigner
         wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
@@ -109,7 +112,7 @@ jobs:
           exit 1
         fi
         
-        # Check if it's an APKM, AAB, or APK
+        # Check if it's an APKM, AAB, XAPK, or APK
         file_type=$(file instagram-file)
         echo "File type: $file_type"
         echo "File size: $(du -h instagram-file | cut -f1)"
@@ -117,9 +120,14 @@ jobs:
         # Check file extension from URL
         url_lower=$(echo "${{ github.event.inputs.instagram_apk_url }}" | tr '[:upper:]' '[:lower:]')
         
-        if [[ $url_lower == *".apkm"* ]] || [[ $file_type == *"Zip archive"* ]]; then
-          # Try to determine if it's APKM by checking contents
-          if unzip -l instagram-file 2>/dev/null | grep -q "base.apk\|split_config"; then
+        if [[ $url_lower == *".xapk"* ]] || [[ $file_type == *"Zip archive"* ]]; then
+          # Check if it's XAPK by looking for manifest.json or icon.png
+          if unzip -l instagram-file 2>/dev/null | grep -q "manifest.json\|icon.png"; then
+            echo "✅ Detected XAPK file (APKPure/Uptodown format)"
+            mv instagram-file instagram-alpha.xapk
+            echo "BUNDLE_TYPE=xapk" >> $GITHUB_ENV
+          # Check if it's APKM by looking for base.apk or split configs
+          elif unzip -l instagram-file 2>/dev/null | grep -q "base.apk\|split_config"; then
             echo "✅ Detected APKM file (APKMirror format)"
             mv instagram-file instagram-alpha.apkm
             echo "BUNDLE_TYPE=apkm" >> $GITHUB_ENV
@@ -132,6 +140,14 @@ jobs:
             mv instagram-file instagram-alpha.apk
             echo "BUNDLE_TYPE=apk" >> $GITHUB_ENV
           fi
+        elif [[ $url_lower == *".apkm"* ]]; then
+          echo "✅ Detected APKM file (APKMirror format)"
+          mv instagram-file instagram-alpha.apkm
+          echo "BUNDLE_TYPE=apkm" >> $GITHUB_ENV
+        elif [[ $url_lower == *".aab"* ]]; then
+          echo "✅ Detected Android App Bundle (AAB)"
+          mv instagram-file instagram-alpha.aab
+          echo "BUNDLE_TYPE=aab" >> $GITHUB_ENV
         else
           echo "✅ Detected APK"
           mv instagram-file instagram-alpha.apk
@@ -160,7 +176,49 @@ jobs:
         mkdir -p workspace
         cd workspace
         
-        if [[ "$BUNDLE_TYPE" == "apkm" ]]; then
+        if [[ "$BUNDLE_TYPE" == "xapk" ]]; then
+          echo "Converting XAPK to APK..."
+          cp ../instagram-alpha.xapk ./
+          
+          # Extract XAPK file (it's a zip containing APK + OBB files)
+          mkdir xapk_extracted
+          unzip instagram-alpha.xapk -d xapk_extracted/
+          
+          echo "XAPK contents:"
+          ls -la xapk_extracted/
+          
+          # Look for the main APK file
+          if [ -f "xapk_extracted/base.apk" ]; then
+            echo "Found base.apk - using as main APK"
+            cp xapk_extracted/base.apk instagram-alpha.apk
+          elif [ -f "xapk_extracted/app.apk" ]; then
+            echo "Found app.apk - using as main APK"
+            cp xapk_extracted/app.apk instagram-alpha.apk
+          else
+            # Find the largest APK file (usually the main one)
+            largest_apk=$(find xapk_extracted/ -name "*.apk" -exec ls -la {} \; | sort -k5 -nr | head -n1 | awk '{print $9}')
+            if [ -n "$largest_apk" ]; then
+              echo "Using largest APK: $largest_apk"
+              cp "$largest_apk" instagram-alpha.apk
+            else
+              echo "❌ No APK files found in XAPK"
+              exit 1
+            fi
+          fi
+          
+          # Handle OBB files if present (for games/large apps)
+          if find xapk_extracted/ -name "*.obb" -type f | head -1 | grep -q .; then
+            echo "⚠️  Found OBB files in XAPK:"
+            find xapk_extracted/ -name "*.obb" -type f
+            echo "Note: OBB files are not processed in this workflow"
+            echo "For full functionality, OBB files need to be placed in:"
+            echo "/Android/obb/com.instagram.android/ on the target device"
+          fi
+          
+          echo "XAPK conversion completed. APK size:"
+          ls -lh instagram-alpha.apk
+          
+        elif [[ "$BUNDLE_TYPE" == "apkm" ]]; then
           echo "Converting APKM to APK..."
           cp ../instagram-alpha.apkm ./
           
