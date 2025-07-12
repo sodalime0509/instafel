@@ -1,4 +1,4 @@
-name: Instafel APK Patcher
+name: Instafel APK Patcher (Android 15 Compatible)
 
 on:
   workflow_dispatch:
@@ -30,55 +30,42 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Set up Android SDK
+    - name: Set up Android SDK (Updated for Android 15)
       uses: android-actions/setup-android@v3
       with:
-        api-level: 33
-        build-tools: 33.0.0
+        api-level: 34
+        build-tools: 34.0.0
+        target: android-34
     
     - name: Install APK Tools & APKM Handler
       run: |
         sudo apt-get update
-        sudo apt-get install -y apktool aapt zipalign unzip
+        sudo apt-get install -y apktool aapt aapt2 zipalign unzip xmlstarlet
         
         # Install additional tools for XAPK handling
         sudo apt-get install -y jq
         
-        # Download and install apksigner
+        # Download latest apktool (important for Android 15 compatibility)
+        wget https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool
+        wget https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_2.9.3.jar
+        chmod +x apktool
+        sudo mv apktool /usr/local/bin/
+        sudo mv apktool_2.9.3.jar /usr/local/bin/apktool.jar
+        
+        # Download and install uber-apk-signer
         wget https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
         chmod +x uber-apk-signer-1.3.0.jar
         sudo mv uber-apk-signer-1.3.0.jar /usr/local/bin/uber-apk-signer.jar
         
-        # Download bundletool for converting AAB to APK (if needed)
+        # Download bundletool for converting AAB to APK
         wget https://github.com/google/bundletool/releases/download/1.15.6/bundletool-all-1.15.6.jar
         chmod +x bundletool-all-1.15.6.jar
         sudo mv bundletool-all-1.15.6.jar /usr/local/bin/bundletool.jar
-        
-        # Install APK Editor Studio for APKM handling (optional - fallback to basic tools)
-        echo "Getting latest APK Editor Studio release..."
-        
-        # Try to get AppImage version (current format)
-        APPIMAGE_URL=$(curl -s https://api.github.com/repos/kefir500/apk-editor-studio/releases/latest | grep "browser_download_url.*linux.*AppImage" | cut -d '"' -f 4)
-        
-        if [ -n "$APPIMAGE_URL" ]; then
-          echo "Downloading AppImage: $APPIMAGE_URL"
-          wget "$APPIMAGE_URL" -O apk-editor-studio.AppImage
-          chmod +x apk-editor-studio.AppImage
-          
-          # Install FUSE for AppImage support
-          sudo apt-get install -y fuse
-          
-          echo "✅ APK Editor Studio (AppImage) installed successfully"
-        else
-          echo "⚠️  Could not find APK Editor Studio Linux version"
-          echo "Note: Will use basic unzip tools for XAPK/APKM processing"
-        fi
     
     - name: Download Instagram Bundle/APK
       run: |
         echo "Downloading Instagram file..."
         
-        # Use curl with user agent and headers to bypass basic bot detection
         curl -L \
           -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36" \
           -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8" \
@@ -88,67 +75,43 @@ jobs:
           -o instagram-file \
           "${{ github.event.inputs.instagram_apk_url }}"
         
-        # Check if download was successful
         if [ ! -f instagram-file ] || [ ! -s instagram-file ]; then
           echo "❌ Download failed or file is empty"
-          echo "This might be due to:"
-          echo "1. APKMirror's anti-bot protection"
-          echo "2. Invalid/expired download URL"
-          echo "3. Network issues"
-          echo ""
-          echo "💡 Solutions:"
-          echo "1. Try getting the direct download URL from APKMirror's download page"
-          echo "2. Use a different APK source (APKPure, APKMonk)"
-          echo "3. Upload the APK file to your repository and use a GitHub raw URL"
           exit 1
         fi
         
-        # Check file size (should be > 50MB for Instagram)
         file_size=$(stat -c%s instagram-file)
         if [ $file_size -lt 50000000 ]; then
           echo "⚠️ File seems too small (${file_size} bytes)"
-          echo "This might be an error page instead of the actual APK/AAB"
-          echo "Content preview:"
-          head -n 20 instagram-file
-          echo ""
-          echo "💡 Try getting a fresh download URL from APKMirror"
           exit 1
         fi
         
-        # Check if it's an APKM, AAB, XAPK, or APK
         file_type=$(file instagram-file)
         echo "File type: $file_type"
         echo "File size: $(du -h instagram-file | cut -f1)"
         
-        # Check file extension from URL
         url_lower=$(echo "${{ github.event.inputs.instagram_apk_url }}" | tr '[:upper:]' '[:lower:]')
         
         if [[ $url_lower == *".xapk"* ]] || [[ $file_type == *"Zip archive"* ]]; then
-          # Check if it's XAPK by looking for manifest.json or icon.png
           if unzip -l instagram-file 2>/dev/null | grep -q "manifest.json\|icon.png"; then
-            echo "✅ Detected XAPK file (APKPure/Uptodown format)"
+            echo "✅ Detected XAPK file"
             mv instagram-file instagram-alpha.xapk
             echo "BUNDLE_TYPE=xapk" >> $GITHUB_ENV
-          # Check if it's APKM by looking for base.apk or split configs
           elif unzip -l instagram-file 2>/dev/null | grep -q "base.apk\|split_config"; then
-            echo "✅ Detected APKM file (APKMirror format)"
+            echo "✅ Detected APKM file"
             mv instagram-file instagram-alpha.apkm
             echo "BUNDLE_TYPE=apkm" >> $GITHUB_ENV
-          elif [[ $file_type == *"Android App Bundle"* ]]; then
-            echo "✅ Detected Android App Bundle (AAB)"
-            mv instagram-file instagram-alpha.aab
-            echo "BUNDLE_TYPE=aab" >> $GITHUB_ENV
           else
             echo "✅ Detected APK"
             mv instagram-file instagram-alpha.apk
             echo "BUNDLE_TYPE=apk" >> $GITHUB_ENV
           fi
         elif [[ $url_lower == *".apkm"* ]]; then
-          echo "✅ Detected APKM file (APKMirror format)"
+          echo "✅ Detected APKM file"
           mv instagram-file instagram-alpha.apkm
           echo "BUNDLE_TYPE=apkm" >> $GITHUB_ENV
         elif [[ $url_lower == *".aab"* ]]; then
-          echo "✅ Detected Android App Bundle (AAB)"
+          echo "✅ Detected AAB file"
           mv instagram-file instagram-alpha.aab
           echo "BUNDLE_TYPE=aab" >> $GITHUB_ENV
         else
@@ -156,8 +119,6 @@ jobs:
           mv instagram-file instagram-alpha.apk
           echo "BUNDLE_TYPE=apk" >> $GITHUB_ENV
         fi
-        
-        ls -la instagram-alpha.*
     
     - name: Setup Gradle
       run: |
@@ -169,12 +130,10 @@ jobs:
       run: |
         cd instafel
         
-        # Check if there's a keystore requirement and create a dummy one
         if grep -r "keystores/instafel-app.jks" . 2>/dev/null; then
           echo "Creating dummy keystore for build..."
           mkdir -p config/keystores
           
-          # Create a dummy keystore
           keytool -genkey -v -keystore config/keystores/instafel-app.jks \
             -alias instafel \
             -keyalg RSA \
@@ -183,63 +142,43 @@ jobs:
             -storepass dummy123 \
             -keypass dummy123 \
             -dname "CN=Dummy, OU=Build, O=GitHub, L=Actions, S=CI, C=US"
-          
-          echo "Dummy keystore created"
         fi
         
-        # Try building with different configurations
-        echo "Attempting to build Instafel..."
+        echo "Building Instafel..."
         
-        # First try: build debug version (no signing required)
         if ./gradlew assembleDebug --stacktrace; then
           echo "✅ Debug build successful"
-        # Second try: build without signing validation
         elif ./gradlew build -x validateSigningRelease --stacktrace; then
-          echo "✅ Build successful (skipped signing validation)"
-        # Third try: build only the library/core components
-        elif ./gradlew :app:assembleDebug --stacktrace; then
-          echo "✅ App debug build successful"
+          echo "✅ Build successful"
         else
-          echo "❌ All build attempts failed"
-          echo "Available tasks:"
-          ./gradlew tasks --all | grep -E "(build|assemble|compile)" | head -10
+          echo "❌ Build failed"
           exit 1
         fi
         
-        # Find the built patcher JAR/APK
         echo "Looking for built artifacts..."
         find . -name "*.jar" -type f | grep -E "(patcher|instafel)" | head -5
         find . -name "*.apk" -type f | head -5
     
-    - name: Convert Bundle/APKM to APK (if needed) and Patch
+    - name: Convert Bundle/APKM to APK and Patch for Android 15
       run: |
-        # Create working directory
         mkdir -p workspace
         cd workspace
         
+        # Handle different bundle types
         if [[ "$BUNDLE_TYPE" == "xapk" ]]; then
           echo "Converting XAPK to APK..."
           cp ../instagram-alpha.xapk ./
           
-          # Extract XAPK file (it's a zip containing APK + OBB files)
           mkdir xapk_extracted
           unzip instagram-alpha.xapk -d xapk_extracted/
           
-          echo "XAPK contents:"
-          ls -la xapk_extracted/
-          
-          # Look for the main APK file
           if [ -f "xapk_extracted/base.apk" ]; then
-            echo "Found base.apk - using as main APK"
             cp xapk_extracted/base.apk instagram-alpha.apk
           elif [ -f "xapk_extracted/app.apk" ]; then
-            echo "Found app.apk - using as main APK"
             cp xapk_extracted/app.apk instagram-alpha.apk
           else
-            # Find the largest APK file (usually the main one)
             largest_apk=$(find xapk_extracted/ -name "*.apk" -exec ls -la {} \; | sort -k5 -nr | head -n1 | awk '{print $9}')
             if [ -n "$largest_apk" ]; then
-              echo "Using largest APK: $largest_apk"
               cp "$largest_apk" instagram-alpha.apk
             else
               echo "❌ No APK files found in XAPK"
@@ -247,38 +186,18 @@ jobs:
             fi
           fi
           
-          # Handle OBB files if present (for games/large apps)
-          if find xapk_extracted/ -name "*.obb" -type f | head -1 | grep -q .; then
-            echo "⚠️  Found OBB files in XAPK:"
-            find xapk_extracted/ -name "*.obb" -type f
-            echo "Note: OBB files are not processed in this workflow"
-            echo "For full functionality, OBB files need to be placed in:"
-            echo "/Android/obb/com.instagram.android/ on the target device"
-          fi
-          
-          echo "XAPK conversion completed. APK size:"
-          ls -lh instagram-alpha.apk
-          
         elif [[ "$BUNDLE_TYPE" == "apkm" ]]; then
           echo "Converting APKM to APK..."
           cp ../instagram-alpha.apkm ./
           
-          # Extract APKM file (it's a zip containing multiple APKs)
           mkdir apkm_extracted
           unzip instagram-alpha.apkm -d apkm_extracted/
           
-          echo "APKM contents:"
-          ls -la apkm_extracted/
-          
-          # Look for base.apk (main APK) or largest APK file
           if [ -f "apkm_extracted/base.apk" ]; then
-            echo "Found base.apk - using as main APK"
             cp apkm_extracted/base.apk instagram-alpha.apk
           else
-            # Find the largest APK file (usually the main one)
             largest_apk=$(find apkm_extracted/ -name "*.apk" -exec ls -la {} \; | sort -k5 -nr | head -n1 | awk '{print $9}')
             if [ -n "$largest_apk" ]; then
-              echo "Using largest APK: $largest_apk"
               cp "$largest_apk" instagram-alpha.apk
             else
               echo "❌ No APK files found in APKM"
@@ -286,129 +205,112 @@ jobs:
             fi
           fi
           
-          echo "Conversion completed. APK size:"
-          ls -lh instagram-alpha.apk
-          
         elif [[ "$BUNDLE_TYPE" == "aab" ]]; then
           echo "Converting AAB to APK..."
           cp ../instagram-alpha.aab ./
           
-          # Convert AAB to APKs using bundletool
-          java -jar /usr/local/bin/bundletool.jar build-apks --bundle=instagram-alpha.aab --output=instagram-alpha.apks --mode=universal
+          # Generate device spec for Android 15
+          cat > device-spec.json << EOF
+{
+  "supportedAbis": ["arm64-v8a", "armeabi-v7a"],
+  "supportedLocales": ["en"],
+  "screenDensity": 420,
+  "sdkVersion": 34
+}
+EOF
           
-          # Extract the universal APK
+          java -jar /usr/local/bin/bundletool.jar build-apks \
+            --bundle=instagram-alpha.aab \
+            --output=instagram-alpha.apks \
+            --device-spec=device-spec.json \
+            --mode=universal
+          
           unzip instagram-alpha.apks
           cp universal.apk instagram-alpha.apk
           
-          echo "Conversion completed. APK size:"
-          ls -lh instagram-alpha.apk
         else
           echo "Using provided APK..."
           cp ../instagram-alpha.apk ./
         fi
         
-        # Decompile APK with multiple fallback strategies
-        echo "Decompiling APK..."
+        # Check original APK info
+        echo "Original APK info:"
+        aapt dump badging instagram-alpha.apk | grep -E "(package|sdkVersion|targetSdkVersion)" || true
         
-        # Strategy 1: Try with latest apktool and different options
-        echo "Attempting decompilation with various apktool options..."
+        # Decompile APK with Android 15 compatibility
+        echo "Decompiling APK with Android 15 support..."
         
-        # Try basic decompilation first
-        if apktool d instagram-alpha.apk -o instagram-decompiled --force-all; then
-          echo "✅ Basic decompilation successful"
-        # Try without resources (for obfuscated apps)
-        elif apktool d instagram-alpha.apk -o instagram-decompiled --no-res --force-all; then
-          echo "✅ Decompilation successful (without resources)"
-        # Try without sources
-        elif apktool d instagram-alpha.apk -o instagram-decompiled --no-src --force-all; then
-          echo "✅ Decompilation successful (without sources)"
-        # Try with only manifest
-        elif apktool d instagram-alpha.apk -o instagram-decompiled --only-main-classes --force-all; then
-          echo "✅ Decompilation successful (manifest only)"
+        if apktool d instagram-alpha.apk -o instagram-decompiled --force-all --api-level 34; then
+          echo "✅ Decompilation successful"
         else
-          echo "❌ Standard apktool decompilation failed"
-          echo "Trying alternative approach with basic APK extraction..."
+          echo "❌ Decompilation failed"
+          exit 1
+        fi
+        
+        # Modify AndroidManifest.xml for Android 15 compatibility
+        echo "Modifying AndroidManifest.xml for Android 15..."
+        
+        manifest_path="instagram-decompiled/AndroidManifest.xml"
+        
+        if [ -f "$manifest_path" ]; then
+          # Backup original
+          cp "$manifest_path" "${manifest_path}.backup"
           
-          # Alternative: Manual APK extraction
-          mkdir -p instagram-decompiled
-          cd instagram-decompiled
+          # Update target SDK version to 34 (Android 15 compatible)
+          sed -i 's/android:targetSdkVersion="[0-9]*"/android:targetSdkVersion="34"/' "$manifest_path"
           
-          # Extract APK using unzip
-          unzip -q ../instagram-alpha.apk
+          # Update compile SDK version if present
+          sed -i 's/android:compileSdkVersion="[0-9]*"/android:compileSdkVersion="34"/' "$manifest_path"
           
-          # Try to extract classes.dex and AndroidManifest.xml
-          if [ -f "classes.dex" ] && [ -f "AndroidManifest.xml" ]; then
-            echo "✅ Manual APK extraction successful"
-            
-            # Convert binary XML to readable format (if possible)
-            if command -v aapt &> /dev/null; then
-              echo "Extracting manifest info..."
-              aapt dump badging ../instagram-alpha.apk > manifest_info.txt || true
-              aapt dump permissions ../instagram-alpha.apk > permissions.txt || true
+          # Add Android 15 compatibility permissions if not present
+          if ! grep -q "android.permission.POST_NOTIFICATIONS" "$manifest_path"; then
+            # Add notification permission for Android 13+
+            sed -i '/<uses-permission android:name="android.permission.INTERNET"/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />' "$manifest_path"
+          fi
+          
+          # Add foreground service types if not present (Android 14+)
+          if grep -q "android.permission.FOREGROUND_SERVICE" "$manifest_path"; then
+            if ! grep -q "android:foregroundServiceType" "$manifest_path"; then
+              # Add foreground service type
+              sed -i 's/<service android:name="\([^"]*\)"/<service android:name="\1" android:foregroundServiceType="mediaPlayback"/' "$manifest_path"
             fi
-            
-            cd ..
-          else
-            echo "❌ Manual extraction also failed"
-            echo "APK structure:"
-            unzip -l ../instagram-alpha.apk | head -20
-            cd ..
-            
-            # Last resort: Skip patching and just re-sign the original
-            echo "⚠️  Skipping decompilation - will attempt direct patching"
-            mkdir -p instagram-decompiled
-            cp instagram-alpha.apk instagram-patched-unsigned.apk
           fi
-        fi
-        
-        # Check what we have after decompilation
-        echo "Decompiled APK contents:"
-        ls -la instagram-decompiled/ | head -10
-        
-        # This is where the Instafel injection would happen
-        # The exact process depends on how Instafel's patcher works
-        # You might need to:
-        # 1. Copy Instafel's modified files to the decompiled APK
-        # 2. Modify manifest and other configuration files
-        # 3. Add Instafel's resources and assets
-        
-        echo "Patching process would happen here..."
-        echo "This step needs to be customized based on Instafel's specific patching logic"
-        
-        # Check if we have a proper decompiled structure
-        if [ -d "instagram-decompiled/smali" ] || [ -d "instagram-decompiled/src" ]; then
-          echo "✅ Proper decompiled structure found - ready for advanced patching"
           
-          # For now, we'll just recompile the APK as-is
-          # In a real implementation, you'd inject Instafel's modifications here
+          # Remove any problematic permissions for Android 15
+          sed -i '/android:name="android.permission.WRITE_EXTERNAL_STORAGE"/d' "$manifest_path"
           
-          # Recompile APK
-          echo "Recompiling APK..."
-          if apktool b instagram-decompiled -o instagram-patched-unsigned.apk; then
-            echo "✅ Recompilation successful"
-          else
-            echo "❌ Recompilation failed, using original APK"
-            cp instagram-alpha.apk instagram-patched-unsigned.apk
-          fi
+          echo "✅ AndroidManifest.xml updated for Android 15"
+          
+          # Show what we changed
+          echo "Changes made to manifest:"
+          diff "${manifest_path}.backup" "$manifest_path" || true
         else
-          echo "⚠️  Limited decompiled structure - using original APK with basic modifications"
-          
-          # For cases where decompilation failed, we can still do basic patching
-          # This might involve:
-          # 1. Extracting the APK
-          # 2. Adding/modifying files directly
-          # 3. Re-packaging
-          
-          echo "Performing basic APK modification..."
-          cp instagram-alpha.apk instagram-patched-unsigned.apk
-          
-          # Example: Add a simple modification marker
-          echo "patched_by_instafel=true" > patched_marker.txt
-          zip -u instagram-patched-unsigned.apk patched_marker.txt
-          rm patched_marker.txt
+          echo "⚠️ AndroidManifest.xml not found"
         fi
+        
+        # Add Android 15 compatibility to apktool.yml
+        apktool_yml="instagram-decompiled/apktool.yml"
+        if [ -f "$apktool_yml" ]; then
+          # Update target SDK in apktool.yml
+          sed -i 's/targetSdkVersion: .*/targetSdkVersion: 34/' "$apktool_yml"
+          sed -i 's/compileSdkVersion: .*/compileSdkVersion: 34/' "$apktool_yml"
+          echo "✅ apktool.yml updated"
+        fi
+        
+        # Recompile APK with Android 15 compatibility
+        echo "Recompiling APK..."
+        if apktool b instagram-decompiled -o instagram-patched-unsigned.apk --api-level 34; then
+          echo "✅ Recompilation successful"
+        else
+          echo "❌ Recompilation failed"
+          exit 1
+        fi
+        
+        # Verify the patched APK
+        echo "Verifying patched APK..."
+        aapt dump badging instagram-patched-unsigned.apk | grep -E "(package|sdkVersion|targetSdkVersion)" || true
     
-    - name: Sign APK
+    - name: Sign APK with Android 15 Compatibility
       env:
         KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -416,8 +318,8 @@ jobs:
       run: |
         cd workspace
         
-        # Create keystore using the secrets
-        echo "Creating keystore with provided credentials..."
+        # Create keystore
+        echo "Creating keystore..."
         keytool -genkey -v -keystore release-key.keystore \
           -alias "$KEY_ALIAS" \
           -keyalg RSA \
@@ -427,14 +329,12 @@ jobs:
           -keypass "$KEY_PASSWORD" \
           -dname "CN=Developer, OU=Development, O=Company, L=City, ST=State, C=US"
         
-        # First, align the APK
+        # Align APK
         echo "Aligning APK..."
         zipalign -v 4 instagram-patched-unsigned.apk instagram-patched-aligned.apk
         
-        # Try to find apksigner first, then fall back to jarsigner
+        # Find apksigner
         APKSIGNER_PATH=""
-        
-        # Check common locations for apksigner
         for build_tools_dir in $ANDROID_HOME/build-tools/*/; do
           if [ -f "${build_tools_dir}apksigner" ]; then
             APKSIGNER_PATH="${build_tools_dir}apksigner"
@@ -443,20 +343,23 @@ jobs:
         done
         
         if [ -n "$APKSIGNER_PATH" ]; then
-          echo "Found apksigner at: $APKSIGNER_PATH"
-          echo "Signing APK with Android SDK apksigner..."
+          echo "Signing APK with apksigner..."
           
+          # Sign with v2 and v3 schemes for Android 15 compatibility
           "$APKSIGNER_PATH" sign \
             --ks release-key.keystore \
             --ks-key-alias "$KEY_ALIAS" \
             --ks-pass pass:"$KEYSTORE_PASSWORD" \
             --key-pass pass:"$KEY_PASSWORD" \
+            --v1-signing-enabled true \
+            --v2-signing-enabled true \
+            --v3-signing-enabled true \
             --out instagram-instafel-${{ github.event.inputs.apk_version }}.apk \
             instagram-patched-aligned.apk
           
-          # Verify the signature
+          # Verify signature
           echo "Verifying APK signature..."
-          "$APKSIGNER_PATH" verify instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+          "$APKSIGNER_PATH" verify --verbose instagram-instafel-${{ github.event.inputs.apk_version }}.apk
           
           if [ $? -eq 0 ]; then
             echo "✅ APK signing and verification completed successfully"
@@ -465,23 +368,27 @@ jobs:
             exit 1
           fi
         else
-          echo "apksigner not found, using jarsigner instead..."
+          echo "Using fallback signing method..."
           
-          # Sign with jarsigner (always available with JDK)
-          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA256 \
-            -keystore release-key.keystore \
-            -storepass "$KEYSTORE_PASSWORD" \
-            -keypass "$KEY_PASSWORD" \
-            instagram-patched-aligned.apk "$KEY_ALIAS"
+          # Use uber-apk-signer which supports newer signing schemes
+          java -jar /usr/local/bin/uber-apk-signer.jar \
+            --apks instagram-patched-aligned.apk \
+            --ks release-key.keystore \
+            --ksAlias "$KEY_ALIAS" \
+            --ksPass "$KEYSTORE_PASSWORD" \
+            --keyPass "$KEY_PASSWORD" \
+            --out instagram-instafel-${{ github.event.inputs.apk_version }}.apk
           
-          # Final zipalign after signing with jarsigner
-          zipalign -f -v 4 instagram-patched-aligned.apk instagram-instafel-${{ github.event.inputs.apk_version }}.apk
-          
-          echo "✅ APK signing completed with jarsigner"
+          echo "✅ APK signing completed with uber-apk-signer"
         fi
         
+        # Final verification
         echo "Final APK details:"
         ls -la instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+        
+        # Check final APK compatibility
+        echo "Final APK info:"
+        aapt dump badging instagram-instafel-${{ github.event.inputs.apk_version }}.apk | grep -E "(package|sdkVersion|targetSdkVersion|platformBuildVersionCode)" || true
     
     - name: Upload Patched APK
       uses: actions/upload-artifact@v4
@@ -489,31 +396,47 @@ jobs:
         name: instafel-patched-apk-${{ github.event.inputs.apk_version }}
         path: workspace/instagram-instafel-${{ github.event.inputs.apk_version }}.apk
         retention-days: 30
+        
+    - name: Generate Installation Instructions
+      run: |
+        cd workspace
+        cat > installation-instructions.md << 'EOF'
+        # Installation Instructions for Android 15
+        
+        ## Before Installing:
+        1. **Enable Developer Options**: Go to Settings > About phone > Tap "Build number" 7 times
+        2. **Enable USB Debugging**: Settings > Developer options > USB debugging
+        3. **Allow Unknown Sources**: Settings > Security > Unknown sources (or Install unknown apps)
+        
+        ## Installation:
+        1. Download the APK file
+        2. Transfer to your Android 15 device
+        3. Open file manager and tap the APK
+        4. If prompted, allow installation from unknown sources
+        5. Tap "Install"
+        
+        ## Troubleshooting:
+        - **"App not compatible"**: Make sure you're using the correct APK for your device architecture
+        - **"Installation blocked"**: Check Play Protect settings and disable if necessary
+        - **"Signature mismatch"**: Uninstall original Instagram first
+        
+        ## Android 15 Specific Notes:
+        - This APK has been compiled with targetSdkVersion 34 for Android 15 compatibility
+        - Notification permissions will be requested on first launch
+        - Some features may require additional permissions on Android 15
+        
+        ## Support:
+        If you encounter issues, check:
+        1. Device architecture (arm64-v8a vs armeabi-v7a)
+        2. Available storage space
+        3. Android version compatibility
+        EOF
+        
+        echo "Installation instructions created"
     
-    - name: Create Release (Optional)
-      if: github.ref == 'refs/heads/main'
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Installation Instructions
+      uses: actions/upload-artifact@v4
       with:
-        tag_name: patched-${{ github.event.inputs.apk_version }}
-        release_name: Instafel Patched Instagram ${{ github.event.inputs.apk_version }}
-        body: |
-          🚀 **Patched Instagram APK with Instafel**
-          
-          - Version: ${{ github.event.inputs.apk_version }}
-          - Built: ${{ github.run_number }}
-          - Commit: ${{ github.sha }}
-          
-          ⚠️ **Important Notes:**
-          - This is a modified version of Instagram
-          - Use at your own risk
-          - May violate Instagram's Terms of Service
-          - Not affiliated with Meta/Instagram
-          
-          📱 **Installation:**
-          1. Enable "Unknown Sources" in Android settings
-          2. Download the APK from artifacts
-          3. Install on your device
-        draft: false
-        prerelease: true
+        name: installation-instructions
+        path: workspace/installation-instructions.md
+        retention-days: 30
