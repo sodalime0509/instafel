@@ -144,13 +144,13 @@ jobs:
         elif [[ "$BUNDLE_TYPE" == "aab" ]]; then
           cp ../instagram-alpha.aab ./
           cat > device-spec.json <<EOF
-{
-  "supportedAbis": ["arm64-v8a", "armeabi-v7a"],
-  "supportedLocales": ["en"],
-  "screenDensity": 420,
-  "sdkVersion": 34
-}
-EOF
+        {
+          "supportedAbis": ["arm64-v8a", "armeabi-v7a"],
+          "supportedLocales": ["en"],
+          "screenDensity": 420,
+          "sdkVersion": 34
+        }
+        EOF
           java -jar /usr/local/bin/bundletool.jar build-apks \
             --bundle=instagram-alpha.aab \
             --output=instagram-alpha.apks \
@@ -220,27 +220,27 @@ EOF
       run: |
         cd workspace
         cat <<EOF > installation-instructions.md
-# Installation Instructions for Android 15
+        # Installation Instructions for Android 15
 
-## Before Installing:
-1. Enable Developer Options (tap "Build number" 7 times)
-2. Enable USB Debugging
-3. Allow installation from unknown sources
+        ## Before Installing:
+        1. Enable Developer Options (tap "Build number" 7 times)
+        2. Enable USB Debugging
+        3. Allow installation from unknown sources
 
-## Installation:
-1. Download the APK file
-2. Transfer to your Android device
-3. Tap to install
+        ## Installation:
+        1. Download the APK file
+        2. Transfer to your Android device
+        3. Tap to install
 
-## Troubleshooting:
-- Signature mismatch: uninstall original Instagram first
-- Install blocked: check Play Protect
-- Compatibility: ensure correct architecture (arm64-v8a / armeabi-v7a)
+        ## Troubleshooting:
+        - Signature mismatch: uninstall original Instagram first
+        - Install blocked: check Play Protect
+        - Compatibility: ensure correct architecture (arm64-v8a / armeabi-v7a)
 
-## Android 15 Notes:
-- Target SDK 34
-- POST_NOTIFICATIONS permission included
-EOF
+        ## Android 15 Notes:
+        - Target SDK 34
+        - POST_NOTIFICATIONS permission included
+        EOF
 
     - name: Upload Instructions
       uses: actions/upload-artifact@v4
