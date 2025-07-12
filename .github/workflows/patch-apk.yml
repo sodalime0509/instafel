@@ -54,22 +54,25 @@ jobs:
         chmod +x bundletool-all-1.15.6.jar
         sudo mv bundletool-all-1.15.6.jar /usr/local/bin/bundletool.jar
         
-        # Install APK Editor Studio for APKM handling (dynamic latest version)
+        # Install APK Editor Studio for APKM handling (optional - fallback to basic tools)
         echo "Getting latest APK Editor Studio release..."
-        LATEST_URL=$(curl -s https://api.github.com/repos/kefir500/apk-editor-studio/releases/latest | grep "browser_download_url.*linux_portable.tar.gz" | cut -d '"' -f 4)
         
-        if [ -z "$LATEST_URL" ]; then
-          echo "❌ Could not find latest APK Editor Studio release"
-          echo "Available releases:"
-          curl -s https://api.github.com/repos/kefir500/apk-editor-studio/releases/latest | grep "browser_download_url" | cut -d '"' -f 4
-          exit 1
+        # Try to get AppImage version (current format)
+        APPIMAGE_URL=$(curl -s https://api.github.com/repos/kefir500/apk-editor-studio/releases/latest | grep "browser_download_url.*linux.*AppImage" | cut -d '"' -f 4)
+        
+        if [ -n "$APPIMAGE_URL" ]; then
+          echo "Downloading AppImage: $APPIMAGE_URL"
+          wget "$APPIMAGE_URL" -O apk-editor-studio.AppImage
+          chmod +x apk-editor-studio.AppImage
+          
+          # Install FUSE for AppImage support
+          sudo apt-get install -y fuse
+          
+          echo "✅ APK Editor Studio (AppImage) installed successfully"
+        else
+          echo "⚠️  Could not find APK Editor Studio Linux version"
+          echo "Note: Will use basic unzip tools for XAPK/APKM processing"
         fi
-        
-        echo "Downloading: $LATEST_URL"
-        wget "$LATEST_URL" -O apk-editor-studio-linux-portable.tar.gz
-        tar -xzf apk-editor-studio-linux-portable.tar.gz
-        
-        echo "✅ APK Editor Studio installed successfully"
     
     - name: Download Instagram Bundle/APK
       run: |
