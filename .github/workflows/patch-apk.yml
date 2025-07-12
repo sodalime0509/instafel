@@ -51,9 +51,22 @@ jobs:
         chmod +x bundletool-all-1.15.6.jar
         sudo mv bundletool-all-1.15.6.jar /usr/local/bin/bundletool.jar
         
-        # Install APK Editor Studio for APKM handling (alternative approach)
-        wget https://github.com/kefir500/apk-editor-studio/releases/download/v1.7.1/apk-editor-studio_1.7.1_linux_portable.tar.gz
-        tar -xzf apk-editor-studio_1.7.1_linux_portable.tar.gz
+        # Install APK Editor Studio for APKM handling (dynamic latest version)
+        echo "Getting latest APK Editor Studio release..."
+        LATEST_URL=$(curl -s https://api.github.com/repos/kefir500/apk-editor-studio/releases/latest | grep "browser_download_url.*linux_portable.tar.gz" | cut -d '"' -f 4)
+        
+        if [ -z "$LATEST_URL" ]; then
+          echo "❌ Could not find latest APK Editor Studio release"
+          echo "Available releases:"
+          curl -s https://api.github.com/repos/kefir500/apk-editor-studio/releases/latest | grep "browser_download_url" | cut -d '"' -f 4
+          exit 1
+        fi
+        
+        echo "Downloading: $LATEST_URL"
+        wget "$LATEST_URL" -O apk-editor-studio-linux-portable.tar.gz
+        tar -xzf apk-editor-studio-linux-portable.tar.gz
+        
+        echo "✅ APK Editor Studio installed successfully"
     
     - name: Download Instagram Bundle/APK
       run: |
