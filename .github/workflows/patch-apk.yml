@@ -427,30 +427,31 @@ jobs:
           -keypass "$KEY_PASSWORD" \
           -dname "CN=Developer, OU=Development, O=Company, L=City, ST=State, C=US"
         
-        # Sign the APK using the secrets
-        echo "Signing APK with provided credentials..."
-        java -jar /usr/local/bin/uber-apk-signer.jar \
-          --apks instagram-patched-unsigned.apk \
+        # First, align the APK
+        echo "Aligning APK..."
+        zipalign -v 4 instagram-patched-unsigned.apk instagram-patched-aligned.apk
+        
+        # Sign the APK using Android SDK's apksigner
+        echo "Signing APK with Android SDK apksigner..."
+        $ANDROID_HOME/build-tools/33.0.0/apksigner sign \
           --ks release-key.keystore \
-          --ksAlias "$KEY_ALIAS" \
-          --ksPass "$KEYSTORE_PASSWORD" \
-          --keyPass "$KEY_PASSWORD"
+          --ks-key-alias "$KEY_ALIAS" \
+          --ks-pass pass:"$KEYSTORE_PASSWORD" \
+          --key-pass pass:"$KEY_PASSWORD" \
+          --out instagram-instafel-${{ github.event.inputs.apk_version }}.apk \
+          instagram-patched-aligned.apk
         
-        # Find the signed APK (uber-apk-signer creates different naming patterns)
-        signed_apk=$(find . -name "*signed*.apk" -o -name "*aligned*.apk" | head -1)
+        # Verify the signature
+        echo "Verifying APK signature..."
+        $ANDROID_HOME/build-tools/33.0.0/apksigner verify instagram-instafel-${{ github.event.inputs.apk_version }}.apk
         
-        if [ -n "$signed_apk" ]; then
-          echo "Found signed APK: $signed_apk"
-          mv "$signed_apk" instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+        if [ $? -eq 0 ]; then
+          echo "✅ APK signing and verification completed successfully"
+          ls -la instagram-instafel-${{ github.event.inputs.apk_version }}.apk
         else
-          echo "❌ Could not find signed APK"
-          echo "Available APK files:"
-          ls -la *.apk
+          echo "❌ APK signature verification failed"
           exit 1
         fi
-        
-        echo "✅ APK signing completed"
-        ls -la instagram-instafel-${{ github.event.inputs.apk_version }}.apk
     
     - name: Upload Patched APK
       uses: actions/upload-artifact@v4
