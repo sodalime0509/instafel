@@ -400,7 +400,7 @@ EOF
     - name: Generate Installation Instructions
       run: |
         cd workspace
-        cat > installation-instructions.md << 'EOF'
+        cat > installation-instructions.md << EOF
         # Installation Instructions for Android 15
         
         ## Before Installing:
