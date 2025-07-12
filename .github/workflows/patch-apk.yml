@@ -253,14 +253,14 @@ jobs:
           cp ../instagram-alpha.aab ./
           
           # Generate device spec for Android 15
-          cat > device-spec.json << 'EOF'
+          cat > device-spec.json << 'DEVICESPEC'
 {
   "supportedAbis": ["arm64-v8a", "armeabi-v7a"],
   "supportedLocales": ["en"],
   "screenDensity": 420,
   "sdkVersion": 34
 }
-EOF
+DEVICESPEC
           
           java -jar /usr/local/bin/bundletool.jar build-apks \
             --bundle=instagram-alpha.aab \
@@ -443,7 +443,7 @@ EOF
     - name: Generate Installation Instructions
       run: |
         cd workspace
-        cat > installation-instructions.md << 'EOF'
+        cat > installation-instructions.md << 'INSTRUCTIONS'
 # Installation Instructions for Android 15
 
 ## Before Installing:
@@ -473,7 +473,7 @@ If you encounter issues, check:
 1. Device architecture (arm64-v8a vs armeabi-v7a)
 2. Available storage space
 3. Android version compatibility
-EOF
+INSTRUCTIONS
         
         echo "Installation instructions created"
     
