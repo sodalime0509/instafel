@@ -431,27 +431,57 @@ jobs:
         echo "Aligning APK..."
         zipalign -v 4 instagram-patched-unsigned.apk instagram-patched-aligned.apk
         
-        # Sign the APK using Android SDK's apksigner
-        echo "Signing APK with Android SDK apksigner..."
-        $ANDROID_HOME/build-tools/33.0.0/apksigner sign \
-          --ks release-key.keystore \
-          --ks-key-alias "$KEY_ALIAS" \
-          --ks-pass pass:"$KEYSTORE_PASSWORD" \
-          --key-pass pass:"$KEY_PASSWORD" \
-          --out instagram-instafel-${{ github.event.inputs.apk_version }}.apk \
-          instagram-patched-aligned.apk
+        # Try to find apksigner first, then fall back to jarsigner
+        APKSIGNER_PATH=""
         
-        # Verify the signature
-        echo "Verifying APK signature..."
-        $ANDROID_HOME/build-tools/33.0.0/apksigner verify instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+        # Check common locations for apksigner
+        for build_tools_dir in $ANDROID_HOME/build-tools/*/; do
+          if [ -f "${build_tools_dir}apksigner" ]; then
+            APKSIGNER_PATH="${build_tools_dir}apksigner"
+            break
+          fi
+        done
         
-        if [ $? -eq 0 ]; then
-          echo "✅ APK signing and verification completed successfully"
-          ls -la instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+        if [ -n "$APKSIGNER_PATH" ]; then
+          echo "Found apksigner at: $APKSIGNER_PATH"
+          echo "Signing APK with Android SDK apksigner..."
+          
+          "$APKSIGNER_PATH" sign \
+            --ks release-key.keystore \
+            --ks-key-alias "$KEY_ALIAS" \
+            --ks-pass pass:"$KEYSTORE_PASSWORD" \
+            --key-pass pass:"$KEY_PASSWORD" \
+            --out instagram-instafel-${{ github.event.inputs.apk_version }}.apk \
+            instagram-patched-aligned.apk
+          
+          # Verify the signature
+          echo "Verifying APK signature..."
+          "$APKSIGNER_PATH" verify instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+          
+          if [ $? -eq 0 ]; then
+            echo "✅ APK signing and verification completed successfully"
+          else
+            echo "❌ APK signature verification failed"
+            exit 1
+          fi
         else
-          echo "❌ APK signature verification failed"
-          exit 1
+          echo "apksigner not found, using jarsigner instead..."
+          
+          # Sign with jarsigner (always available with JDK)
+          jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA256 \
+            -keystore release-key.keystore \
+            -storepass "$KEYSTORE_PASSWORD" \
+            -keypass "$KEY_PASSWORD" \
+            instagram-patched-aligned.apk "$KEY_ALIAS"
+          
+          # Final zipalign after signing with jarsigner
+          zipalign -f -v 4 instagram-patched-aligned.apk instagram-instafel-${{ github.event.inputs.apk_version }}.apk
+          
+          echo "✅ APK signing completed with jarsigner"
         fi
+        
+        echo "Final APK details:"
+        ls -la instagram-instafel-${{ github.event.inputs.apk_version }}.apk
     
     - name: Upload Patched APK
       uses: actions/upload-artifact@v4
